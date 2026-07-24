@@ -1,0 +1,139 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Content Settings",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 0,
+ "issingle": 1,
+ "track_changes": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_section",
+  "site_name",
+  "tagline_en",
+  "tagline_ar",
+  "column_break_1",
+  "hero_quote_en",
+  "hero_quote_ar",
+  "about_section",
+  "about_text_en",
+  "about_text_ar",
+  "footer_section",
+  "footer_text_en",
+  "footer_text_ar",
+  "banners_section",
+  "banners",
+  "categories_section",
+  "featured_categories",
+  "testimonials_section",
+  "testimonials"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "site_name",
+   "fieldtype": "Data",
+   "label": "Site Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tagline_en",
+   "fieldtype": "Data",
+   "label": "Tagline (English)"
+  },
+  {
+   "fieldname": "tagline_ar",
+   "fieldtype": "Data",
+   "label": "Tagline (Arabic)"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hero_quote_en",
+   "fieldtype": "Small Text",
+   "label": "Hero Quote (English)"
+  },
+  {
+   "fieldname": "hero_quote_ar",
+   "fieldtype": "Small Text",
+   "label": "Hero Quote (Arabic)"
+  },
+  {
+   "fieldname": "about_section",
+   "fieldtype": "Section Break",
+   "label": "About"
+  },
+  {
+   "fieldname": "about_text_en",
+   "fieldtype": "Text Editor",
+   "label": "About Text (English)"
+  },
+  {
+   "fieldname": "about_text_ar",
+   "fieldtype": "Text Editor",
+   "label": "About Text (Arabic)"
+  },
+  {
+   "fieldname": "footer_section",
+   "fieldtype": "Section Break",
+   "label": "Footer"
+  },
+  {
+   "fieldname": "footer_text_en",
+   "fieldtype": "Small Text",
+   "label": "Footer Text (English)"
+  },
+  {
+   "fieldname": "footer_text_ar",
+   "fieldtype": "Small Text",
+   "label": "Footer Text (Arabic)"
+  },
+  {
+   "fieldname": "banners_section",
+   "fieldtype": "Section Break",
+   "label": "Banners"
+  },
+  {
+   "fieldname": "banners",
+   "fieldtype": "Table",
+   "label": "Banners",
+   "options": "Webshop Banner"
+  },
+  {
+   "fieldname": "categories_section",
+   "fieldtype": "Section Break",
+   "label": "Featured Categories"
+  },
+  {
+   "fieldname": "featured_categories",
+   "fieldtype": "Table",
+   "label": "Featured Categories",
+   "options": "Webshop Featured Category"
+  },
+  {
+   "fieldname": "testimonials_section",
+   "fieldtype": "Section Break",
+   "label": "Testimonials / Quotes"
+  },
+  {
+   "fieldname": "testimonials",
+   "fieldtype": "Table",
+   "label": "Testimonials",
+   "options": "Webshop Testimonial"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ]
+}

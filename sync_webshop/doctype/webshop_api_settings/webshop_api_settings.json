@@ -1,0 +1,62 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop API Settings",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 0,
+ "issingle": 1,
+ "track_changes": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "connection_section",
+  "api_user",
+  "column_break_1",
+  "enable_guest_catalog_access",
+  "cors_section",
+  "allowed_origins"
+ ],
+ "fields": [
+  {
+   "fieldname": "connection_section",
+   "fieldtype": "Section Break",
+   "label": "Connection"
+  },
+  {
+   "fieldname": "api_user",
+   "fieldtype": "Link",
+   "label": "API User",
+   "options": "User",
+   "description": "A restricted-role user whose API Key/Secret the React frontend uses for write calls (checkout, etc). Created and scoped in Step 3."
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "enable_guest_catalog_access",
+   "fieldtype": "Check",
+   "label": "Enable Guest Catalog Access",
+   "default": "1",
+   "description": "Allow the item/price catalog and theme/content endpoints to be read without login, so the storefront can render for anonymous visitors."
+  },
+  {
+   "fieldname": "cors_section",
+   "fieldtype": "Section Break",
+   "label": "CORS"
+  },
+  {
+   "fieldname": "allowed_origins",
+   "fieldtype": "Small Text",
+   "label": "Allowed Frontend Origins",
+   "description": "One origin per line, e.g. https://shop.dpono.com - this server's frontend domain(s) allowed to call the API."
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ]
+}

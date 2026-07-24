@@ -1,0 +1,133 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Theme Settings",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 0,
+ "issingle": 1,
+ "track_changes": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "branding_section",
+  "logo",
+  "favicon",
+  "column_break_1",
+  "layout_style",
+  "colors_section",
+  "primary_color",
+  "secondary_color",
+  "column_break_2",
+  "accent_color",
+  "background_color",
+  "typography_section",
+  "font_heading",
+  "column_break_3",
+  "font_body",
+  "hero_section",
+  "hero_background_image"
+ ],
+ "fields": [
+  {
+   "fieldname": "branding_section",
+   "fieldtype": "Section Break",
+   "label": "Branding"
+  },
+  {
+   "fieldname": "logo",
+   "fieldtype": "Attach Image",
+   "label": "Logo"
+  },
+  {
+   "fieldname": "favicon",
+   "fieldtype": "Attach Image",
+   "label": "Favicon"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "layout_style",
+   "fieldtype": "Select",
+   "label": "Layout Style",
+   "options": "Classic\nMinimal\nBold",
+   "default": "Classic",
+   "description": "Swaps between a few pre-built layout variants in the frontend - no code change needed."
+  },
+  {
+   "fieldname": "colors_section",
+   "fieldtype": "Section Break",
+   "label": "Colors"
+  },
+  {
+   "fieldname": "primary_color",
+   "fieldtype": "Color",
+   "label": "Primary Color",
+   "default": "#6F4E37"
+  },
+  {
+   "fieldname": "secondary_color",
+   "fieldtype": "Color",
+   "label": "Secondary Color",
+   "default": "#C9A66B"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "accent_color",
+   "fieldtype": "Color",
+   "label": "Accent Color",
+   "default": "#2E2A25"
+  },
+  {
+   "fieldname": "background_color",
+   "fieldtype": "Color",
+   "label": "Background Color",
+   "default": "#FFFFFF"
+  },
+  {
+   "fieldname": "typography_section",
+   "fieldtype": "Section Break",
+   "label": "Typography"
+  },
+  {
+   "fieldname": "font_heading",
+   "fieldtype": "Select",
+   "label": "Heading Font",
+   "options": "Poppins\nPlayfair Display\nCairo\nInter",
+   "default": "Poppins",
+   "description": "Curated list so a non-technical admin can't break layout with an unsupported font."
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "font_body",
+   "fieldtype": "Select",
+   "label": "Body Font",
+   "options": "Inter\nCairo\nRoboto\nOpen Sans",
+   "default": "Inter"
+  },
+  {
+   "fieldname": "hero_section",
+   "fieldtype": "Section Break",
+   "label": "Hero"
+  },
+  {
+   "fieldname": "hero_background_image",
+   "fieldtype": "Attach Image",
+   "label": "Hero Background Image"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ]
+}
