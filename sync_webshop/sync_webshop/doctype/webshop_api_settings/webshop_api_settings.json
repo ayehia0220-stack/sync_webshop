@@ -12,6 +12,8 @@
   "api_user",
   "column_break_1",
   "enable_guest_catalog_access",
+  "catalog_section",
+  "default_price_list",
   "cors_section",
   "allowed_origins"
  ],
@@ -38,6 +40,18 @@
    "label": "Enable Guest Catalog Access",
    "default": "1",
    "description": "Allow the item/price catalog and theme/content endpoints to be read without login, so the storefront can render for anonymous visitors."
+  },
+  {
+   "fieldname": "catalog_section",
+   "fieldtype": "Section Break",
+   "label": "Catalog"
+  },
+  {
+   "fieldname": "default_price_list",
+   "fieldtype": "Link",
+   "label": "Default Price List",
+   "options": "Price List",
+   "description": "Which ERPNext Price List the storefront's item prices are read from (e.g. Standard Selling)."
   },
   {
    "fieldname": "cors_section",
