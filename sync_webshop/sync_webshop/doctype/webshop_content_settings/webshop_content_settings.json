@@ -1,4 +1,4 @@
-{
+{ 
  "doctype": "DocType",
  "name": "Webshop Content Settings",
  "module": "Sync Webshop",
@@ -26,7 +26,9 @@
   "categories_section",
   "featured_categories",
   "testimonials_section",
-  "testimonials"
+  "testimonials",
+  "trust_badges_section",
+  "trust_badges"
  ],
  "fields": [
   {
@@ -126,6 +128,17 @@
    "fieldtype": "Table",
    "label": "Testimonials",
    "options": "Webshop Testimonial"
+  },
+  {
+   "fieldname": "trust_badges_section",
+   "fieldtype": "Section Break",
+   "label": "Trust Badges"
+  },
+  {
+   "fieldname": "trust_badges",
+   "fieldtype": "Table",
+   "label": "Trust Badges",
+   "options": "Webshop Trust Badge"
   }
  ],
  "permissions": [

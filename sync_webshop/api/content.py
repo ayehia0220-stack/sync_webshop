@@ -46,6 +46,17 @@ def get_content():
 		for row in active_sorted(settings.testimonials)
 	]
 
+	trust_badges = [
+		{
+			"icon": row.icon,
+			"label_en": row.label_en,
+			"label_ar": row.label_ar,
+			"description_en": row.description_en,
+			"description_ar": row.description_ar,
+		}
+		for row in active_sorted(settings.trust_badges)
+	]
+
 	return {
 		"site_name": settings.site_name,
 		"tagline_en": settings.tagline_en,
@@ -59,4 +70,5 @@ def get_content():
 		"banners": banners,
 		"featured_categories": featured_categories,
 		"testimonials": testimonials,
+		"trust_badges": trust_badges,
 	}
