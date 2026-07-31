@@ -369,6 +369,53 @@
    "fieldtype": "Check",
    "label": "Enable Wishlist",
    "default": 1
+  },
+  {
+   "fieldname": "analytics_section",
+   "fieldtype": "Section Break",
+   "label": "Analytics & Performance"
+  },
+  {
+   "fieldname": "google_analytics_id",
+   "fieldtype": "Data",
+   "label": "Google Analytics ID (G-XXXXX)"
+  },
+  {
+   "fieldname": "cdn_url_prefix",
+   "fieldtype": "Data",
+   "label": "CDN URL Prefix",
+   "description": "e.g. https://cdn.example.com"
+  },
+  {
+   "fieldname": "enable_webp_optimization",
+   "fieldtype": "Check",
+   "label": "Enable WebP Optimization",
+   "default": 1
+  },
+  {
+   "fieldname": "customer_support_section",
+   "fieldtype": "Section Break",
+   "label": "Customer Support & Live Chat"
+  },
+  {
+   "fieldname": "enable_live_chat",
+   "fieldtype": "Check",
+   "label": "Enable Live Chat Widget",
+   "default": 1
+  },
+  {
+   "fieldname": "live_chat_type",
+   "fieldtype": "Select",
+   "label": "Live Chat Type",
+   "options": "WhatsApp\nTawk.to\nCustom Script",
+   "default": "WhatsApp"
+  },
+  {
+   "fieldname": "live_chat_custom_script",
+   "fieldtype": "Code",
+   "label": "Custom Chat Script",
+   "options": "JS",
+   "depends_on": "eval:doc.live_chat_type==\"Custom Script\""
   }
  ],
  "permissions": [

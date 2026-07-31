@@ -203,6 +203,14 @@ def get_content():
 		]
 	}
 
+	# FAQs
+	faqs = frappe.get_all(
+		"Webshop FAQ",
+		filters={"is_active": 1},
+		fields=["question_en", "question_ar", "answer_en", "answer_ar", "sort_order"],
+		order_by="sort_order asc"
+	)
+
 	return {
 		"site_name": settings.site_name,
 		"show_category_sidebar": settings.show_category_sidebar,
@@ -257,5 +265,14 @@ def get_content():
 		"seo": seo_data,
 		# User Auth & Wishlist Settings
 		"enable_user_registration": settings.enable_user_registration,
-		"enable_wishlist": settings.enable_wishlist
+		"enable_wishlist": settings.enable_wishlist,
+		# Analytics & Performance
+		"google_analytics_id": settings.google_analytics_id,
+		"cdn_url_prefix": settings.cdn_url_prefix,
+		"enable_webp_optimization": settings.enable_webp_optimization,
+		# Customer Support
+		"enable_live_chat": settings.enable_live_chat,
+		"live_chat_type": settings.live_chat_type,
+		"live_chat_custom_script": settings.live_chat_custom_script,
+		"faqs": faqs
 	}
