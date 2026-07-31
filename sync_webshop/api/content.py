@@ -86,22 +86,18 @@ def get_content():
 	)
 
 	price_list = _get_price_list()
-
 	for s in sections:
 		items = frappe.get_all(
 			"Webshop Landing Section Item",
 			filters={"parent": s.name},
 			fields=["item_code"]
 		)
-		
 		section_items = []
 		for item_row in items:
 			item_code = item_row.item_code
 			item_doc = frappe.get_doc("Item", item_code)
-			
 			# Get price
 			price = frappe.db.get_value("Item Price", {"item_code": item_code, "price_list": price_list}, "price_list_rate")
-			
 			section_items.append({
 				"item_code": item_code,
 				"item_name": item_doc.item_name,
@@ -109,7 +105,6 @@ def get_content():
 				"price": price or 0,
 				"currency": frappe.db.get_value("Price List", price_list, "currency")
 			})
-			
 		landing_sections.append({
 			"title_en": s.section_title_en,
 			"title_ar": s.section_title_ar,
@@ -117,6 +112,96 @@ def get_content():
 			"subtitle_ar": s.section_subtitle_ar,
 			"items": section_items
 		})
+
+	# New Features Data
+	footer_settings = frappe.get_single("Webshop Footer Settings")
+	footer_columns = []
+	if footer_settings.enabled:
+		columns = frappe.get_all(
+			"Webshop Footer Column",
+			filters={"enabled": 1},
+			fields=["name", "title_en", "title_ar", "sort_order"],
+			order_by="sort_order asc"
+		)
+		for col in columns:
+			col_doc = frappe.get_doc("Webshop Footer Column", col.name)
+			footer_columns.append({
+				"title_en": col.title_en,
+				"title_ar": col.title_ar,
+				"links": [
+					{
+						"label_en": l.label_en,
+						"label_ar": l.label_ar,
+						"link_url": l.link_url,
+						"is_external": l.is_external
+					} for l in col_doc.links
+				]
+			})
+
+	announcement = frappe.get_single("Webshop Announcement Bar")
+	announcement_data = {
+		"enabled": announcement.enabled,
+		"message_en": announcement.message_en,
+		"message_ar": announcement.message_ar,
+		"background_color": announcement.background_color,
+		"text_color": announcement.text_color,
+		"link_url": announcement.link_url,
+		"show_close_button": announcement.show_close_button
+	}
+
+	product_settings = frappe.get_single("Webshop Product Settings")
+	product_settings_data = {
+		"enable_zoom": product_settings.enable_zoom,
+		"show_related_products": product_settings.show_related_products,
+		"related_products_title_en": product_settings.related_products_title_en,
+		"related_products_title_ar": product_settings.related_products_title_ar,
+		"show_sidebar": product_settings.show_sidebar
+	}
+
+	popups = frappe.get_all(
+		"Webshop Popup",
+		filters={"enabled": 1},
+		fields=["*"]
+	)
+	popups_data = [
+		{
+			"title_en": p.title_en,
+			"title_ar": p.title_ar,
+			"content_en": p.content_en,
+			"content_ar": p.content_ar,
+			"image": full_url(p.image) if p.image else None,
+			"popup_type": p.popup_type,
+			"link_url": p.link_url,
+			"button_text_en": p.button_text_en,
+			"button_text_ar": p.button_text_ar,
+			"delay_seconds": p.delay_seconds,
+			"show_once_per_session": p.show_once_per_session
+		} for p in popups
+	]
+
+	seo_settings = frappe.get_single("Webshop SEO Settings")
+	seo_data = {
+		"meta_title_en": seo_settings.meta_title_en,
+		"meta_title_ar": seo_settings.meta_title_ar,
+		"meta_description_en": seo_settings.meta_description_en,
+		"meta_description_ar": seo_settings.meta_description_ar,
+		"og_title_en": seo_settings.og_title_en,
+		"og_title_ar": seo_settings.og_title_ar,
+		"og_description_en": seo_settings.og_description_en,
+		"og_description_ar": seo_settings.og_description_ar,
+		"og_image": full_url(seo_settings.og_image) if seo_settings.og_image else None,
+		"canonical_url": seo_settings.canonical_url,
+		"robots_txt": seo_settings.robots_txt,
+		"sitemap_enabled": seo_settings.sitemap_enabled,
+		"structured_data": seo_settings.structured_data,
+		"redirects": [
+			{
+				"source_url": r.source_url,
+				"target_url": r.target_url,
+				"redirect_type": r.redirect_type
+			} for r in seo_settings.redirects
+		]
+	}
 
 	return {
 		"site_name": settings.site_name,
@@ -157,5 +242,17 @@ def get_content():
 		"testimonials": testimonials,
 		"trust_badges": trust_badges,
 		"landing_sections": landing_sections,
-		"theme": get_theme()
+		"theme": get_theme(),
+		# New Data
+		"footer_settings": {
+			"enabled": footer_settings.enabled,
+			"footer_logo": full_url(footer_settings.footer_logo) if footer_settings.footer_logo else None,
+			"copyright_en": footer_settings.copyright_en,
+			"copyright_ar": footer_settings.copyright_ar,
+			"columns": footer_columns
+		},
+		"announcement": announcement_data,
+		"product_settings": product_settings_data,
+		"popups": popups_data,
+		"seo": seo_data
 	}

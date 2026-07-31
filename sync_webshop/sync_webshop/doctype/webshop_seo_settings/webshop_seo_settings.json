@@ -1,0 +1,109 @@
+{
+ "name": "Webshop SEO Settings",
+ "module": "Sync Webshop",
+ "doctype": "DocType",
+ "issingle": 1,
+ "fields": [
+  {
+   "fieldname": "meta_section",
+   "fieldtype": "Section Break",
+   "label": "Meta Tags"
+  },
+  {
+   "fieldname": "meta_title_en",
+   "fieldtype": "Data",
+   "label": "Meta Title (English)"
+  },
+  {
+   "fieldname": "meta_title_ar",
+   "fieldtype": "Data",
+   "label": "Meta Title (Arabic)"
+  },
+  {
+   "fieldname": "meta_description_en",
+   "fieldtype": "Small Text",
+   "label": "Meta Description (English)"
+  },
+  {
+   "fieldname": "meta_description_ar",
+   "fieldtype": "Small Text",
+   "label": "Meta Description (Arabic)"
+  },
+  {
+   "fieldname": "og_section",
+   "fieldtype": "Section Break",
+   "label": "Open Graph"
+  },
+  {
+   "fieldname": "og_title_en",
+   "fieldtype": "Data",
+   "label": "OG Title (English)"
+  },
+  {
+   "fieldname": "og_title_ar",
+   "fieldtype": "Data",
+   "label": "OG Title (Arabic)"
+  },
+  {
+   "fieldname": "og_description_en",
+   "fieldtype": "Small Text",
+   "label": "OG Description (English)"
+  },
+  {
+   "fieldname": "og_description_ar",
+   "fieldtype": "Small Text",
+   "label": "OG Description (Arabic)"
+  },
+  {
+   "fieldname": "og_image",
+   "fieldtype": "Attach Image",
+   "label": "OG Image"
+  },
+  {
+   "fieldname": "advanced_section",
+   "fieldtype": "Section Break",
+   "label": "Advanced SEO"
+  },
+  {
+   "fieldname": "canonical_url",
+   "fieldtype": "Data",
+   "label": "Canonical URL"
+  },
+  {
+   "fieldname": "robots_txt",
+   "fieldtype": "Code",
+   "label": "Robots.txt",
+   "options": "Markdown"
+  },
+  {
+   "fieldname": "sitemap_enabled",
+   "fieldtype": "Check",
+   "label": "Sitemap Enabled",
+   "default": 1
+  },
+  {
+   "fieldname": "structured_data",
+   "fieldtype": "Code",
+   "label": "Structured Data (JSON-LD)",
+   "options": "JSON"
+  },
+  {
+   "fieldname": "redirects_section",
+   "fieldtype": "Section Break",
+   "label": "Redirects"
+  },
+  {
+   "fieldname": "redirects",
+   "fieldtype": "Table",
+   "label": "Redirects",
+   "options": "Webshop SEO Redirect"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1
+  }
+ ]
+}

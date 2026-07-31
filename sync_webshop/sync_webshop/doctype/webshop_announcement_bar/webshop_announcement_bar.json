@@ -1,0 +1,55 @@
+{
+ "name": "Webshop Announcement Bar",
+ "module": "Sync Webshop",
+ "doctype": "DocType",
+ "issingle": 1,
+ "fields": [
+  {
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "default": 0
+  },
+  {
+   "fieldname": "message_en",
+   "fieldtype": "Data",
+   "label": "Message (English)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "message_ar",
+   "fieldtype": "Data",
+   "label": "Message (Arabic)"
+  },
+  {
+   "fieldname": "background_color",
+   "fieldtype": "Color",
+   "label": "Background Color",
+   "default": "#000000"
+  },
+  {
+   "fieldname": "text_color",
+   "fieldtype": "Color",
+   "label": "Text Color",
+   "default": "#ffffff"
+  },
+  {
+   "fieldname": "link_url",
+   "fieldtype": "Data",
+   "label": "Link URL"
+  },
+  {
+   "fieldname": "show_close_button",
+   "fieldtype": "Check",
+   "label": "Show Close Button",
+   "default": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1
+  }
+ ]
+}

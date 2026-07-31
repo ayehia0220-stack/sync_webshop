@@ -1,0 +1,47 @@
+{
+ "name": "Webshop Footer Column",
+ "module": "Sync Webshop",
+ "doctype": "DocType",
+ "autoname": "field:title_en",
+ "fields": [
+  {
+   "fieldname": "title_en",
+   "fieldtype": "Data",
+   "label": "Title (English)",
+   "unique": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "title_ar",
+   "fieldtype": "Data",
+   "label": "Title (Arabic)"
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order",
+   "default": 0
+  },
+  {
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "default": 1
+  },
+  {
+   "fieldname": "links",
+   "fieldtype": "Table",
+   "label": "Links",
+   "options": "Webshop Footer Link"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ]
+}
