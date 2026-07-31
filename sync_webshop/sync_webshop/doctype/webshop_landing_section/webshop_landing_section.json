@@ -55,8 +55,7 @@
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "Items",
-   "options": "Webshop Landing Section Item",
-   "reqd": 1
+   "options": "Webshop Landing Section Item"
   }
  ],
  "permissions": [
