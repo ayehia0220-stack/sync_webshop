@@ -1,5 +1,4 @@
 import frappe
-from functools import wraps
 
 def set_cors_headers():
     """
@@ -24,14 +23,10 @@ def guest_catalog_allowed():
     except Exception:
         return True
 
-def require_catalog_access(func):
-    """Decorator to check if guest access is allowed or user is logged in."""
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        if not guest_catalog_allowed() and frappe.session.user == "Guest":
-            frappe.throw(frappe._("Catalog access restricted to logged-in users."), frappe.PermissionError)
-        return func(*args, **kwargs)
-    return wrapper
+def require_catalog_access():
+    """Function to check if guest access is allowed or user is logged in."""
+    if not guest_catalog_allowed() and frappe.session.user == "Guest":
+        frappe.throw(frappe._("Catalog access restricted to logged-in users."), frappe.PermissionError)
 
 def full_url(file_url):
     """Turn a stored Attach/Attach Image value into an absolute URL, optionally via CDN."""
@@ -57,4 +52,7 @@ def clear_webshop_cache(doc=None, method=None):
     """
     frappe.clear_cache()
     # Also clear redis cache specifically if needed
-    frappe.cache().flushall()
+    try:
+        frappe.cache().flushall()
+    except Exception:
+        pass
