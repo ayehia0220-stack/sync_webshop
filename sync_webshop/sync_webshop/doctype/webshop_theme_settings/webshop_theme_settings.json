@@ -37,7 +37,9 @@
   "font_body",
   "header_dimensions_section",
   "header_max_width",
+  "header_height",
   "header_padding_vertical",
+  "header_padding_horizontal",
   "logo_height",
   "logo_width",
   "column_break_header",
@@ -216,9 +218,21 @@
    "default": 1200
   },
   {
+   "fieldname": "header_height",
+   "fieldtype": "Int",
+   "label": "Header Height (px)",
+   "default": 80
+  },
+  {
    "fieldname": "header_padding_vertical",
    "fieldtype": "Int",
    "label": "Header Padding Vertical (px)",
+   "default": 15
+  },
+  {
+   "fieldname": "header_padding_horizontal",
+   "fieldtype": "Int",
+   "label": "Header Padding Horizontal (px)",
    "default": 15
   },
   {
