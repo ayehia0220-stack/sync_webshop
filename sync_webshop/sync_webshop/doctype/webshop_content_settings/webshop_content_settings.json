@@ -352,6 +352,23 @@
    "fieldtype": "Int",
    "label": "Maximum Delivery Lead Time (Days)",
    "default": 7
+  },
+  {
+   "fieldname": "user_auth_section",
+   "fieldtype": "Section Break",
+   "label": "User Authentication & Wishlist"
+  },
+  {
+   "fieldname": "enable_user_registration",
+   "fieldtype": "Check",
+   "label": "Enable User Registration",
+   "default": 1
+  },
+  {
+   "fieldname": "enable_wishlist",
+   "fieldtype": "Check",
+   "label": "Enable Wishlist",
+   "default": 1
   }
  ],
  "permissions": [

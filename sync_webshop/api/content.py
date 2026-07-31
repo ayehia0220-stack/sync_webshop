@@ -254,5 +254,8 @@ def get_content():
 		"announcement": announcement_data,
 		"product_settings": product_settings_data,
 		"popups": popups_data,
-		"seo": seo_data
+		"seo": seo_data,
+		# User Auth & Wishlist Settings
+		"enable_user_registration": settings.enable_user_registration,
+		"enable_wishlist": settings.enable_wishlist
 	}
