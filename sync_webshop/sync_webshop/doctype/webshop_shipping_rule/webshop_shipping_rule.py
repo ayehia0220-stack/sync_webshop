@@ -1,1 +1,5 @@
-import frappe\nfrom frappe.model.document import Document\n\nclass WebshopShippingRule(Document):\n\tpass
+import frappe
+from frappe.model.document import Document
+
+class WebshopShippingRule(Document):
+	pass
