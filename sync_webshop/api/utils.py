@@ -49,3 +49,12 @@ def full_url(file_url):
         pass
         
     return frappe.utils.get_url(file_url)
+
+def clear_webshop_cache(doc=None, method=None):
+    """
+    Clears all Frappe caches to ensure the frontend gets fresh data.
+    Triggered by document updates in hooks.py.
+    """
+    frappe.clear_cache()
+    # Also clear redis cache specifically if needed
+    frappe.cache().flushall()
