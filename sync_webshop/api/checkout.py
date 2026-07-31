@@ -161,21 +161,21 @@ def create_order(customer, items, payment_method=None, stripe_payment_intent=Non
 		}
 	)
 	
-		# Add shipping cost to taxes and charges table
-		if shipping_cost > 0:
-			so.append("taxes", {
-				"charge_type": "Actual",
-				"account_head": frappe.db.get_value("Account", {"account_type": "Tax", "company": company, "is_group": 0}, "name") or "Shipping Charges - " + company,
-				"description": "Shipping Charges",
-				"rate": shipping_cost,
-				"tax_amount": shipping_cost,
-				"add_deduct_tax": "Add"
-			})
-		
-		so.flags.ignore_permissions = True
-		so.insert()
-		so.run_method("calculate_taxes_and_totals")
-		so.save()
+	# Add shipping cost to taxes and charges table
+	if shipping_cost > 0:
+		so.append("taxes", {
+			"charge_type": "Actual",
+			"account_head": frappe.db.get_value("Account", {"account_type": "Tax", "company": company, "is_group": 0}, "name") or "Shipping Charges - " + company,
+			"description": "Shipping Charges",
+			"rate": shipping_cost,
+			"tax_amount": shipping_cost,
+			"add_deduct_tax": "Add"
+		})
+	
+	so.flags.ignore_permissions = True
+	so.insert()
+	so.run_method("calculate_taxes_and_totals")
+	so.save()
 
 	if frappe.utils.cint(submit):
 		so.submit()
@@ -184,7 +184,7 @@ def create_order(customer, items, payment_method=None, stripe_payment_intent=Non
 		"sales_order": so.name,
 		"customer": customer_name,
 		"status": so.status,
-		"grand_total": so.grand_total + shipping_cost,
+		"grand_total": so.grand_total,
 		"currency": so.currency,
 		"shipping_cost": shipping_cost
 	}
