@@ -35,9 +35,17 @@
   "font_heading",
   "column_break_3",
   "font_body",
+  "header_dimensions_section",
+  "header_max_width",
+  "header_padding_vertical",
+  "logo_height",
+  "logo_width",
+  "column_break_header",
+  "search_bar_max_width",
+  "search_bar_height",
+  "nav_bar_height",
   "hero_section",
   "hero_background_image",
-  "header_max_width",
   "hero_height",
   "hero_width"
  ],
@@ -197,15 +205,59 @@
    "label": "Hero"
   },
   {
-   "fieldname": "hero_background_image",
-   "fieldtype": "Attach Image",
-   "label": "Hero Background Image"
+   "fieldname": "header_dimensions_section",
+   "fieldtype": "Section Break",
+   "label": "Header Dimensions"
   },
   {
    "fieldname": "header_max_width",
    "fieldtype": "Int",
    "label": "Header Max Width (px)",
    "default": 1200
+  },
+  {
+   "fieldname": "header_padding_vertical",
+   "fieldtype": "Int",
+   "label": "Header Padding Vertical (px)",
+   "default": 15
+  },
+  {
+   "fieldname": "logo_height",
+   "fieldtype": "Int",
+   "label": "Logo Height (px)",
+   "default": 45
+  },
+  {
+   "fieldname": "logo_width",
+   "fieldtype": "Int",
+   "label": "Logo Width (px)"
+  },
+  {
+   "fieldname": "column_break_header",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "search_bar_max_width",
+   "fieldtype": "Int",
+   "label": "Search Bar Max Width (px)",
+   "default": 600
+  },
+  {
+   "fieldname": "search_bar_height",
+   "fieldtype": "Int",
+   "label": "Search Bar Height (px)",
+   "default": 45
+  },
+  {
+   "fieldname": "nav_bar_height",
+   "fieldtype": "Int",
+   "label": "Nav Bar Height (px)",
+   "default": 50
+  },
+  {
+   "fieldname": "hero_background_image",
+   "fieldtype": "Attach Image",
+   "label": "Hero Background Image"
   },
   {
    "fieldname": "hero_height",

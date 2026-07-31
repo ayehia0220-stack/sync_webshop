@@ -33,6 +33,12 @@ def get_theme():
 			},
 			"dimensions": {
 				"header_max_width": settings.header_max_width or 1200,
+				"header_padding_vertical": settings.header_padding_vertical or 15,
+				"logo_height": settings.logo_height or 45,
+				"logo_width": settings.logo_width or 0,
+				"search_bar_max_width": settings.search_bar_max_width or 600,
+				"search_bar_height": settings.search_bar_height or 45,
+				"nav_bar_height": settings.nav_bar_height or 50,
 				"hero_height": settings.hero_height or 400,
 				"hero_width": settings.hero_width or 1200,
 			},
