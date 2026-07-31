@@ -27,8 +27,13 @@ def get_theme():
 			"footer_bg": settings.footer_bg_color,
 			"footer_text": settings.footer_text_color,
 		},
-		"fonts": {
-			"heading": settings.font_heading,
-			"body": settings.font_body,
-		},
+"fonts": {
+				"heading": settings.font_heading,
+				"body": settings.font_body,
+			},
+			"dimensions": {
+				"header_max_width": settings.header_max_width or 1200,
+				"hero_height": settings.hero_height or 400,
+				"hero_width": settings.hero_width or 1200,
+			},
 	}

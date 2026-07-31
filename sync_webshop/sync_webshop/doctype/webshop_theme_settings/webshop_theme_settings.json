@@ -36,7 +36,10 @@
   "column_break_3",
   "font_body",
   "hero_section",
-  "hero_background_image"
+  "hero_background_image",
+  "header_max_width",
+  "hero_height",
+  "hero_width"
  ],
  "fields": [
   {
@@ -197,6 +200,24 @@
    "fieldname": "hero_background_image",
    "fieldtype": "Attach Image",
    "label": "Hero Background Image"
+  },
+  {
+   "fieldname": "header_max_width",
+   "fieldtype": "Int",
+   "label": "Header Max Width (px)",
+   "default": 1200
+  },
+  {
+   "fieldname": "hero_height",
+   "fieldtype": "Int",
+   "label": "Hero Height (px)",
+   "default": 400
+  },
+  {
+   "fieldname": "hero_width",
+   "fieldtype": "Int",
+   "label": "Hero Max Width (px)",
+   "default": 1200
   }
  ],
  "permissions": [

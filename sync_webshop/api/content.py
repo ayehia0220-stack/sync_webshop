@@ -1,5 +1,6 @@
 import frappe
 from sync_webshop.api.utils import set_cors_headers, full_url
+from sync_webshop.api.catalog import _get_price_list
 
 @frappe.whitelist(allow_guest=True)
 def get_content():
@@ -74,6 +75,48 @@ def get_content():
 		for row in settings.social_links
 	]
 
+	# Fetch Landing Sections
+	landing_sections = []
+	sections = frappe.get_all(
+		"Webshop Landing Section",
+		filters={"enabled": 1},
+		fields=["name", "section_title_en", "section_title_ar", "section_subtitle_en", "section_subtitle_ar", "sort_order"],
+		order_by="sort_order asc"
+	)
+
+	price_list = _get_price_list()
+
+	for s in sections:
+		items = frappe.get_all(
+			"Webshop Landing Section Item",
+			filters={"parent": s.name},
+			fields=["item_code"]
+		)
+		
+		section_items = []
+		for item_row in items:
+			item_code = item_row.item_code
+			item_doc = frappe.get_doc("Item", item_code)
+			
+			# Get price
+			price = frappe.db.get_value("Item Price", {"item_code": item_code, "price_list": price_list}, "price_list_rate")
+			
+			section_items.append({
+				"item_code": item_code,
+				"item_name": item_doc.item_name,
+				"image": full_url(item_doc.image) if item_doc.image else None,
+				"price": price or 0,
+				"currency": frappe.db.get_value("Price List", price_list, "currency")
+			})
+			
+		landing_sections.append({
+			"title_en": s.section_title_en,
+			"title_ar": s.section_title_ar,
+			"subtitle_en": s.section_subtitle_en,
+			"subtitle_ar": s.section_subtitle_ar,
+			"items": section_items
+		})
+
 	return {
 		"site_name": settings.site_name,
 		"show_category_sidebar": settings.show_category_sidebar,
@@ -112,4 +155,5 @@ def get_content():
 		"featured_categories": featured_categories,
 		"testimonials": testimonials,
 		"trust_badges": trust_badges,
+		"landing_sections": landing_sections
 	}

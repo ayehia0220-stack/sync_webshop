@@ -1,0 +1,71 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Landing Section",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 0,
+ "engine": "InnoDB",
+ "autoname": "field:section_title_en",
+ "field_order": [
+  "section_title_en",
+  "section_title_ar",
+  "enabled",
+  "sort_order",
+  "section_subtitle_en",
+  "section_subtitle_ar",
+  "items"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_title_en",
+   "fieldtype": "Data",
+   "label": "Section Title (English)",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "section_title_ar",
+   "fieldtype": "Data",
+   "label": "Section Title (Arabic)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "default": 1
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order",
+   "default": 0
+  },
+  {
+   "fieldname": "section_subtitle_en",
+   "fieldtype": "Data",
+   "label": "Section Subtitle (English)"
+  },
+  {
+   "fieldname": "section_subtitle_ar",
+   "fieldtype": "Data",
+   "label": "Section Subtitle (Arabic)"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Webshop Landing Section Item",
+   "reqd": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ]
+}

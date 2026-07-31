@@ -53,6 +53,28 @@ def run_setup():
 	
 	create_custom_fields(custom_fields)
 	
+	# Create Landing Sections if none exist
+	if not frappe.db.count("Webshop Landing Section"):
+		featured = frappe.get_doc({
+			"doctype": "Webshop Landing Section",
+			"section_title_en": "Featured Products",
+			"section_title_ar": "المنتجات المميزة",
+			"enabled": 1,
+			"sort_order": 1,
+			"items": []
+		})
+		featured.insert(ignore_permissions=True)
+		
+		offers = frappe.get_doc({
+			"doctype": "Webshop Landing Section",
+			"section_title_en": "Best Offers",
+			"section_title_ar": "أفضل العروض",
+			"enabled": 1,
+			"sort_order": 2,
+			"items": []
+		})
+		offers.insert(ignore_permissions=True)
+		
 	# Create a default Webshop Payment Settings record if it doesn't exist
 	if not frappe.db.exists("Webshop Payment Settings", "Webshop Payment Settings"):
 		doc = frappe.get_doc({
