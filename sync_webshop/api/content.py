@@ -1,6 +1,7 @@
 import frappe
 from sync_webshop.api.utils import set_cors_headers, full_url
 from sync_webshop.api.catalog import _get_price_list
+from sync_webshop.api.theme import get_theme
 
 @frappe.whitelist(allow_guest=True)
 def get_content():
@@ -155,5 +156,6 @@ def get_content():
 		"featured_categories": featured_categories,
 		"testimonials": testimonials,
 		"trust_badges": trust_badges,
-		"landing_sections": landing_sections
+		"landing_sections": landing_sections,
+		"theme": get_theme()
 	}

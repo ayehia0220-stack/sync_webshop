@@ -161,12 +161,21 @@ def create_order(customer, items, payment_method=None, stripe_payment_intent=Non
 		}
 	)
 	
-	# Add shipping cost as a custom field or extra charge
-	# For simplicity, we'll use a custom field if it exists, or just return it
-	so.base_total_taxes_and_charges = shipping_cost
-	
-	so.flags.ignore_permissions = True
-	so.insert()
+		# Add shipping cost to taxes and charges table
+		if shipping_cost > 0:
+			so.append("taxes", {
+				"charge_type": "Actual",
+				"account_head": frappe.db.get_value("Account", {"account_type": "Tax", "company": company, "is_group": 0}, "name") or "Shipping Charges - " + company,
+				"description": "Shipping Charges",
+				"rate": shipping_cost,
+				"tax_amount": shipping_cost,
+				"add_deduct_tax": "Add"
+			})
+		
+		so.flags.ignore_permissions = True
+		so.insert()
+		so.run_method("calculate_taxes_and_totals")
+		so.save()
 
 	if frappe.utils.cint(submit):
 		so.submit()
