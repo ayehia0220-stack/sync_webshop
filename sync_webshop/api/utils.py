@@ -1,4 +1,5 @@
 import frappe
+from functools import wraps
 
 def set_cors_headers():
     """
@@ -22,6 +23,15 @@ def guest_catalog_allowed():
         return bool(settings.enable_guest_catalog_access)
     except Exception:
         return True
+
+def require_catalog_access(func):
+    """Decorator to check if guest access is allowed or user is logged in."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if not guest_catalog_allowed() and frappe.session.user == "Guest":
+            frappe.throw(frappe._("Catalog access restricted to logged-in users."), frappe.PermissionError)
+        return func(*args, **kwargs)
+    return wrapper
 
 def full_url(file_url):
     """Turn a stored Attach/Attach Image value into an absolute URL, optionally via CDN."""
