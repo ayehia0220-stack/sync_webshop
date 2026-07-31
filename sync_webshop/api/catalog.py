@@ -110,3 +110,24 @@ def get_categories():
 		}
 		for g in groups
 	]
+
+@frappe.whitelist(allow_guest=True)
+def get_search_suggestions(search):
+	set_cors_headers()
+	require_catalog_access()
+	if not search or len(search) < 2:
+		return []
+	items = frappe.get_all(
+		"Item",
+		filters={"disabled": 0, "item_name": ["like", f"%{search}%"]},
+		fields=["item_code", "item_name", "image"],
+		limit_page_length=5
+	)
+	return [
+		{
+			"item_code": i.item_code,
+			"item_name": i.item_name,
+			"image": full_url(i.image)
+		}
+		for i in items
+	]

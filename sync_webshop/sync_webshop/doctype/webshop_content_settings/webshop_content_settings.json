@@ -41,7 +41,11 @@
   "testimonials_section",
   "testimonials",
   "trust_badges_section",
-  "trust_badges"
+  "trust_badges",
+  "product_list_section",
+  "show_category_sidebar",
+  "show_price_filter",
+  "show_brand_filter"
  ],
  "fields": [
   {
@@ -219,6 +223,29 @@
    "fieldtype": "Table",
    "label": "Trust Badges",
    "options": "Webshop Trust Badge"
+  },
+  {
+   "fieldname": "product_list_section",
+   "fieldtype": "Section Break",
+   "label": "Product List Settings"
+  },
+  {
+   "fieldname": "show_category_sidebar",
+   "fieldtype": "Check",
+   "label": "Show Category Sidebar",
+   "default": 1
+  },
+  {
+   "fieldname": "show_price_filter",
+   "fieldtype": "Check",
+   "label": "Show Price Filter",
+   "default": 1
+  },
+  {
+   "fieldname": "show_brand_filter",
+   "fieldtype": "Check",
+   "label": "Show Brand Filter",
+   "default": 1
   }
  ],
  "permissions": [

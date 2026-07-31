@@ -74,13 +74,13 @@
    "fieldname": "primary_color",
    "fieldtype": "Color",
    "label": "Primary Color",
-   "default": "#6F4E37"
+   "default": "#21504C"
   },
   {
    "fieldname": "secondary_color",
    "fieldtype": "Color",
    "label": "Secondary Color",
-   "default": "#C9A66B"
+   "default": "#84B082"
   },
   {
    "fieldname": "column_break_2",
@@ -90,7 +90,7 @@
    "fieldname": "accent_color",
    "fieldtype": "Color",
    "label": "Accent Color",
-   "default": "#2E2A25"
+   "default": "#FF9900"
   },
   {
    "fieldname": "background_color",
@@ -157,7 +157,7 @@
    "fieldname": "footer_bg_color",
    "fieldtype": "Color",
    "label": "Footer Background",
-   "default": "#333333"
+   "default": "#21504C"
   },
   {
    "fieldname": "footer_text_color",

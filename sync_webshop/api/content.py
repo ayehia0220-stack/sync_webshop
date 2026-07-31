@@ -76,6 +76,9 @@ def get_content():
 
 	return {
 		"site_name": settings.site_name,
+		"show_category_sidebar": settings.show_category_sidebar,
+		"show_price_filter": settings.show_price_filter,
+		"show_brand_filter": settings.show_brand_filter,
 		"tagline_en": settings.tagline_en,
 		"tagline_ar": settings.tagline_ar,
 		"hero_quote_en": settings.hero_quote_en,
