@@ -182,17 +182,49 @@ def get_search_suggestions(search):
 	require_catalog_access()
 	if not search or len(search) < 2:
 		return []
+	
+	# 1. Search Categories
+	categories = frappe.get_all(
+		"Item Group",
+		filters={
+			"show_in_website": 1,
+			"item_group_name": ["like", f"%{search}%"]
+		},
+		fields=["name", "item_group_name", "image"],
+		limit_page_length=3
+	)
+	
+	# 2. Search Items (with better matching)
+	# Try exact match first, then partial
 	items = frappe.get_all(
 		"Item",
-		filters={"disabled": 0, "item_name": ["like", f"%{search}%"]},
-		fields=["item_code", "item_name", "image"],
+		filters={
+			"disabled": 0,
+			"item_name": ["like", f"%{search}%"]
+		},
+		fields=["item_code", "item_name", "image", "item_group"],
 		limit_page_length=5
 	)
-	return [
-		{
-			"item_code": i.item_code,
-			"item_name": i.item_name,
-			"image": full_url(i.image)
-		}
-		for i in items
-	]
+	
+	results = []
+	
+	# Add category suggestions
+	for cat in categories:
+		results.append({
+			"type": "category",
+			"id": cat.name,
+			"name": cat.item_group_name,
+			"image": full_url(cat.image) if cat.image else None
+		})
+		
+	# Add item suggestions
+	for i in items:
+		results.append({
+			"type": "item",
+			"id": i.item_code,
+			"name": i.item_name,
+			"image": full_url(i.image) if i.image else None,
+			"category": i.item_group
+		})
+		
+	return results
