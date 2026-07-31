@@ -58,7 +58,10 @@
   "whatsapp_number",
   "whatsapp_message",
   "column_break_floating",
-  "show_back_to_top"
+  "show_back_to_top",
+  "delivery_section",
+  "min_delivery_days",
+  "max_delivery_days"
  ],
  "fields": [
   {
@@ -332,6 +335,23 @@
    "fieldtype": "Check",
    "label": "Show Back to Top Button",
    "default": 1
+  },
+  {
+   "fieldname": "delivery_section",
+   "fieldtype": "Section Break",
+   "label": "Delivery Settings"
+  },
+  {
+   "fieldname": "min_delivery_days",
+   "fieldtype": "Int",
+   "label": "Minimum Delivery Lead Time (Days)",
+   "default": 1
+  },
+  {
+   "fieldname": "max_delivery_days",
+   "fieldtype": "Int",
+   "label": "Maximum Delivery Lead Time (Days)",
+   "default": 7
   }
  ],
  "permissions": [

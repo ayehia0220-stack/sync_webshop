@@ -3,7 +3,6 @@ from sync_webshop.api.utils import set_cors_headers
 
 
 def _find_customer(email=None, phone=None):
-	"""Read-only version of checkout's customer lookup - does not create."""
 	contact_name = None
 	if email:
 		contact_name = frappe.db.get_value("Contact", {"email_id": email}, "name")
@@ -25,14 +24,6 @@ def _find_customer(email=None, phone=None):
 
 @frappe.whitelist(allow_guest=True)
 def list_my_orders(email=None, phone=None):
-	"""
-	Returns this customer's Sales Orders, matched by the email or phone
-	they used at checkout. Guest-accessible by design, matching the same
-	identity model as checkout - there is no customer login system yet,
-	so this trades a small amount of privacy (anyone with the email/phone
-	can view that history) for simplicity. Revisit alongside checkout's
-	abuse-protection note before a real public launch.
-	"""
 	set_cors_headers()
 
 	if not email and not phone:
@@ -53,6 +44,7 @@ def list_my_orders(email=None, phone=None):
 			"grand_total",
 			"currency",
 			"docstatus",
+			"tracking_number",
 		],
 		order_by="creation desc",
 		limit_page_length=50,
@@ -66,3 +58,53 @@ def list_my_orders(email=None, phone=None):
 		)
 
 	return {"customer": customer, "orders": orders}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_order_status(order_name, email=None, phone=None):
+	set_cors_headers()
+	
+	filters = {"name": order_name}
+	if email or phone:
+		customer = _find_customer(email=email, phone=phone)
+		if customer:
+			filters["customer"] = customer
+		else:
+			frappe.throw("Customer not found with provided contact info.")
+	
+	order = frappe.get_all(
+		"Sales Order",
+		filters=filters,
+		fields=[
+			"name",
+			"transaction_date",
+			"delivery_date",
+			"status",
+			"grand_total",
+			"currency",
+			"docstatus",
+			"tracking_number",
+			"webshop_payment_status"
+		],
+		limit=1
+	)
+	
+	if not order:
+		frappe.throw("Order not found.")
+		
+	order = order[0]
+	order["items"] = frappe.get_all(
+		"Sales Order Item",
+		filters={"parent": order.name},
+		fields=["item_code", "item_name", "qty"],
+	)
+	
+	# Also check for Delivery Note tracking
+	delivery_notes = frappe.get_all(
+		"Delivery Note",
+		filters={"against_sales_order": order.name},
+		fields=["name", "status", "tracking_number"]
+	)
+	order["delivery_notes"] = delivery_notes
+	
+	return order

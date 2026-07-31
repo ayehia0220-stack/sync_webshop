@@ -1,0 +1,88 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Payment Settings",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 0,
+ "issingle": 1,
+ "track_changes": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "stripe_section",
+  "stripe_enabled",
+  "stripe_mode",
+  "stripe_publishable_key",
+  "stripe_secret_key",
+  "stripe_webhook_secret",
+  "cod_section",
+  "cod_enabled",
+  "cod_label_en",
+  "cod_label_ar"
+ ],
+ "fields": [
+  {
+   "fieldname": "stripe_section",
+   "fieldtype": "Section Break",
+   "label": "Stripe Settings"
+  },
+  {
+   "fieldname": "stripe_enabled",
+   "fieldtype": "Check",
+   "label": "Enable Stripe",
+   "default": 0
+  },
+  {
+   "fieldname": "stripe_mode",
+   "fieldtype": "Select",
+   "label": "Mode",
+   "options": "Test\nLive",
+   "default": "Test"
+  },
+  {
+   "fieldname": "stripe_publishable_key",
+   "fieldtype": "Data",
+   "label": "Stripe Publishable Key"
+  },
+  {
+   "fieldname": "stripe_secret_key",
+   "fieldtype": "Password",
+   "label": "Stripe Secret Key"
+  },
+  {
+   "fieldname": "stripe_webhook_secret",
+   "fieldtype": "Password",
+   "label": "Stripe Webhook Secret"
+  },
+  {
+   "fieldname": "cod_section",
+   "fieldtype": "Section Break",
+   "label": "Cash on Delivery"
+  },
+  {
+   "fieldname": "cod_enabled",
+   "fieldtype": "Check",
+   "label": "Enable Cash on Delivery",
+   "default": 1
+  },
+  {
+   "fieldname": "cod_label_en",
+   "fieldtype": "Data",
+   "label": "COD Label (English)",
+   "default": "Cash on Delivery"
+  },
+  {
+   "fieldname": "cod_label_ar",
+   "fieldtype": "Data",
+   "label": "COD Label (Arabic)",
+   "default": "الدفع عند الاستلام"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ]
+}
