@@ -45,7 +45,20 @@
   "product_list_section",
   "show_category_sidebar",
   "show_price_filter",
-  "show_brand_filter"
+  "show_brand_filter",
+  "sidebar_width",
+  "seo_section",
+  "seo_meta_description_en",
+  "seo_meta_description_ar",
+  "column_break_seo",
+  "seo_og_image",
+  "seo_keywords",
+  "floating_buttons_section",
+  "show_whatsapp_button",
+  "whatsapp_number",
+  "whatsapp_message",
+  "column_break_floating",
+  "show_back_to_top"
  ],
  "fields": [
   {
@@ -245,6 +258,79 @@
    "fieldname": "show_brand_filter",
    "fieldtype": "Check",
    "label": "Show Brand Filter",
+   "default": 1
+  },
+  {
+   "fieldname": "sidebar_width",
+   "fieldtype": "Int",
+   "label": "Sidebar Width (px)",
+   "default": 220,
+   "description": "Width of the category sidebar in pixels (e.g. 180, 220, 280)"
+  },
+  {
+   "fieldname": "seo_section",
+   "fieldtype": "Section Break",
+   "label": "SEO & Social Sharing"
+  },
+  {
+   "fieldname": "seo_meta_description_en",
+   "fieldtype": "Small Text",
+   "label": "Meta Description (English)",
+   "description": "Default meta description for search engines (English)"
+  },
+  {
+   "fieldname": "seo_meta_description_ar",
+   "fieldtype": "Small Text",
+   "label": "Meta Description (Arabic)",
+   "description": "Default meta description for search engines (Arabic)"
+  },
+  {
+   "fieldname": "column_break_seo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "seo_og_image",
+   "fieldtype": "Attach Image",
+   "label": "Default OG Image",
+   "description": "Default image shown when sharing links on social media (recommended: 1200x630px)"
+  },
+  {
+   "fieldname": "seo_keywords",
+   "fieldtype": "Data",
+   "label": "SEO Keywords",
+   "description": "Comma-separated keywords for search engines"
+  },
+  {
+   "fieldname": "floating_buttons_section",
+   "fieldtype": "Section Break",
+   "label": "Floating Action Buttons"
+  },
+  {
+   "fieldname": "show_whatsapp_button",
+   "fieldtype": "Check",
+   "label": "Show WhatsApp Button",
+   "default": 1
+  },
+  {
+   "fieldname": "whatsapp_number",
+   "fieldtype": "Data",
+   "label": "WhatsApp Number",
+   "description": "International format without + (e.g. 9647801234567)"
+  },
+  {
+   "fieldname": "whatsapp_message",
+   "fieldtype": "Data",
+   "label": "WhatsApp Default Message",
+   "description": "Pre-filled message when user clicks WhatsApp button"
+  },
+  {
+   "fieldname": "column_break_floating",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "show_back_to_top",
+   "fieldtype": "Check",
+   "label": "Show Back to Top Button",
    "default": 1
   }
  ],

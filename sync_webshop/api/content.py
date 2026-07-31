@@ -79,6 +79,7 @@ def get_content():
 		"show_category_sidebar": settings.show_category_sidebar,
 		"show_price_filter": settings.show_price_filter,
 		"show_brand_filter": settings.show_brand_filter,
+		"sidebar_width": settings.sidebar_width or 220,
 		"tagline_en": settings.tagline_en,
 		"tagline_ar": settings.tagline_ar,
 		"hero_quote_en": settings.hero_quote_en,
@@ -94,6 +95,17 @@ def get_content():
 		"show_top_bar": settings.show_top_bar,
 		"top_bar_message_en": settings.top_bar_message_en,
 		"top_bar_message_ar": settings.top_bar_message_ar,
+		# SEO & Social Sharing
+		"seo_meta_description_en": settings.seo_meta_description_en,
+		"seo_meta_description_ar": settings.seo_meta_description_ar,
+		"seo_og_image": full_url(settings.seo_og_image) if settings.seo_og_image else None,
+		"seo_keywords": settings.seo_keywords,
+		# Floating Action Buttons
+		"show_whatsapp_button": settings.show_whatsapp_button,
+		"whatsapp_number": settings.whatsapp_number,
+		"whatsapp_message": settings.whatsapp_message,
+		"show_back_to_top": settings.show_back_to_top,
+		# Lists
 		"nav_links": nav_links,
 		"social_links": social_links,
 		"banners": banners,
