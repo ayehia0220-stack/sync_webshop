@@ -1,11 +1,9 @@
 import frappe
 from sync_webshop.api.utils import set_cors_headers, full_url, require_catalog_access
 
-
 def _get_price_list():
 	settings = frappe.get_single("Webshop API Settings")
 	return settings.default_price_list or "Standard Selling"
-
 
 def _get_prices(item_codes, price_list):
 	if not item_codes:
@@ -18,7 +16,6 @@ def _get_prices(item_codes, price_list):
 	# last one wins if there are duplicates - fine for a single default price list
 	return {row.item_code: {"rate": row.price_list_rate, "currency": row.currency} for row in rows}
 
-
 @frappe.whitelist(allow_guest=True)
 def get_catalog(item_group=None, search=None, page=1, page_size=20):
 	"""
@@ -28,21 +25,17 @@ def get_catalog(item_group=None, search=None, page=1, page_size=20):
 	"""
 	set_cors_headers()
 	require_catalog_access()
-
 	page = int(page)
 	page_size = min(int(page_size), 100)
-
 	filters = {"disabled": 0}
 	if item_group:
 		filters["item_group"] = item_group
-
 	or_filters = None
 	if search:
 		or_filters = [
 			["item_name", "like", f"%{search}%"],
 			["item_code", "like", f"%{search}%"],
 		]
-
 	items = frappe.get_all(
 		"Item",
 		filters=filters,
@@ -52,12 +45,9 @@ def get_catalog(item_group=None, search=None, page=1, page_size=20):
 		limit_page_length=page_size,
 		order_by="item_name asc",
 	)
-
 	total_count = frappe.db.count("Item", filters=filters)
-
 	price_list = _get_price_list()
 	prices = _get_prices([i.item_code for i in items], price_list)
-
 	results = []
 	for item in items:
 		price = prices.get(item.item_code)
@@ -72,7 +62,6 @@ def get_catalog(item_group=None, search=None, page=1, page_size=20):
 				"currency": price.get("currency") if price else None,
 			}
 		)
-
 	return {
 		"items": results,
 		"page": page,
@@ -81,21 +70,17 @@ def get_catalog(item_group=None, search=None, page=1, page_size=20):
 		"price_list": price_list,
 	}
 
-
 @frappe.whitelist(allow_guest=True)
 def get_item(item_code):
 	"""Returns full detail for a single item, for the product detail page."""
 	set_cors_headers()
 	require_catalog_access()
-
 	if not frappe.db.exists("Item", {"item_code": item_code, "disabled": 0}):
 		frappe.throw("Item not found", frappe.DoesNotExistError)
-
 	item = frappe.get_doc("Item", item_code)
 	price_list = _get_price_list()
 	prices = _get_prices([item_code], price_list)
 	price = prices.get(item_code)
-
 	return {
 		"item_code": item.item_code,
 		"item_name": item.item_name,
@@ -107,3 +92,21 @@ def get_item(item_code):
 		"currency": price.get("currency") if price else None,
 		"price_list": price_list,
 	}
+
+@frappe.whitelist(allow_guest=True)
+def get_categories():
+	set_cors_headers()
+	require_catalog_access()
+	groups = frappe.get_all(
+		"Item Group",
+		filters={"show_in_website": 1},
+		fields=["name", "item_group_name", "image"]
+	)
+	return [
+		{
+			"name": g.name,
+			"label": g.item_group_name,
+			"image": full_url(g.image)
+		}
+		for g in groups
+	]

@@ -1,18 +1,13 @@
 import frappe
 from sync_webshop.api.utils import set_cors_headers, full_url
 
-
 @frappe.whitelist(allow_guest=True)
 def get_theme():
 	"""
 	Returns this server's Webshop Theme Settings as JSON.
-	The React frontend calls this once on load and uses it to paint
-	colors/fonts/logo/layout - nothing here requires a code change to
-	reskin a server, only editing the Webshop Theme Settings doctype.
 	"""
 	set_cors_headers()
 	settings = frappe.get_single("Webshop Theme Settings")
-
 	return {
 		"logo": full_url(settings.logo),
 		"favicon": full_url(settings.favicon),
@@ -23,6 +18,14 @@ def get_theme():
 			"secondary": settings.secondary_color,
 			"accent": settings.accent_color,
 			"background": settings.background_color,
+			"top_bar_bg": settings.top_bar_bg_color,
+			"top_bar_text": settings.top_bar_text_color,
+			"header_bg": settings.header_bg_color,
+			"header_text": settings.header_text_color,
+			"nav_bg": settings.nav_bg_color,
+			"nav_text": settings.nav_text_color,
+			"footer_bg": settings.footer_bg_color,
+			"footer_text": settings.footer_text_color,
 		},
 		"fonts": {
 			"heading": settings.font_heading,

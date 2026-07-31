@@ -1,18 +1,16 @@
 import frappe
 from sync_webshop.api.utils import set_cors_headers, full_url
 
-
 @frappe.whitelist(allow_guest=True)
 def get_content():
 	"""
-	Returns this server's text content: site name, taglines, about/footer
-	text (English + Arabic), plus active banners, featured categories, and
-	testimonials, each sorted by their sort_order field.
+	Returns this server's text content and settings.
 	"""
 	set_cors_headers()
 	settings = frappe.get_single("Webshop Content Settings")
-
+	
 	def active_sorted(rows):
+		if not rows: return []
 		active = [r for r in rows if r.get("is_active")]
 		return sorted(active, key=lambda r: r.get("sort_order") or 0)
 
@@ -57,6 +55,25 @@ def get_content():
 		for row in active_sorted(settings.trust_badges)
 	]
 
+	nav_links = [
+		{
+			"label_en": row.label_en,
+			"label_ar": row.label_ar,
+			"link_url": row.link_url,
+			"is_external": row.is_external
+		}
+		for row in settings.nav_links
+	]
+
+	social_links = [
+		{
+			"platform": row.platform,
+			"link_url": row.link_url,
+			"icon": row.icon
+		}
+		for row in settings.social_links
+	]
+
 	return {
 		"site_name": settings.site_name,
 		"tagline_en": settings.tagline_en,
@@ -67,6 +84,15 @@ def get_content():
 		"about_text_ar": settings.about_text_ar,
 		"footer_text_en": settings.footer_text_en,
 		"footer_text_ar": settings.footer_text_ar,
+		"phone_number": settings.phone_number,
+		"email_address": settings.email_address,
+		"contact_address_en": settings.contact_address_en,
+		"contact_address_ar": settings.contact_address_ar,
+		"show_top_bar": settings.show_top_bar,
+		"top_bar_message_en": settings.top_bar_message_en,
+		"top_bar_message_ar": settings.top_bar_message_ar,
+		"nav_links": nav_links,
+		"social_links": social_links,
 		"banners": banners,
 		"featured_categories": featured_categories,
 		"testimonials": testimonials,

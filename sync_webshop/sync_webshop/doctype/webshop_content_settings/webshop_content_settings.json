@@ -1,4 +1,4 @@
-{ 
+{
  "doctype": "DocType",
  "name": "Webshop Content Settings",
  "module": "Sync Webshop",
@@ -15,12 +15,25 @@
   "column_break_1",
   "hero_quote_en",
   "hero_quote_ar",
+  "contact_section",
+  "phone_number",
+  "email_address",
+  "column_break_contact",
+  "contact_address_en",
+  "contact_address_ar",
+  "top_bar_section",
+  "show_top_bar",
+  "top_bar_message_en",
+  "top_bar_message_ar",
+  "navigation_section",
+  "nav_links",
   "about_section",
   "about_text_en",
   "about_text_ar",
   "footer_section",
   "footer_text_en",
   "footer_text_ar",
+  "social_links",
   "banners_section",
   "banners",
   "categories_section",
@@ -67,6 +80,67 @@
    "label": "Hero Quote (Arabic)"
   },
   {
+   "fieldname": "contact_section",
+   "fieldtype": "Section Break",
+   "label": "Contact Information"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "email_address",
+   "fieldtype": "Data",
+   "label": "Email Address"
+  },
+  {
+   "fieldname": "column_break_contact",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contact_address_en",
+   "fieldtype": "Small Text",
+   "label": "Address (English)"
+  },
+  {
+   "fieldname": "contact_address_ar",
+   "fieldtype": "Small Text",
+   "label": "Address (Arabic)"
+  },
+  {
+   "fieldname": "top_bar_section",
+   "fieldtype": "Section Break",
+   "label": "Top Bar"
+  },
+  {
+   "fieldname": "show_top_bar",
+   "fieldtype": "Check",
+   "label": "Show Top Bar",
+   "default": 1
+  },
+  {
+   "fieldname": "top_bar_message_en",
+   "fieldtype": "Data",
+   "label": "Top Bar Message (English)"
+  },
+  {
+   "fieldname": "top_bar_message_ar",
+   "fieldtype": "Data",
+   "label": "Top Bar Message (Arabic)"
+  },
+  {
+   "fieldname": "navigation_section",
+   "fieldtype": "Section Break",
+   "label": "Navigation Menu"
+  },
+  {
+   "fieldname": "nav_links",
+   "fieldtype": "Table",
+   "label": "Navigation Links",
+   "options": "Webshop Navigation Link"
+  },
+  {
    "fieldname": "about_section",
    "fieldtype": "Section Break",
    "label": "About"
@@ -95,6 +169,12 @@
    "fieldname": "footer_text_ar",
    "fieldtype": "Small Text",
    "label": "Footer Text (Arabic)"
+  },
+  {
+   "fieldname": "social_links",
+   "fieldtype": "Table",
+   "label": "Social Media Links",
+   "options": "Webshop Social Link"
   },
   {
    "fieldname": "banners_section",

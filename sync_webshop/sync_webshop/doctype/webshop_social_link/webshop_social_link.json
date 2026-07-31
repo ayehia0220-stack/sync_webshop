@@ -1,0 +1,35 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Social Link",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "platform",
+  "link_url",
+  "icon"
+ ],
+ "fields": [
+  {
+   "fieldname": "platform",
+   "fieldtype": "Select",
+   "label": "Platform",
+   "options": "Facebook\nInstagram\nTwitter\nLinkedIn\nYouTube\nTikTok",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "link_url",
+   "fieldtype": "Data",
+   "label": "Link URL",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "icon",
+   "fieldtype": "Data",
+   "label": "Icon (SVG or Class)"
+  }
+ ]
+}
