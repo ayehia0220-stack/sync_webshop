@@ -274,5 +274,8 @@ def get_content():
 		"enable_live_chat": settings.enable_live_chat,
 		"live_chat_type": settings.live_chat_type,
 		"live_chat_custom_script": settings.live_chat_custom_script,
-		"faqs": faqs
+		"faqs": faqs,
+		# Marketing & Sales
+		"enable_coupons": settings.enable_coupons,
+		"enable_mailchimp": settings.enable_mailchimp
 	}

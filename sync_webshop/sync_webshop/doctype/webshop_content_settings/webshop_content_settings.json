@@ -416,6 +416,55 @@
    "label": "Custom Chat Script",
    "options": "JS",
    "depends_on": "eval:doc.live_chat_type==\"Custom Script\""
+  },
+  {
+   "fieldname": "marketing_section",
+   "fieldtype": "Section Break",
+   "label": "Marketing & Coupons"
+  },
+  {
+   "fieldname": "enable_coupons",
+   "fieldtype": "Check",
+   "label": "Enable Coupon Codes",
+   "default": 1
+  },
+  {
+   "fieldname": "enable_abandoned_cart_recovery",
+   "fieldtype": "Check",
+   "label": "Enable Abandoned Cart Recovery",
+   "default": 1
+  },
+  {
+   "fieldname": "recovery_email_delay",
+   "fieldtype": "Int",
+   "label": "Recovery Email Delay (Hours)",
+   "default": 24
+  },
+  {
+   "fieldname": "mailchimp_section",
+   "fieldtype": "Section Break",
+   "label": "Mailchimp Integration"
+  },
+  {
+   "fieldname": "enable_mailchimp",
+   "fieldtype": "Check",
+   "label": "Enable Mailchimp Subscription",
+   "default": 0
+  },
+  {
+   "fieldname": "mailchimp_api_key",
+   "fieldtype": "Data",
+   "label": "Mailchimp API Key"
+  },
+  {
+   "fieldname": "mailchimp_list_id",
+   "fieldtype": "Data",
+   "label": "Mailchimp List ID"
+  },
+  {
+   "fieldname": "mailchimp_server_prefix",
+   "fieldtype": "Data",
+   "label": "Mailchimp Server Prefix (e.g. us1)"
   }
  ],
  "permissions": [
