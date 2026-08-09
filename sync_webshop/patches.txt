@@ -5,3 +5,4 @@ sync_webshop.patches.v0_1.create_webshop_settings_fields
 sync_webshop.patches.v0_1.create_webshop_order_defaults
 sync_webshop.patches.v0_1.seed_storefront_content
 sync_webshop.patches.v0_1.create_website_display_fields
+sync_webshop.patches.v0_1.create_webshop_workspace
