@@ -1,0 +1,207 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:gateway_name",
+ "creation": "2026-08-09 22:51:29.177725",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "gateway_name",
+  "enabled",
+  "gateway_type",
+  "sort_order",
+  "cb1",
+  "label_ar",
+  "label_en",
+  "extra_fee",
+  "sec_instructions",
+  "instructions_ar",
+  "instructions_en",
+  "sec_keys",
+  "mode",
+  "public_key",
+  "secret_key",
+  "cb2",
+  "webhook_secret",
+  "merchant_id",
+  "integration_id",
+  "sec_redirect",
+  "redirect_url_template"
+ ],
+ "fields": [
+  {
+   "fieldname": "gateway_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0627\u0633\u0645 \u0627\u0644\u0637\u0631\u064a\u0642\u0629 / Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "\u0645\u0641\u0639\u0651\u0644 / Enabled"
+  },
+  {
+   "description": "\u0627\u0644\u062f\u0641\u0639 \u0639\u0646\u062f \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645 \u0648\u0627\u0644\u062a\u062d\u0648\u064a\u0644 \u0627\u0644\u0628\u0646\u0643\u064a \u0634\u063a\u0651\u0627\u0644\u064a\u0646 \u0628\u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u062f\u064a \u0628\u0633. \u0627\u0644\u0628\u0627\u0642\u064a \u0645\u062d\u062a\u0627\u062c \u0645\u0641\u0627\u062a\u064a\u062d.",
+   "fieldname": "gateway_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0646\u0648\u0639 / Type",
+   "options": "Cash on Delivery\nBank Transfer\nPaymob\nFawry\nStripe\nCustom Redirect",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "\u0627\u0644\u062a\u0631\u062a\u064a\u0628 / Order"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "label_ar",
+   "fieldtype": "Data",
+   "label": "\u0627\u0644\u0627\u0633\u0645 \u0644\u0644\u0639\u0645\u064a\u0644 (\u0639\u0631\u0628\u064a)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "label_en",
+   "fieldtype": "Data",
+   "label": "Label shown to customer (English)"
+  },
+  {
+   "description": "\u0631\u0633\u0648\u0645 \u062a\u062d\u0635\u064a\u0644 \u0645\u062b\u0644\u064b\u0627. \u062a\u062a\u0636\u0627\u0641 \u0639\u0644\u0649 \u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0637\u0644\u0628.",
+   "fieldname": "extra_fee",
+   "fieldtype": "Currency",
+   "label": "\u0631\u0633\u0648\u0645 \u0625\u0636\u0627\u0641\u064a\u0629 / Extra Fee"
+  },
+  {
+   "fieldname": "sec_instructions",
+   "fieldtype": "Section Break",
+   "label": "\u062a\u0639\u0644\u064a\u0645\u0627\u062a \u0644\u0644\u0639\u0645\u064a\u0644 / Customer Instructions"
+  },
+  {
+   "description": "\u062a\u0638\u0647\u0631 \u0644\u0644\u0639\u0645\u064a\u0644 \u0644\u0645\u0627 \u064a\u062e\u062a\u0627\u0631 \u0627\u0644\u0637\u0631\u064a\u0642\u0629 \u062f\u064a \u2014 \u0645\u062b\u0644\u064b\u0627 \u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u062d\u0633\u0627\u0628 \u0627\u0644\u0628\u0646\u0643\u064a.",
+   "fieldname": "instructions_ar",
+   "fieldtype": "Small Text",
+   "label": "\u0627\u0644\u062a\u0639\u0644\u064a\u0645\u0627\u062a (\u0639\u0631\u0628\u064a)"
+  },
+  {
+   "fieldname": "instructions_en",
+   "fieldtype": "Small Text",
+   "label": "Instructions (English)"
+  },
+  {
+   "description": "\u062a\u064f\u0645\u0644\u0623 \u0645\u0646 \u0644\u0648\u062d\u0629 \u0645\u0632\u0648\u0651\u062f \u0627\u0644\u062f\u0641\u0639. \u0627\u0644\u0645\u0641\u0627\u062a\u064a\u062d \u0627\u0644\u0633\u0631\u064a\u0629 \u0645\u062a\u062e\u0632\u0651\u0646\u0629 \u0645\u0634\u0641\u0651\u0631\u0629.",
+   "fieldname": "sec_keys",
+   "fieldtype": "Section Break",
+   "label": "\u0645\u0641\u0627\u062a\u064a\u062d \u0627\u0644\u0628\u0648\u0627\u0628\u0629 / Gateway Keys"
+  },
+  {
+   "default": "Test",
+   "fieldname": "mode",
+   "fieldtype": "Select",
+   "label": "\u0627\u0644\u0648\u0636\u0639 / Mode",
+   "options": "Test\nLive"
+  },
+  {
+   "fieldname": "public_key",
+   "fieldtype": "Data",
+   "label": "\u0627\u0644\u0645\u0641\u062a\u0627\u062d \u0627\u0644\u0639\u0627\u0645 / Public Key"
+  },
+  {
+   "fieldname": "secret_key",
+   "fieldtype": "Password",
+   "label": "\u0627\u0644\u0645\u0641\u062a\u0627\u062d \u0627\u0644\u0633\u0631\u064a / Secret Key"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "webhook_secret",
+   "fieldtype": "Password",
+   "label": "\u0633\u0631 \u0627\u0644\u0640 Webhook"
+  },
+  {
+   "fieldname": "merchant_id",
+   "fieldtype": "Data",
+   "label": "\u0631\u0642\u0645 \u0627\u0644\u062a\u0627\u062c\u0631 / Merchant ID"
+  },
+  {
+   "description": "Paymob \u0628\u064a\u062d\u062a\u0627\u062c\u0647.",
+   "fieldname": "integration_id",
+   "fieldtype": "Data",
+   "label": "Integration ID"
+  },
+  {
+   "fieldname": "sec_redirect",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "\u0644\u0646\u0648\u0639 Custom Redirect. \u0645\u062a\u0627\u062d: {order_id} {amount} {currency} {email}",
+   "fieldname": "redirect_url_template",
+   "fieldtype": "Data",
+   "label": "\u0631\u0627\u0628\u0637 \u0627\u0644\u062a\u062d\u0648\u064a\u0644 / Redirect URL"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-09 22:51:29.177725",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Payment Gateway",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "gateway_name",
+ "track_changes": 1
+}

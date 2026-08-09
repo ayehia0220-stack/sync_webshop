@@ -147,7 +147,7 @@ def _shipping_for(subtotal):
 	return {"cost": cost, "rule": rule.rule_name, "account": rule.shipping_account, "free_over": threshold}
 
 
-def _quote(item_qty, coupon_code=None):
+def _quote(item_qty, coupon_code=None, city=None, payment_method=None):
 	prices = _server_prices(item_qty.keys())
 	currency = None
 	lines = []
@@ -178,8 +178,19 @@ def _quote(item_qty, coupon_code=None):
 		discount = float(checked["discount_amount"])
 		coupon = checked
 
-	shipping = _shipping_for(subtotal - discount)
+	shipping = _shipping_company(subtotal - discount, city)
+
+	# A collection fee configured on the payment method, if any.
+	fee = 0.0
+	gateway = _gateway_doc(payment_method)
+	if gateway:
+		fee = float(gateway.extra_fee or 0)
+
 	return {
+		"payment_fee": round(fee, 2),
+		"shipping_company": shipping["company"],
+		"shipping_label_ar": shipping["label_ar"],
+		"shipping_label_en": shipping["label_en"],
 		"discount": round(discount, 2),
 		"coupon": {k: coupon[k] for k in ("code", "coupon", "description")} if coupon else None,
 		"_coupon_name": coupon["coupon"] if coupon else None,
@@ -188,9 +199,113 @@ def _quote(item_qty, coupon_code=None):
 		"subtotal": round(subtotal, 2),
 		"shipping_cost": round(shipping["cost"], 2),
 		"free_shipping_threshold": shipping["free_over"],
-		"shipping_rule": shipping["rule"],
-		"grand_total": round(subtotal - discount + shipping["cost"], 2),
+
+		"grand_total": round(subtotal - discount + shipping["cost"] + fee, 2),
 		"_shipping_account": shipping["account"],
+	}
+
+
+def _gateways_from_documents():
+	"""
+	Payment methods the owner created in ERPNext. Secret keys never leave the
+	server — only what the storefront needs to draw the option.
+	"""
+	rows = frappe.get_all(
+		"Webshop Payment Gateway",
+		filters={"enabled": 1},
+		fields=[
+			"name", "gateway_type", "label_ar", "label_en",
+			"instructions_ar", "instructions_en", "extra_fee", "public_key", "mode",
+		],
+		order_by="sort_order asc, name asc",
+	)
+	gateways = []
+	for row in rows:
+		gateways.append(
+			{
+				"name": row.name,
+				"type": row.gateway_type,
+				"label_ar": row.label_ar or row.name,
+				"label_en": row.label_en or row.label_ar or row.name,
+				"instructions_ar": row.instructions_ar,
+				"instructions_en": row.instructions_en,
+				"extra_fee": float(row.extra_fee or 0),
+				# Public keys are meant to be public; secrets stay on the server.
+				"publishable_key": row.public_key if row.gateway_type == "Stripe" else None,
+				"mode": row.mode,
+			}
+		)
+	return gateways
+
+
+def _gateway_doc(name):
+	if name and frappe.db.exists("Webshop Payment Gateway", {"name": name, "enabled": 1}):
+		return frappe.get_doc("Webshop Payment Gateway", name)
+	return None
+
+
+def _shipping_company(subtotal, city=None):
+	"""
+	The enabled courier, priced by zone when the customer's city matches one.
+	Falls back to the old single shipping rule while no company exists yet.
+	"""
+	company = frappe.get_all(
+		"Webshop Shipping Company",
+		filters={"enabled": 1},
+		fields=[
+			"name", "label_ar", "label_en", "shipping_cost", "free_shipping_threshold",
+			"shipping_account", "min_delivery_days", "max_delivery_days",
+		],
+		order_by="modified asc",
+		limit=1,
+	)
+	if not company:
+		rule = _shipping_for(subtotal)
+		return {
+			"company": None,
+			"label_ar": None,
+			"label_en": None,
+			"cost": rule["cost"],
+			"free_over": rule["free_over"],
+			"account": rule["account"],
+			"min_days": None,
+			"max_days": None,
+		}
+
+	company = company[0]
+	cost = float(company.shipping_cost or 0)
+	free_over = float(company.free_shipping_threshold or 0)
+	min_days, max_days = company.min_delivery_days, company.max_delivery_days
+
+	if city:
+		needle = str(city).strip()
+		for zone in frappe.get_all(
+			"Webshop Shipping Zone",
+			filters={"parent": company.name},
+			fields=["governorates", "shipping_cost", "free_shipping_threshold", "delivery_days"],
+			order_by="idx asc",
+		):
+			names = [g.strip() for g in (zone.governorates or "").replace("،", ",").split(",") if g.strip()]
+			if names and not any(n in needle or needle in n for n in names):
+				continue
+			cost = float(zone.shipping_cost or 0)
+			free_over = float(zone.free_shipping_threshold or free_over)
+			if zone.delivery_days:
+				min_days = max_days = zone.delivery_days
+			break
+
+	if free_over and subtotal >= free_over:
+		cost = 0.0
+
+	return {
+		"company": company.name,
+		"label_ar": company.label_ar or company.name,
+		"label_en": company.label_en or company.label_ar or company.name,
+		"cost": cost,
+		"free_over": free_over,
+		"account": company.shipping_account,
+		"min_days": min_days,
+		"max_days": max_days,
 	}
 
 
@@ -203,6 +318,26 @@ def get_checkout_settings():
 	payment_settings = frappe.get_single("Webshop Payment Settings")
 	content_settings = frappe.get_single("Webshop Content Settings")
 
+	gateways = _gateways_from_documents()
+	if gateways:
+		shipping = _shipping_company(0)
+		return {
+			"payment_gateways": gateways,
+			"shipping_rules": [],
+			"shipping_company": {
+				"name": shipping["company"],
+				"label_ar": shipping["label_ar"],
+				"label_en": shipping["label_en"],
+				"cost": shipping["cost"],
+				"free_shipping_threshold": shipping["free_over"],
+			},
+			"delivery_settings": {
+				"min_days": shipping["min_days"] or content_settings.min_delivery_days or 1,
+				"max_days": shipping["max_days"] or content_settings.max_delivery_days or 7,
+			},
+		}
+
+	# Nothing configured yet — fall back to the old single settings record.
 	gateways = []
 	if payment_settings.stripe_enabled:
 		gateways.append(
@@ -239,14 +374,14 @@ def get_checkout_settings():
 
 
 @frappe.whitelist(allow_guest=True)
-def quote_order(items, coupon_code=None):
+def quote_order(items, coupon_code=None, city=None, payment_method=None):
 	"""
 	Authoritative totals for a cart. The storefront shows these numbers rather
 	than adding up prices itself, so what the shopper sees is what the order
 	will cost.
 	"""
 	set_cors_headers()
-	quote = _quote(_clean_items(items), coupon_code)
+	quote = _quote(_clean_items(items), coupon_code, city, payment_method)
 	quote.pop("_shipping_account", None)
 	quote.pop("_coupon_name", None)
 	return quote
@@ -383,14 +518,22 @@ def create_order(
 
 	clean_customer = _clean_customer(customer)
 	item_qty = _clean_items(items)
-	quote = _quote(item_qty, coupon_code)
+	quote = _quote(item_qty, coupon_code, clean_customer.get("city"), payment_method)
 
-	method = (payment_method or "cod").lower()
-	payment_settings = frappe.get_single("Webshop Payment Settings")
-	if method == "cod" and not payment_settings.cod_enabled:
-		frappe.throw(frappe._("الدفع عند الاستلام مش متاح دلوقتي."))
-	if method == "stripe" and not payment_settings.stripe_enabled:
-		frappe.throw(frappe._("الدفع بالبطاقة مش متاح دلوقتي."))
+	method = payment_method or "cod"
+	gateway = _gateway_doc(method)
+	if gateway:
+		# Anything other than cash or a bank transfer needs its own integration
+		# before it can be taken online.
+		if gateway.gateway_type not in ("Cash on Delivery", "Bank Transfer"):
+			frappe.throw(frappe._("طريقة الدفع دي لسه مش جاهزة على الموقع."))
+	else:
+		payment_settings = frappe.get_single("Webshop Payment Settings")
+		method = method.lower()
+		if method == "cod" and not payment_settings.cod_enabled:
+			frappe.throw(frappe._("الدفع عند الاستلام مش متاح دلوقتي."))
+		if method == "stripe":
+			frappe.throw(frappe._("الدفع بالبطاقة مش متاح دلوقتي."))
 
 	company = _company()
 	warehouse = _warehouse(company)
@@ -419,7 +562,7 @@ def create_order(
 			"delivery_date": delivery_date or frappe.utils.add_days(frappe.utils.nowdate(), 3),
 			"is_webshop_order": 1,
 			"webshop_payment_method": method,
-			"webshop_payment_status": "COD" if method == "cod" else "Pending",
+			"webshop_payment_status": "COD" if (gateway.gateway_type if gateway else method) in ("Cash on Delivery", "cod") else "Pending",
 			"webshop_idempotency_key": idempotency_key,
 			"webshop_customer_note": (note or "")[:500] or None,
 			"contact_email": clean_customer["email"],
