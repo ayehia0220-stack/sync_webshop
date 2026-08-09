@@ -2,7 +2,7 @@ import random
 
 import frappe
 
-from sync_webshop.api.utils import set_cors_headers
+from sync_webshop.api.utils import full_url, set_cors_headers
 
 OTP_TTL_SECONDS = 10 * 60
 OTP_MAX_PER_WINDOW = 3
@@ -51,9 +51,30 @@ def _order_items(order_name):
 	)
 
 
+def _delivery_address(customer):
+	"""The shipping address the store saved for this customer, if any."""
+	row = frappe.db.sql(
+		"""
+		SELECT a.address_line1, a.city
+		FROM `tabAddress` a
+		JOIN `tabDynamic Link` dl ON dl.parent = a.name AND dl.parenttype = 'Address'
+		WHERE dl.link_doctype = 'Customer' AND dl.link_name = %s
+		ORDER BY a.is_shipping_address DESC, a.modified DESC
+		LIMIT 1
+		""",
+		customer,
+		as_dict=True,
+	)
+	if not row:
+		return None
+	parts = [row[0].address_line1, row[0].city]
+	return "، ".join(p for p in parts if p and p != "-")
+
+
 def _order_payload(order):
 	order = dict(order)
 	order["items"] = _order_items(order["name"])
+	order["delivery_address"] = _delivery_address(order.get("customer") or "")
 	notes = frappe.get_all(
 		"Delivery Note Item",
 		filters={"against_sales_order": order["name"]},
@@ -69,6 +90,7 @@ def _order_payload(order):
 
 ORDER_FIELDS = [
 	"name",
+	"customer",
 	"transaction_date",
 	"delivery_date",
 	"status",
@@ -195,3 +217,67 @@ def list_my_orders(email=None, code=None, phone=None):
 		"customer": customer,
 		"orders": [_order_payload(o) for o in orders],
 	}
+
+
+@frappe.whitelist(allow_guest=True)
+def reorder(order_name, email=None, phone=None):
+	"""
+	Rebuild a cart from a past order.
+
+	Ownership is checked the same way as order lookup, and every line is
+	re-priced and re-checked against the live catalogue — a reorder must not
+	resurrect a discontinued product or an old price.
+	"""
+	set_cors_headers()
+
+	if not order_name:
+		frappe.throw(frappe._("رقم الطلب مطلوب."))
+	if not email and not phone:
+		frappe.throw(frappe._("اكتب البريد أو رقم الموبايل اللي طلبت بيه."))
+
+	customer = _find_customer(email=email, phone=phone)
+	if not customer or not frappe.db.exists("Sales Order", {"name": order_name, "customer": customer}):
+		frappe.throw(frappe._("مفيش طلب بالبيانات دي."))
+
+	from sync_webshop.api.catalog import _get_price_list, _website_item_groups
+
+	price_list = _get_price_list()
+	allowed = _website_item_groups()
+
+	available, unavailable = [], []
+	for line in frappe.get_all(
+		"Sales Order Item",
+		filters={"parent": order_name},
+		fields=["item_code", "item_name", "qty"],
+	):
+		item = frappe.db.get_value(
+			"Item",
+			{"name": line.item_code, "disabled": 0},
+			["name", "item_name", "website_title", "item_group", "image"],
+			as_dict=True,
+		)
+		price = frappe.db.get_value(
+			"Item Price",
+			{"item_code": line.item_code, "price_list": price_list, "selling": 1},
+			["price_list_rate", "currency"],
+			as_dict=True,
+		)
+		in_scope = item and (allowed is None or item.item_group in allowed)
+
+		if not in_scope or not price:
+			unavailable.append(line.item_name or line.item_code)
+			continue
+
+		available.append(
+			{
+				"item_code": item.name,
+				"item_name": item.website_title or item.item_name,
+				"item_group": item.item_group,
+				"image": full_url(item.image),
+				"qty": int(line.qty),
+				"price": float(price.price_list_rate),
+				"currency": price.currency,
+			}
+		)
+
+	return {"items": available, "unavailable": unavailable}
