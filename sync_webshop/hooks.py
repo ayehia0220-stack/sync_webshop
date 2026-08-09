@@ -55,6 +55,10 @@ doc_events = {
 	},
 	"Item Group": {
 		"on_update": "sync_webshop.api.utils.clear_webshop_cache"
+	},
+	"Sales Order": {
+		"on_submit": "sync_webshop.api.notifications.on_sales_order_submit",
+		"on_update_after_submit": "sync_webshop.api.notifications.on_sales_order_update"
 	}
 }
 

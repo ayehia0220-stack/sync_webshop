@@ -9,3 +9,4 @@ sync_webshop.patches.v0_1.create_webshop_workspace
 sync_webshop.patches.v0_1.create_analytics_fields
 sync_webshop.patches.v0_1.create_signup_toggle
 sync_webshop.patches.v0_1.create_label_fields
+sync_webshop.patches.v0_1.create_order_emails
