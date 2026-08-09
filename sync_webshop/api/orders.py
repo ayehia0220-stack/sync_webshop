@@ -91,14 +91,14 @@ def get_order_status(order_name, email=None, phone=None):
 	set_cors_headers()
 
 	if not order_name:
-		frappe.throw(frappe._("Order number is required."))
+		frappe.throw(frappe._("رقم الطلب مطلوب."))
 	if not email and not phone:
-		frappe.throw(frappe._("Enter the email or phone number used on the order."))
+		frappe.throw(frappe._("اكتب البريد أو رقم الموبايل اللي طلبت بيه."))
 
 	customer = _find_customer(email=email, phone=phone)
 	if not customer:
 		# Same message either way, so this can't be used to test which emails exist.
-		frappe.throw(frappe._("No order found with those details."))
+		frappe.throw(frappe._("مفيش طلب بالبيانات دي."))
 
 	order = frappe.db.get_value(
 		"Sales Order",
@@ -107,7 +107,7 @@ def get_order_status(order_name, email=None, phone=None):
 		as_dict=True,
 	)
 	if not order:
-		frappe.throw(frappe._("No order found with those details."))
+		frappe.throw(frappe._("مفيش طلب بالبيانات دي."))
 
 	return _order_payload(order)
 
@@ -129,12 +129,12 @@ def request_order_access(email):
 	set_cors_headers()
 	email = (email or "").strip().lower()
 	if not email or "@" not in email:
-		frappe.throw(frappe._("Enter a valid email address."))
+		frappe.throw(frappe._("اكتب بريد إلكتروني صحيح."))
 
 	cache = frappe.cache()
 	attempts = int(cache.get_value(_otp_rate_key(email)) or 0)
 	if attempts >= OTP_MAX_PER_WINDOW:
-		frappe.throw(frappe._("Too many requests. Try again in a few minutes."))
+		frappe.throw(frappe._("طلبات كتير. جرّب تاني بعد شوية."))
 	cache.set_value(_otp_rate_key(email), attempts + 1, expires_in_sec=OTP_WINDOW_SECONDS)
 
 	customer = _find_customer(email=email)
@@ -143,7 +143,7 @@ def request_order_access(email):
 		cache.set_value(_otp_key(email), code, expires_in_sec=OTP_TTL_SECONDS)
 		frappe.sendmail(
 			recipients=[email],
-			subject=frappe._("Your order lookup code"),
+			subject=frappe._("كود الدخول لطلباتك"),
 			message=(
 				"<div dir='rtl' style='font-family:Tahoma'>"
 				f"<p>كود الدخول لطلباتك: <b style='font-size:22px;letter-spacing:3px'>{code}</b></p>"
@@ -167,15 +167,15 @@ def list_my_orders(email=None, code=None, phone=None):
 	email = (email or "").strip().lower()
 
 	if not email:
-		frappe.throw(frappe._("Enter the email used on your orders."))
+		frappe.throw(frappe._("اكتب البريد اللي طلبت بيه."))
 	if not code:
-		frappe.throw(frappe._("Enter the code sent to your email."))
+		frappe.throw(frappe._("اكتب الكود اللي وصلك على البريد."))
 
 	expected = frappe.cache().get_value(_otp_key(email))
 	if isinstance(expected, bytes):
 		expected = expected.decode()
 	if not expected or str(code).strip() != str(expected):
-		frappe.throw(frappe._("That code is not valid or has expired."))
+		frappe.throw(frappe._("الكود مش صحيح أو انتهت صلاحيته."))
 
 	# One code, one use.
 	frappe.cache().delete_value(_otp_key(email))

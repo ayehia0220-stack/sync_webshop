@@ -46,7 +46,7 @@ def guest_catalog_allowed():
 def require_catalog_access():
 	"""Function to check if guest access is allowed or user is logged in."""
 	if not guest_catalog_allowed() and frappe.session.user == "Guest":
-		frappe.throw(frappe._("Catalog access restricted to logged-in users."), frappe.PermissionError)
+		frappe.throw(frappe._("التصفّح متاح للمسجّلين فقط."), frappe.PermissionError)
 
 
 def full_url(file_url):

@@ -4,6 +4,7 @@ import re
 import frappe
 
 from sync_webshop.api.catalog import _get_price_list, _website_item_groups
+from sync_webshop.api.marketing import mark_coupon_used, validate_coupon
 from sync_webshop.api.utils import set_cors_headers
 
 MAX_LINES = 50
@@ -66,15 +67,15 @@ def _clean_customer(customer):
 	city = (customer.get("city") or "").strip()
 
 	if len(name) < 3:
-		frappe.throw(frappe._("Please enter your full name."))
+		frappe.throw(frappe._("اكتب اسمك بالكامل."))
 	if not email or not EMAIL_RE.match(email):
-		frappe.throw(frappe._("Please enter a valid email address."))
+		frappe.throw(frappe._("اكتب بريد إلكتروني صحيح."))
 
 	digits = "".join(ch for ch in phone if ch.isdigit())
 	if len(digits) < 9:
-		frappe.throw(frappe._("Please enter a valid phone number."))
+		frappe.throw(frappe._("اكتب رقم موبايل صحيح."))
 	if len(address) < 10:
-		frappe.throw(frappe._("Please enter the full delivery address."))
+		frappe.throw(frappe._("اكتب عنوان التوصيل بالتفصيل."))
 
 	return {"name": name, "email": email, "phone": phone, "address": address, "city": city}
 
@@ -88,9 +89,9 @@ def _clean_items(items):
 	if isinstance(items, str):
 		items = json.loads(items)
 	if not items:
-		frappe.throw(frappe._("Your cart is empty."))
+		frappe.throw(frappe._("سلتك فاضية."))
 	if len(items) > MAX_LINES:
-		frappe.throw(frappe._("Too many different products in one order."))
+		frappe.throw(frappe._("عدد المنتجات كبير في طلب واحد."))
 
 	allowed = _website_item_groups()
 	merged = {}
@@ -103,16 +104,16 @@ def _clean_items(items):
 		except (TypeError, ValueError):
 			qty = 1
 		if qty < 1 or qty > MAX_QTY_PER_LINE:
-			frappe.throw(frappe._("Quantity for {0} is not valid.").format(code))
+			frappe.throw(frappe._("الكمية المطلوبة من {0} مش صحيحة.").format(code))
 
 		item = frappe.db.get_value("Item", {"name": code, "disabled": 0}, ["name", "item_group"], as_dict=True)
 		if not item or (allowed is not None and item.item_group not in allowed):
-			frappe.throw(frappe._("{0} is no longer available.").format(code))
+			frappe.throw(frappe._("{0} مش متاح دلوقتي.").format(code))
 
 		merged[code] = merged.get(code, 0) + qty
 
 	if not merged:
-		frappe.throw(frappe._("Your cart is empty."))
+		frappe.throw(frappe._("سلتك فاضية."))
 	return merged
 
 
@@ -126,7 +127,7 @@ def _server_prices(item_codes):
 	prices = {r.item_code: r for r in rows}
 	missing = [c for c in item_codes if c not in prices]
 	if missing:
-		frappe.throw(frappe._("{0} is not available for sale right now.").format(missing[0]))
+		frappe.throw(frappe._("{0} مش معروض للبيع دلوقتي.").format(missing[0]))
 	return prices
 
 
@@ -146,7 +147,7 @@ def _shipping_for(subtotal):
 	return {"cost": cost, "rule": rule.rule_name, "account": rule.shipping_account, "free_over": threshold}
 
 
-def _quote(item_qty):
+def _quote(item_qty, coupon_code=None):
 	prices = _server_prices(item_qty.keys())
 	currency = None
 	lines = []
@@ -168,15 +169,27 @@ def _quote(item_qty):
 			}
 		)
 
-	shipping = _shipping_for(subtotal)
+	# الخصم يُحسب على المجموع قبل الشحن، ودايمًا من الخادم
+	discount, coupon = 0.0, None
+	if coupon_code:
+		checked = validate_coupon(coupon_code, subtotal, currency)
+		if not checked.get("valid"):
+			frappe.throw(checked.get("reason") or frappe._("الكوبون ده مش صحيح."))
+		discount = float(checked["discount_amount"])
+		coupon = checked
+
+	shipping = _shipping_for(subtotal - discount)
 	return {
+		"discount": round(discount, 2),
+		"coupon": {k: coupon[k] for k in ("code", "coupon", "description")} if coupon else None,
+		"_coupon_name": coupon["coupon"] if coupon else None,
 		"items": lines,
 		"currency": currency,
 		"subtotal": round(subtotal, 2),
 		"shipping_cost": round(shipping["cost"], 2),
 		"free_shipping_threshold": shipping["free_over"],
 		"shipping_rule": shipping["rule"],
-		"grand_total": round(subtotal + shipping["cost"], 2),
+		"grand_total": round(subtotal - discount + shipping["cost"], 2),
 		"_shipping_account": shipping["account"],
 	}
 
@@ -226,15 +239,16 @@ def get_checkout_settings():
 
 
 @frappe.whitelist(allow_guest=True)
-def quote_order(items):
+def quote_order(items, coupon_code=None):
 	"""
 	Authoritative totals for a cart. The storefront shows these numbers rather
 	than adding up prices itself, so what the shopper sees is what the order
 	will cost.
 	"""
 	set_cors_headers()
-	quote = _quote(_clean_items(items))
+	quote = _quote(_clean_items(items), coupon_code)
 	quote.pop("_shipping_account", None)
+	quote.pop("_coupon_name", None)
 	return quote
 
 
@@ -340,7 +354,7 @@ def _find_or_create_customer(customer):
 @frappe.whitelist(allow_guest=True)
 def create_order(
 	customer, items, payment_method=None, delivery_date=None,
-	note=None, idempotency_key=None, submit=True, **kwargs
+	note=None, coupon_code=None, idempotency_key=None, submit=True, **kwargs
 ):
 	"""
 	Turn a cart into a Sales Order. Everything that decides money — prices,
@@ -369,14 +383,14 @@ def create_order(
 
 	clean_customer = _clean_customer(customer)
 	item_qty = _clean_items(items)
-	quote = _quote(item_qty)
+	quote = _quote(item_qty, coupon_code)
 
 	method = (payment_method or "cod").lower()
 	payment_settings = frappe.get_single("Webshop Payment Settings")
 	if method == "cod" and not payment_settings.cod_enabled:
-		frappe.throw(frappe._("Cash on delivery is not available."))
+		frappe.throw(frappe._("الدفع عند الاستلام مش متاح دلوقتي."))
 	if method == "stripe" and not payment_settings.stripe_enabled:
-		frappe.throw(frappe._("Card payment is not available."))
+		frappe.throw(frappe._("الدفع بالبطاقة مش متاح دلوقتي."))
 
 	company = _company()
 	warehouse = _warehouse(company)
@@ -423,6 +437,10 @@ def create_order(
 		}
 	)
 
+	if quote["discount"] > 0:
+		so.apply_discount_on = "Net Total"
+		so.discount_amount = quote["discount"]
+
 	if quote["shipping_cost"] > 0:
 		account = quote["_shipping_account"]
 		if not account:
@@ -450,10 +468,13 @@ def create_order(
 	# The order the shopper agreed to must be the order that gets saved.
 	if abs(float(so.grand_total) - quote["grand_total"]) > 0.5:
 		frappe.db.rollback()
-		frappe.throw(frappe._("The order total changed. Please refresh your cart and try again."))
+		frappe.throw(frappe._("إجمالي الطلب اتغيّر. حدّث السلة وجرّب تاني."))
 
 	if frappe.utils.cint(submit):
 		so.submit()
+
+	if quote.get("_coupon_name"):
+		mark_coupon_used(quote["_coupon_name"])
 
 	frappe.db.commit()
 
@@ -462,6 +483,8 @@ def create_order(
 		"customer": customer_name,
 		"status": so.status,
 		"subtotal": quote["subtotal"],
+		"discount": quote["discount"],
+		"coupon": quote["coupon"],
 		"shipping_cost": quote["shipping_cost"],
 		"grand_total": float(so.grand_total),
 		"currency": so.currency,
