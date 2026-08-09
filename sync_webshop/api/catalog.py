@@ -175,7 +175,8 @@ def get_catalog(
 		"total_count": total_count,
 		"total_pages": max(1, -(-total_count // page_size)),
 		"price_list": price_list,
-		"sort": sort or DEFAULT_SORT,
+		# The resolved key, never the raw input.
+		"sort": sort if sort in SORT_OPTIONS else DEFAULT_SORT,
 		"sort_options": list(SORT_OPTIONS.keys()),
 		"price_range": _get_price_range(price_list, item_group),
 	}

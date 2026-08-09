@@ -158,6 +158,15 @@ def subscribe_newsletter(email):
 	configured, and a failure there never loses the address.
 	"""
 	set_cors_headers()
+
+	# One address at a time, not a script filling the list.
+	ip = frappe.local.request_ip or "unknown"
+	key = "webshop:newsletter:" + ip
+	attempts = int(frappe.cache().get_value(key) or 0)
+	if attempts >= 5:
+		frappe.throw(frappe._("محاولات كتير. جرّب تاني بعد شوية."))
+	frappe.cache().set_value(key, attempts + 1, expires_in_sec=3600)
+
 	email = (email or "").strip().lower()
 	if "@" not in email:
 		frappe.throw(frappe._("اكتب بريد إلكتروني صحيح."))
