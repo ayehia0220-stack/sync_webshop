@@ -1,0 +1,82 @@
+{
+ "name": "Webshop Popup",
+ "module": "Sync Webshop",
+ "doctype": "DocType",
+ "fields": [
+  {
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "default": 0
+  },
+  {
+   "fieldname": "title_en",
+   "fieldtype": "Data",
+   "label": "Title (English)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "title_ar",
+   "fieldtype": "Data",
+   "label": "Title (Arabic)"
+  },
+  {
+   "fieldname": "content_en",
+   "fieldtype": "Text Editor",
+   "label": "Content (English)"
+  },
+  {
+   "fieldname": "content_ar",
+   "fieldtype": "Text Editor",
+   "label": "Content (Arabic)"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image"
+  },
+  {
+   "fieldname": "popup_type",
+   "fieldtype": "Select",
+   "label": "Popup Type",
+   "options": "Offer\nNewsletter",
+   "default": "Offer"
+  },
+  {
+   "fieldname": "link_url",
+   "fieldtype": "Data",
+   "label": "Link URL"
+  },
+  {
+   "fieldname": "button_text_en",
+   "fieldtype": "Data",
+   "label": "Button Text (English)"
+  },
+  {
+   "fieldname": "button_text_ar",
+   "fieldtype": "Data",
+   "label": "Button Text (Arabic)"
+  },
+  {
+   "fieldname": "delay_seconds",
+   "fieldtype": "Int",
+   "label": "Delay (Seconds)",
+   "default": 5
+  },
+  {
+   "fieldname": "show_once_per_session",
+   "fieldtype": "Check",
+   "label": "Show Once Per Session",
+   "default": 1
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ]
+}

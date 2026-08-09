@@ -1,0 +1,68 @@
+{ 
+ "doctype": "DocType",
+ "name": "Webshop Trust Badge",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 1,
+ "issingle": 0,
+ "editable_grid": 1,
+ "track_changes": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "icon",
+  "label_en",
+  "label_ar",
+  "description_en",
+  "description_ar",
+  "sort_order",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "icon",
+   "fieldtype": "Select",
+   "label": "Icon",
+   "options": "Delivery\nQuality\nPayment\nSupport\nSchedule",
+   "default": "Delivery",
+   "reqd": 1,
+   "description": "Curated icon set so a non-technical admin can't break the layout with an unsupported image."
+  },
+  {
+   "fieldname": "label_en",
+   "fieldtype": "Data",
+   "label": "Label (English)",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "label_ar",
+   "fieldtype": "Data",
+   "label": "Label (Arabic)"
+  },
+  {
+   "fieldname": "description_en",
+   "fieldtype": "Data",
+   "label": "Description (English)",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "description_ar",
+   "fieldtype": "Data",
+   "label": "Description (Arabic)"
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order",
+   "default": "0"
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active",
+   "default": "1",
+   "in_list_view": 1
+  }
+ ],
+ "permissions": []
+}

@@ -1,0 +1,58 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Shipping Rule",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 0,
+ "issingle": 0,
+ "track_changes": 1,
+ "engine": "InnoDB",
+ "autoname": "field:rule_name",
+ "field_order": [
+  "rule_name",
+  "enabled",
+  "column_break_1",
+  "shipping_cost",
+  "free_shipping_threshold"
+ ],
+ "fields": [
+  {
+   "fieldname": "rule_name",
+   "fieldtype": "Data",
+   "label": "Rule Name",
+   "unique": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "default": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "shipping_cost",
+   "fieldtype": "Currency",
+   "label": "Shipping Cost",
+   "default": 0
+  },
+  {
+   "fieldname": "free_shipping_threshold",
+   "fieldtype": "Currency",
+   "label": "Free Shipping Threshold",
+   "default": 0
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ]
+}

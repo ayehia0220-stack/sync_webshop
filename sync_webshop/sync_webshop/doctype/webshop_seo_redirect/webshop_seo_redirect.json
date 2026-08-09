@@ -1,0 +1,29 @@
+{
+ "name": "Webshop SEO Redirect",
+ "module": "Sync Webshop",
+ "doctype": "DocType",
+ "istable": 1,
+ "fields": [
+  {
+   "fieldname": "source_url",
+   "fieldtype": "Data",
+   "label": "Source URL",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "target_url",
+   "fieldtype": "Data",
+   "label": "Target URL",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "redirect_type",
+   "fieldtype": "Select",
+   "label": "Redirect Type",
+   "options": "301\n302",
+   "default": "301"
+  }
+ ]
+}

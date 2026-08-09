@@ -1,0 +1,2 @@
+# Patches added in this file will be executed before the patch queue starts.
+# For further info, see https://frappeframework.com/docs/v14/user/en/database-migrations

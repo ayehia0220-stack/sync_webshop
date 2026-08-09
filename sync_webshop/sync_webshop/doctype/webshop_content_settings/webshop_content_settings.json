@@ -1,0 +1,478 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Content Settings",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 0,
+ "issingle": 1,
+ "track_changes": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_section",
+  "site_name",
+  "tagline_en",
+  "tagline_ar",
+  "column_break_1",
+  "hero_quote_en",
+  "hero_quote_ar",
+  "contact_section",
+  "phone_number",
+  "email_address",
+  "column_break_contact",
+  "contact_address_en",
+  "contact_address_ar",
+  "top_bar_section",
+  "show_top_bar",
+  "top_bar_message_en",
+  "top_bar_message_ar",
+  "navigation_section",
+  "nav_links",
+  "about_section",
+  "about_text_en",
+  "about_text_ar",
+  "footer_section",
+  "footer_text_en",
+  "footer_text_ar",
+  "social_links",
+  "banners_section",
+  "banners",
+  "categories_section",
+  "featured_categories",
+  "testimonials_section",
+  "testimonials",
+  "trust_badges_section",
+  "trust_badges",
+  "product_list_section",
+  "show_category_sidebar",
+  "show_price_filter",
+  "show_brand_filter",
+  "sidebar_width",
+  "seo_section",
+  "seo_meta_description_en",
+  "seo_meta_description_ar",
+  "column_break_seo",
+  "seo_og_image",
+  "seo_keywords",
+  "floating_buttons_section",
+  "show_whatsapp_button",
+  "whatsapp_number",
+  "whatsapp_message",
+  "column_break_floating",
+  "show_back_to_top",
+  "delivery_section",
+  "min_delivery_days",
+  "max_delivery_days"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "site_name",
+   "fieldtype": "Data",
+   "label": "Site Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "tagline_en",
+   "fieldtype": "Data",
+   "label": "Tagline (English)"
+  },
+  {
+   "fieldname": "tagline_ar",
+   "fieldtype": "Data",
+   "label": "Tagline (Arabic)"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hero_quote_en",
+   "fieldtype": "Small Text",
+   "label": "Hero Quote (English)"
+  },
+  {
+   "fieldname": "hero_quote_ar",
+   "fieldtype": "Small Text",
+   "label": "Hero Quote (Arabic)"
+  },
+  {
+   "fieldname": "contact_section",
+   "fieldtype": "Section Break",
+   "label": "Contact Information"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "email_address",
+   "fieldtype": "Data",
+   "label": "Email Address"
+  },
+  {
+   "fieldname": "column_break_contact",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "contact_address_en",
+   "fieldtype": "Small Text",
+   "label": "Address (English)"
+  },
+  {
+   "fieldname": "contact_address_ar",
+   "fieldtype": "Small Text",
+   "label": "Address (Arabic)"
+  },
+  {
+   "fieldname": "top_bar_section",
+   "fieldtype": "Section Break",
+   "label": "Top Bar"
+  },
+  {
+   "fieldname": "show_top_bar",
+   "fieldtype": "Check",
+   "label": "Show Top Bar",
+   "default": 1
+  },
+  {
+   "fieldname": "top_bar_message_en",
+   "fieldtype": "Data",
+   "label": "Top Bar Message (English)"
+  },
+  {
+   "fieldname": "top_bar_message_ar",
+   "fieldtype": "Data",
+   "label": "Top Bar Message (Arabic)"
+  },
+  {
+   "fieldname": "navigation_section",
+   "fieldtype": "Section Break",
+   "label": "Navigation Menu"
+  },
+  {
+   "fieldname": "nav_links",
+   "fieldtype": "Table",
+   "label": "Navigation Links",
+   "options": "Webshop Navigation Link"
+  },
+  {
+   "fieldname": "about_section",
+   "fieldtype": "Section Break",
+   "label": "About"
+  },
+  {
+   "fieldname": "about_text_en",
+   "fieldtype": "Text Editor",
+   "label": "About Text (English)"
+  },
+  {
+   "fieldname": "about_text_ar",
+   "fieldtype": "Text Editor",
+   "label": "About Text (Arabic)"
+  },
+  {
+   "fieldname": "footer_section",
+   "fieldtype": "Section Break",
+   "label": "Footer"
+  },
+  {
+   "fieldname": "footer_text_en",
+   "fieldtype": "Small Text",
+   "label": "Footer Text (English)"
+  },
+  {
+   "fieldname": "footer_text_ar",
+   "fieldtype": "Small Text",
+   "label": "Footer Text (Arabic)"
+  },
+  {
+   "fieldname": "social_links",
+   "fieldtype": "Table",
+   "label": "Social Media Links",
+   "options": "Webshop Social Link"
+  },
+  {
+   "fieldname": "banners_section",
+   "fieldtype": "Section Break",
+   "label": "Banners"
+  },
+  {
+   "fieldname": "banners",
+   "fieldtype": "Table",
+   "label": "Banners",
+   "options": "Webshop Banner"
+  },
+  {
+   "fieldname": "categories_section",
+   "fieldtype": "Section Break",
+   "label": "Featured Categories"
+  },
+  {
+   "fieldname": "featured_categories",
+   "fieldtype": "Table",
+   "label": "Featured Categories",
+   "options": "Webshop Featured Category"
+  },
+  {
+   "fieldname": "testimonials_section",
+   "fieldtype": "Section Break",
+   "label": "Testimonials / Quotes"
+  },
+  {
+   "fieldname": "testimonials",
+   "fieldtype": "Table",
+   "label": "Testimonials",
+   "options": "Webshop Testimonial"
+  },
+  {
+   "fieldname": "trust_badges_section",
+   "fieldtype": "Section Break",
+   "label": "Trust Badges"
+  },
+  {
+   "fieldname": "trust_badges",
+   "fieldtype": "Table",
+   "label": "Trust Badges",
+   "options": "Webshop Trust Badge"
+  },
+  {
+   "fieldname": "product_list_section",
+   "fieldtype": "Section Break",
+   "label": "Product List Settings"
+  },
+  {
+   "fieldname": "show_category_sidebar",
+   "fieldtype": "Check",
+   "label": "Show Category Sidebar",
+   "default": 1
+  },
+  {
+   "fieldname": "show_price_filter",
+   "fieldtype": "Check",
+   "label": "Show Price Filter",
+   "default": 1
+  },
+  {
+   "fieldname": "show_brand_filter",
+   "fieldtype": "Check",
+   "label": "Show Brand Filter",
+   "default": 1
+  },
+  {
+   "fieldname": "sidebar_width",
+   "fieldtype": "Int",
+   "label": "Sidebar Width (px)",
+   "default": 220,
+   "description": "Width of the category sidebar in pixels (e.g. 180, 220, 280)"
+  },
+  {
+   "fieldname": "seo_section",
+   "fieldtype": "Section Break",
+   "label": "SEO & Social Sharing"
+  },
+  {
+   "fieldname": "seo_meta_description_en",
+   "fieldtype": "Small Text",
+   "label": "Meta Description (English)",
+   "description": "Default meta description for search engines (English)"
+  },
+  {
+   "fieldname": "seo_meta_description_ar",
+   "fieldtype": "Small Text",
+   "label": "Meta Description (Arabic)",
+   "description": "Default meta description for search engines (Arabic)"
+  },
+  {
+   "fieldname": "column_break_seo",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "seo_og_image",
+   "fieldtype": "Attach Image",
+   "label": "Default OG Image",
+   "description": "Default image shown when sharing links on social media (recommended: 1200x630px)"
+  },
+  {
+   "fieldname": "seo_keywords",
+   "fieldtype": "Data",
+   "label": "SEO Keywords",
+   "description": "Comma-separated keywords for search engines"
+  },
+  {
+   "fieldname": "floating_buttons_section",
+   "fieldtype": "Section Break",
+   "label": "Floating Action Buttons"
+  },
+  {
+   "fieldname": "show_whatsapp_button",
+   "fieldtype": "Check",
+   "label": "Show WhatsApp Button",
+   "default": 1
+  },
+  {
+   "fieldname": "whatsapp_number",
+   "fieldtype": "Data",
+   "label": "WhatsApp Number",
+   "description": "International format without + (e.g. 9647801234567)"
+  },
+  {
+   "fieldname": "whatsapp_message",
+   "fieldtype": "Data",
+   "label": "WhatsApp Default Message",
+   "description": "Pre-filled message when user clicks WhatsApp button"
+  },
+  {
+   "fieldname": "column_break_floating",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "show_back_to_top",
+   "fieldtype": "Check",
+   "label": "Show Back to Top Button",
+   "default": 1
+  },
+  {
+   "fieldname": "delivery_section",
+   "fieldtype": "Section Break",
+   "label": "Delivery Settings"
+  },
+  {
+   "fieldname": "min_delivery_days",
+   "fieldtype": "Int",
+   "label": "Minimum Delivery Lead Time (Days)",
+   "default": 1
+  },
+  {
+   "fieldname": "max_delivery_days",
+   "fieldtype": "Int",
+   "label": "Maximum Delivery Lead Time (Days)",
+   "default": 7
+  },
+  {
+   "fieldname": "user_auth_section",
+   "fieldtype": "Section Break",
+   "label": "User Authentication & Wishlist"
+  },
+  {
+   "fieldname": "enable_user_registration",
+   "fieldtype": "Check",
+   "label": "Enable User Registration",
+   "default": 1
+  },
+  {
+   "fieldname": "enable_wishlist",
+   "fieldtype": "Check",
+   "label": "Enable Wishlist",
+   "default": 1
+  },
+  {
+   "fieldname": "analytics_section",
+   "fieldtype": "Section Break",
+   "label": "Analytics & Performance"
+  },
+  {
+   "fieldname": "google_analytics_id",
+   "fieldtype": "Data",
+   "label": "Google Analytics ID (G-XXXXX)"
+  },
+  {
+   "fieldname": "cdn_url_prefix",
+   "fieldtype": "Data",
+   "label": "CDN URL Prefix",
+   "description": "e.g. https://cdn.example.com"
+  },
+  {
+   "fieldname": "enable_webp_optimization",
+   "fieldtype": "Check",
+   "label": "Enable WebP Optimization",
+   "default": 1
+  },
+  {
+   "fieldname": "customer_support_section",
+   "fieldtype": "Section Break",
+   "label": "Customer Support & Live Chat"
+  },
+  {
+   "fieldname": "enable_live_chat",
+   "fieldtype": "Check",
+   "label": "Enable Live Chat Widget",
+   "default": 1
+  },
+  {
+   "fieldname": "live_chat_type",
+   "fieldtype": "Select",
+   "label": "Live Chat Type",
+   "options": "WhatsApp\nTawk.to\nCustom Script",
+   "default": "WhatsApp"
+  },
+  {
+   "fieldname": "live_chat_custom_script",
+   "fieldtype": "Code",
+   "label": "Custom Chat Script",
+   "options": "JS",
+   "depends_on": "eval:doc.live_chat_type==\"Custom Script\""
+  },
+  {
+   "fieldname": "marketing_section",
+   "fieldtype": "Section Break",
+   "label": "Marketing & Coupons"
+  },
+  {
+   "fieldname": "enable_coupons",
+   "fieldtype": "Check",
+   "label": "Enable Coupon Codes",
+   "default": 1
+  },
+  {
+   "fieldname": "enable_abandoned_cart_recovery",
+   "fieldtype": "Check",
+   "label": "Enable Abandoned Cart Recovery",
+   "default": 1
+  },
+  {
+   "fieldname": "recovery_email_delay",
+   "fieldtype": "Int",
+   "label": "Recovery Email Delay (Hours)",
+   "default": 24
+  },
+  {
+   "fieldname": "mailchimp_section",
+   "fieldtype": "Section Break",
+   "label": "Mailchimp Integration"
+  },
+  {
+   "fieldname": "enable_mailchimp",
+   "fieldtype": "Check",
+   "label": "Enable Mailchimp Subscription",
+   "default": 0
+  },
+  {
+   "fieldname": "mailchimp_api_key",
+   "fieldtype": "Data",
+   "label": "Mailchimp API Key"
+  },
+  {
+   "fieldname": "mailchimp_list_id",
+   "fieldtype": "Data",
+   "label": "Mailchimp List ID"
+  },
+  {
+   "fieldname": "mailchimp_server_prefix",
+   "fieldtype": "Data",
+   "label": "Mailchimp Server Prefix (e.g. us1)"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ]
+}

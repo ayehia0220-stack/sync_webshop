@@ -1,0 +1,60 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Banner",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 1,
+ "issingle": 0,
+ "editable_grid": 1,
+ "track_changes": 0,
+ "engine": "InnoDB",
+ "field_order": [
+  "image",
+  "title",
+  "subtitle",
+  "link_url",
+  "sort_order",
+  "is_active"
+ ],
+ "fields": [
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "subtitle",
+   "fieldtype": "Data",
+   "label": "Subtitle"
+  },
+  {
+   "fieldname": "link_url",
+   "fieldtype": "Data",
+   "label": "Link URL",
+   "description": "Where the banner should navigate to on click (e.g. /products/coffee)"
+  },
+  {
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Sort Order",
+   "default": "0",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active",
+   "default": "1",
+   "in_list_view": 1
+  }
+ ],
+ "permissions": []
+}

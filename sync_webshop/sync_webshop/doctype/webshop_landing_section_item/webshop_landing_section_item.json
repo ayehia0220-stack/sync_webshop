@@ -1,0 +1,17 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Landing Section Item",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 1,
+ "engine": "InnoDB",
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  }
+ ]
+}

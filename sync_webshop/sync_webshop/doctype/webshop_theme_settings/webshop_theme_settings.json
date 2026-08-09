@@ -1,0 +1,297 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Theme Settings",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 0,
+ "issingle": 1,
+ "track_changes": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "branding_section",
+  "logo",
+  "favicon",
+  "column_break_1",
+  "layout_style",
+  "colors_section",
+  "primary_color",
+  "secondary_color",
+  "column_break_2",
+  "accent_color",
+  "background_color",
+  "top_bar_colors_section",
+  "top_bar_bg_color",
+  "top_bar_text_color",
+  "column_break_4",
+  "header_bg_color",
+  "header_text_color",
+  "nav_colors_section",
+  "nav_bg_color",
+  "nav_text_color",
+  "footer_colors_section",
+  "footer_bg_color",
+  "footer_text_color",
+  "typography_section",
+  "font_heading",
+  "column_break_3",
+  "font_body",
+  "header_dimensions_section",
+  "header_max_width",
+  "header_height",
+  "header_padding_vertical",
+  "header_padding_horizontal",
+  "logo_height",
+  "logo_width",
+  "column_break_header",
+  "search_bar_max_width",
+  "search_bar_height",
+  "nav_bar_height",
+  "hero_section",
+  "hero_background_image",
+  "hero_height",
+  "hero_width"
+ ],
+ "fields": [
+  {
+   "fieldname": "branding_section",
+   "fieldtype": "Section Break",
+   "label": "Branding"
+  },
+  {
+   "fieldname": "logo",
+   "fieldtype": "Attach Image",
+   "label": "Logo"
+  },
+  {
+   "fieldname": "favicon",
+   "fieldtype": "Attach Image",
+   "label": "Favicon"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "layout_style",
+   "fieldtype": "Select",
+   "label": "Layout Style",
+   "options": "Classic\nMinimal\nBold\nOasis",
+   "default": "Classic"
+  },
+  {
+   "fieldname": "colors_section",
+   "fieldtype": "Section Break",
+   "label": "General Colors"
+  },
+  {
+   "fieldname": "primary_color",
+   "fieldtype": "Color",
+   "label": "Primary Color",
+   "default": "#21504C"
+  },
+  {
+   "fieldname": "secondary_color",
+   "fieldtype": "Color",
+   "label": "Secondary Color",
+   "default": "#84B082"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "accent_color",
+   "fieldtype": "Color",
+   "label": "Accent Color",
+   "default": "#FF9900"
+  },
+  {
+   "fieldname": "background_color",
+   "fieldtype": "Color",
+   "label": "Background Color",
+   "default": "#FFFFFF"
+  },
+  {
+   "fieldname": "top_bar_colors_section",
+   "fieldtype": "Section Break",
+   "label": "Top Bar Colors"
+  },
+  {
+   "fieldname": "top_bar_bg_color",
+   "fieldtype": "Color",
+   "label": "Top Bar Background",
+   "default": "#f8f9fa"
+  },
+  {
+   "fieldname": "top_bar_text_color",
+   "fieldtype": "Color",
+   "label": "Top Bar Text",
+   "default": "#333333"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "header_bg_color",
+   "fieldtype": "Color",
+   "label": "Header Background",
+   "default": "#ffffff"
+  },
+  {
+   "fieldname": "header_text_color",
+   "fieldtype": "Color",
+   "label": "Header Text",
+   "default": "#333333"
+  },
+  {
+   "fieldname": "nav_colors_section",
+   "fieldtype": "Section Break",
+   "label": "Navigation Colors"
+  },
+  {
+   "fieldname": "nav_bg_color",
+   "fieldtype": "Color",
+   "label": "Nav Background",
+   "default": "#ffffff"
+  },
+  {
+   "fieldname": "nav_text_color",
+   "fieldtype": "Color",
+   "label": "Nav Text",
+   "default": "#333333"
+  },
+  {
+   "fieldname": "footer_colors_section",
+   "fieldtype": "Section Break",
+   "label": "Footer Colors"
+  },
+  {
+   "fieldname": "footer_bg_color",
+   "fieldtype": "Color",
+   "label": "Footer Background",
+   "default": "#21504C"
+  },
+  {
+   "fieldname": "footer_text_color",
+   "fieldtype": "Color",
+   "label": "Footer Text",
+   "default": "#ffffff"
+  },
+  {
+   "fieldname": "typography_section",
+   "fieldtype": "Section Break",
+   "label": "Typography"
+  },
+  {
+   "fieldname": "font_heading",
+   "fieldtype": "Select",
+   "label": "Heading Font",
+   "options": "Poppins\nPlayfair Display\nCairo\nInter",
+   "default": "Poppins"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "font_body",
+   "fieldtype": "Select",
+   "label": "Body Font",
+   "options": "Inter\nCairo\nRoboto\nOpen Sans",
+   "default": "Inter"
+  },
+  {
+   "fieldname": "hero_section",
+   "fieldtype": "Section Break",
+   "label": "Hero"
+  },
+  {
+   "fieldname": "header_dimensions_section",
+   "fieldtype": "Section Break",
+   "label": "Header Dimensions"
+  },
+  {
+   "fieldname": "header_max_width",
+   "fieldtype": "Int",
+   "label": "Header Max Width (px)",
+   "default": 1200
+  },
+  {
+   "fieldname": "header_height",
+   "fieldtype": "Int",
+   "label": "Header Height (px)",
+   "default": 80
+  },
+  {
+   "fieldname": "header_padding_vertical",
+   "fieldtype": "Int",
+   "label": "Header Padding Vertical (px)",
+   "default": 15
+  },
+  {
+   "fieldname": "header_padding_horizontal",
+   "fieldtype": "Int",
+   "label": "Header Padding Horizontal (px)",
+   "default": 15
+  },
+  {
+   "fieldname": "logo_height",
+   "fieldtype": "Int",
+   "label": "Logo Height (px)",
+   "default": 45
+  },
+  {
+   "fieldname": "logo_width",
+   "fieldtype": "Int",
+   "label": "Logo Width (px)"
+  },
+  {
+   "fieldname": "column_break_header",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "search_bar_max_width",
+   "fieldtype": "Int",
+   "label": "Search Bar Max Width (px)",
+   "default": 600
+  },
+  {
+   "fieldname": "search_bar_height",
+   "fieldtype": "Int",
+   "label": "Search Bar Height (px)",
+   "default": 45
+  },
+  {
+   "fieldname": "nav_bar_height",
+   "fieldtype": "Int",
+   "label": "Nav Bar Height (px)",
+   "default": 50
+  },
+  {
+   "fieldname": "hero_background_image",
+   "fieldtype": "Attach Image",
+   "label": "Hero Background Image"
+  },
+  {
+   "fieldname": "hero_height",
+   "fieldtype": "Int",
+   "label": "Hero Height (px)",
+   "default": 400
+  },
+  {
+   "fieldname": "hero_width",
+   "fieldtype": "Int",
+   "label": "Hero Max Width (px)",
+   "default": 1200
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1
+  }
+ ]
+}

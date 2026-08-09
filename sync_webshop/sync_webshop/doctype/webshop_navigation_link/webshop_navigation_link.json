@@ -1,0 +1,41 @@
+{
+ "doctype": "DocType",
+ "name": "Webshop Navigation Link",
+ "module": "Sync Webshop",
+ "custom": 0,
+ "istable": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "label_en",
+  "label_ar",
+  "link_url",
+  "is_external"
+ ],
+ "fields": [
+  {
+   "fieldname": "label_en",
+   "fieldtype": "Data",
+   "label": "Label (English)",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "label_ar",
+   "fieldtype": "Data",
+   "label": "Label (Arabic)",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "link_url",
+   "fieldtype": "Data",
+   "label": "Link URL",
+   "in_list_view": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "is_external",
+   "fieldtype": "Check",
+   "label": "Is External"
+  }
+ ]
+}

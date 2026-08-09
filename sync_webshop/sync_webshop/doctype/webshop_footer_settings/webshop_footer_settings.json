@@ -1,0 +1,36 @@
+{
+ "name": "Webshop Footer Settings",
+ "module": "Sync Webshop",
+ "doctype": "DocType",
+ "issingle": 1,
+ "fields": [
+  {
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled",
+   "default": 1
+  },
+  {
+   "fieldname": "footer_logo",
+   "fieldtype": "Attach Image",
+   "label": "Footer Logo"
+  },
+  {
+   "fieldname": "copyright_en",
+   "fieldtype": "Data",
+   "label": "Copyright Text (English)"
+  },
+  {
+   "fieldname": "copyright_ar",
+   "fieldtype": "Data",
+   "label": "Copyright Text (Arabic)"
+  }
+ ],
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1
+  }
+ ]
+}
