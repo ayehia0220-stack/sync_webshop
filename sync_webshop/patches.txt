@@ -12,3 +12,4 @@ sync_webshop.patches.v0_1.create_label_fields
 sync_webshop.patches.v0_1.create_order_emails
 sync_webshop.patches.v0_1.create_shipping_payment_doctypes
 sync_webshop.patches.v0_1.seed_gateways
+sync_webshop.patches.v0_1.create_webshop_pages
