@@ -27,7 +27,21 @@ def get_theme():
 			"footer_bg": settings.footer_bg_color,
 			"footer_text": settings.footer_text_color,
 		},
-"fonts": {
+"card": {
+			"radius": settings.get("card_radius") or 15,
+			"border": settings.get("card_border_color") or "#ECECEC",
+			"heading": settings.get("heading_color") or "#253D4E",
+			"muted": settings.get("muted_text_color") or "#7E7E7E",
+			"tints": [
+				settings.get("tint_color_1") or "#DEF9EC",
+				settings.get("tint_color_2") or "#FEEFEA",
+				settings.get("tint_color_3") or "#F2FCE4",
+				settings.get("tint_color_4") or "#FFF3EB",
+				settings.get("tint_color_5") or "#F2F6FF",
+				settings.get("tint_color_6") or "#FFF3FF",
+			],
+		},
+		"fonts": {
 				"heading": settings.font_heading,
 				"body": settings.font_body,
 			},

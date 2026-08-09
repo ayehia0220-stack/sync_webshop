@@ -3,6 +3,44 @@ from sync_webshop.api.utils import set_cors_headers, full_url
 from sync_webshop.api.catalog import _get_price_list
 from sync_webshop.api.theme import get_theme
 
+def _labels(settings):
+	"""
+	Collect every `label_<key>_ar` / `label_<key>_en` field into
+	{key: {"ar": ..., "en": ...}}.
+
+	Discovered by naming convention, so a new label is one custom field in
+	ERPNext and needs no change here.
+	"""
+	labels = {}
+	for field, value in (settings.as_dict() or {}).items():
+		if not field.startswith("label_") or not value:
+			continue
+		body = field[len("label_"):]
+		if body.endswith("_ar"):
+			labels.setdefault(body[:-3], {})["ar"] = value
+		elif body.endswith("_en"):
+			labels.setdefault(body[:-3], {})["en"] = value
+	return labels
+
+
+def _display_counts():
+	"""How many products and categories each section shows."""
+	defaults = {
+		"products_per_page": 20,
+		"home_products_count": 8,
+		"home_categories_count": 6,
+		"related_products_count": 4,
+	}
+	try:
+		product_settings = frappe.get_single("Webshop Product Settings")
+	except Exception:
+		return defaults
+	return {
+		key: int(product_settings.get(key) or fallback)
+		for key, fallback in defaults.items()
+	}
+
+
 @frappe.whitelist(allow_guest=True)
 def get_content():
 	"""
@@ -318,5 +356,8 @@ def get_content():
 		"faqs": faqs,
 		# Marketing & Sales
 		"enable_coupons": settings.enable_coupons,
-		"enable_mailchimp": settings.enable_mailchimp
+		"enable_mailchimp": settings.enable_mailchimp,
+		# Wording and layout numbers, both editable in ERPNext
+		"labels": _labels(settings),
+		"display": _display_counts(),
 	}
