@@ -64,4 +64,8 @@ doc_events = {
 
 # Scheduled Tasks
 # ------------------
-# scheduler_events = {}
+scheduler_events = {
+	"daily": [
+		"sync_webshop.api.intelligence.daily_refresh",
+	],
+}
