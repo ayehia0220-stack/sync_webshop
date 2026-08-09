@@ -96,7 +96,10 @@ def _catalog_query(groups, search, min_price, max_price, price_list):
 BASE_FROM = """
 	FROM (
 		SELECT
-			it.name AS item_code, it.item_name, it.description, it.image,
+			it.name AS item_code,
+			COALESCE(NULLIF(it.website_title, ''), it.item_name) AS item_name,
+			COALESCE(NULLIF(it.website_short_description, ''), it.description) AS description,
+			it.image,
 			it.item_group, it.stock_uom, it.creation, it.disabled,
 			ip.price_list_rate AS price, ip.currency,
 			COALESCE(bin.qty, 0) AS stock_qty
@@ -205,7 +208,8 @@ def get_item(item_code):
 	item = frappe.db.get_value(
 		"Item",
 		{"name": item_code, "disabled": 0},
-		["name", "item_name", "description", "item_group", "image", "stock_uom", "brand"],
+		["name", "item_name", "website_title", "description", "website_short_description",
+		 "item_group", "image", "stock_uom", "brand"],
 		as_dict=True,
 	)
 	if not item or (allowed is not None and item.item_group not in allowed):
@@ -228,15 +232,15 @@ def get_item(item_code):
 		ancestors = frappe.get_all(
 			"Item Group",
 			filters={"lft": ["<=", group.lft], "rgt": [">=", group.rgt], "show_in_website": 1},
-			fields=["name", "item_group_name"],
+			fields=["name", "item_group_name", "website_title"],
 			order_by="lft",
 		)
-		crumbs = [{"name": a.name, "label": a.item_group_name} for a in ancestors]
+		crumbs = [{"name": a.name, "label": a.website_title or a.item_group_name} for a in ancestors]
 
 	return {
 		"item_code": item.name,
-		"item_name": item.item_name,
-		"description": item.description,
+		"item_name": item.website_title or item.item_name,
+		"description": item.website_short_description or item.description,
 		"item_group": item.item_group,
 		"brand": item.brand,
 		"image": full_url(item.image),
@@ -285,7 +289,7 @@ def get_categories():
 	groups = frappe.get_all(
 		"Item Group",
 		filters={"show_in_website": 1},
-		fields=["name", "item_group_name", "image", "parent_item_group", "lft", "rgt"],
+		fields=["name", "item_group_name", "website_title", "image", "parent_item_group", "lft", "rgt"],
 		order_by="lft asc",
 	)
 	if not groups:
@@ -323,7 +327,7 @@ def get_categories():
 		results.append(
 			{
 				"name": g.name,
-				"label": g.item_group_name,
+				"label": g.website_title or g.item_group_name,
 				"image": full_url(g.image),
 				"parent": g.parent_item_group if g.parent_item_group in by_name else None,
 				"depth": depths[g.name],
@@ -350,7 +354,7 @@ def get_search_suggestions(search):
 	categories = frappe.get_all(
 		"Item Group",
 		filters={"show_in_website": 1, "item_group_name": ["like", f"%{search}%"]},
-		fields=["name", "item_group_name", "image"],
+		fields=["name", "item_group_name", "website_title", "image"],
 		limit_page_length=3,
 	)
 	for cat in categories:
@@ -358,7 +362,7 @@ def get_search_suggestions(search):
 			{
 				"type": "category",
 				"id": cat.name,
-				"name": cat.item_group_name,
+				"name": cat.website_title or cat.item_group_name,
 				"image": full_url(cat.image) if cat.image else None,
 			}
 		)
@@ -369,7 +373,7 @@ def get_search_suggestions(search):
 	items = frappe.get_all(
 		"Item",
 		filters=item_filters,
-		fields=["name as item_code", "item_name", "image", "item_group"],
+		fields=["name as item_code", "item_name", "website_title", "image", "item_group"],
 		limit_page_length=5,
 	)
 	for i in items:
@@ -377,7 +381,7 @@ def get_search_suggestions(search):
 			{
 				"type": "item",
 				"id": i.item_code,
-				"name": i.item_name,
+				"name": i.website_title or i.item_name,
 				"image": full_url(i.image) if i.image else None,
 				"category": i.item_group,
 			}
