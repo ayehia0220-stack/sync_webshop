@@ -32,6 +32,10 @@ def get_theme():
 			"border": settings.get("card_border_color") or "#ECECEC",
 			"heading": settings.get("heading_color") or "#253D4E",
 			"muted": settings.get("muted_text_color") or "#7E7E7E",
+			"product_width": settings.get("product_card_width") or 210,
+			"category_width": settings.get("category_card_width") or 150,
+			"product_cols_mobile": settings.get("product_card_width_mobile") or 2,
+			"category_cols_mobile": settings.get("category_card_width_mobile") or 3,
 			"tints": [
 				settings.get("tint_color_1") or "#DEF9EC",
 				settings.get("tint_color_2") or "#FEEFEA",
