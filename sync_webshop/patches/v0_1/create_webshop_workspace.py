@@ -60,13 +60,26 @@ LINKS = [
 	("الإعدادات الفنية", "حساب البريد", "Email Account", "إعدادات إرسال رسائل الطلبات"),
 ]
 
+# (doctype, button label, colour)
 SHORTCUTS = [
-	("Webshop Content Settings", "محتوى الموقع"),
-	("Webshop Theme Settings", "المظهر"),
-	("Item", "الأصناف"),
-	("Item Group", "الفئات"),
-	("Sales Order", "الطلبات"),
-	("Webshop API Settings", "إعدادات API"),
+	("Webshop Content Settings", "محتوى الموقع", "Blue"),
+	("Webshop Theme Settings", "ألوان وخطوط", "Blue"),
+	("Webshop Page", "صفحات الموقع", "Blue"),
+	("Item", "الأصناف والصور", "Green"),
+	("Item Group", "الفئات", "Green"),
+	("Item Price", "الأسعار", "Green"),
+	("Sales Order", "الطلبات", "Orange"),
+	("Webshop Shipping Company", "شركات الشحن", "Orange"),
+	("Webshop Payment Gateway", "طرق الدفع", "Orange"),
+	("Webshop Bot Settings", "إعدادات مساعد الموقع", "Purple"),
+	("Webshop Bot Answer", "أسئلة وأجوبة العملاء", "Purple"),
+	("Webshop Agent Settings", "إعدادات مساعد الإدارة", "Purple"),
+	("Webshop Agent Skill", "مهارات المساعد", "Purple"),
+	("Webshop Telegram User", "مستخدمو تليجرام", "Purple"),
+	("Webshop Agent Log", "سجل المساعد", "Grey"),
+	("Webshop Bot Log", "سجل أسئلة العملاء", "Grey"),
+	("Webshop SEO Settings", "SEO والتحليلات", "Grey"),
+	("Webshop API Settings", "إعدادات فنية", "Grey"),
 ]
 
 
@@ -89,9 +102,14 @@ def execute():
 
 	content = [
 		{"id": "hdr", "type": "header",
-		 "data": {"text": "<span class='h4'>متجر دبونو — كل إعدادات الموقع</span>", "col": 12}},
-		{"id": "sc", "type": "shortcut", "data": {"shortcut_name": "محتوى الموقع", "col": 4}},
+		 "data": {"text": "<span class='h4'>متجر دبونو</span>", "col": 12}},
 	]
+	for doctype, label, _colour in SHORTCUTS:
+		if frappe.db.exists("DocType", doctype):
+			content.append(
+				{"id": "sc_" + label, "type": "shortcut",
+				 "data": {"shortcut_name": label, "col": 3}}
+			)
 	doc.content = json.dumps(content, ensure_ascii=False)
 
 	seen_sections = set()
@@ -118,9 +136,12 @@ def execute():
 			**({"link_count": 0} if not single else {}),
 		})
 
-	for doctype, label in SHORTCUTS:
+	for doctype, label, colour in SHORTCUTS:
 		if frappe.db.exists("DocType", doctype):
-			doc.append("shortcuts", {"type": "DocType", "link_to": doctype, "label": label, "color": "Green"})
+			doc.append(
+				"shortcuts",
+				{"type": "DocType", "link_to": doctype, "label": label, "color": colour},
+			)
 
 	doc.flags.ignore_permissions = True
 	doc.flags.ignore_mandatory = True
