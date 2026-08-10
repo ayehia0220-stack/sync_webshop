@@ -11,8 +11,9 @@ app_license = "mit"
 
 # Includes in <head>
 # ------------------
-# app_include_css = "/assets/sync_webshop/css/sync_webshop.css"
-# app_include_js = "/assets/sync_webshop/js/sync_webshop.js"
+# The assistant rides along with the Desk on every page.
+app_include_css = "/assets/sync_webshop/css/agent_widget.css"
+app_include_js = "/assets/sync_webshop/js/agent_widget.js"
 
 # Whitelisted methods (added in Step 3 - Backend APIs)
 # ------------------
