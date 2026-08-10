@@ -13,6 +13,7 @@ import re
 
 import frappe
 
+from sync_webshop.api import ai
 from sync_webshop.api.bot import MIN_SCORE, _normalise, _tokens, _words, keyword_score
 
 MAX_ROWS = 10
@@ -320,6 +321,18 @@ def answer(question, channel="ERP"):
 		)
 		if hits > best_hits:
 			best, best_hits = skill, hits
+
+	if (not best or best_hits < MIN_SCORE) and ai.is_enabled():
+		# Keywords came up short. Let the model pick from what we already do.
+		options = frappe.get_all(
+			"Webshop Agent Skill",
+			filters={"enabled": 1},
+			fields=["name", "skill_name", "action", "times_used", "example_question"],
+			order_by="name",
+		)
+		choice = ai.classify(question, [o.example_question or o.skill_name for o in options])
+		if choice:
+			best, best_hits = options[choice - 1], MIN_SCORE
 
 	if not best or best_hits < MIN_SCORE:
 		reply = s.get("fallback") or "مش فاهم السؤال."

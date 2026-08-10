@@ -19,3 +19,5 @@ sync_webshop.patches.v0_1.create_chatbot
 sync_webshop.patches.v0_1.seed_examples
 sync_webshop.patches.v0_1.create_agent
 sync_webshop.patches.v0_1.create_telegram
+sync_webshop.patches.v0_1.wire_ai
+sync_webshop.patches.v0_1.fix_guard

@@ -14,9 +14,15 @@ import re
 
 import frappe
 
+from sync_webshop.api import ai
+
 from sync_webshop.api.utils import set_cors_headers
 
 MAX_QUESTION_LENGTH = 300
+
+# Offered to the model alongside the real answers. A word list alone always
+# has gaps — Arabic verb forms rarely share a stem with the noun.
+GUARD_OPTION = "سؤال عن التكاليف أو الأرباح أو الموردين أو المخزون أو أي معلومة داخلية للشركة"
 
 
 def _settings():
@@ -208,6 +214,30 @@ def ask(question, lang="ar"):
 		)
 		if hits > best_hits:
 			best, best_hits = row, hits
+
+	if (not best or best_hits < MIN_SCORE) and ai.is_enabled():
+		# The blocked-subject check already ran, so the model never sees a
+		# question about cost or margin.
+		options = frappe.get_all(
+			"Webshop Bot Answer",
+			filters={"enabled": 1},
+			fields=["name", "question_ar", "answer_ar", "answer_en", "times_used"],
+			order_by="name",
+		)
+		labels = [o.question_ar for o in options] + [GUARD_OPTION]
+		choice = ai.classify(question, labels)
+		if choice == len(labels):
+			# The model read this as an internal question.
+			_log(question, None, "ممنوع", lang)
+			return {
+				"answered": False,
+				"blocked": True,
+				"reply": (s.get("blocked_reply_ar") if is_ar else s.get("blocked_reply_en"))
+				or "ده استفسار داخلي مش بقدر أرد عليه.",
+				"handover": True,
+			}
+		if choice:
+			best, best_hits = options[choice - 1], MIN_SCORE
 
 	if not best or best_hits < MIN_SCORE:
 		_log(question, None, "مفيش رد", lang)
