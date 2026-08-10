@@ -44,6 +44,7 @@ def _normalise(text):
 # search makes "وصل" (arrived) match inside "بتوصلوا" (do you deliver) and
 # answer the wrong question. Matching works on whole words instead.
 PREFIXES = ("وال", "بال", "كال", "فال", "لل", "ال", "و", "ب", "ف", "ل", "ك")
+SUFFIXES = ("هما", "كما", "هم", "هن", "كم", "كن", "نا", "ها", "ات", "ين", "ون", "ية", "ه", "ي", "ك")
 
 
 def _strip_prefix(word):
@@ -53,26 +54,63 @@ def _strip_prefix(word):
 	return word
 
 
+def _strip_suffix(word):
+	for suffix in SUFFIXES:
+		if len(word) > len(suffix) + 2 and word.endswith(suffix):
+			return word[: -len(suffix)]
+	return word
+
+
+def _stem(word):
+	return _strip_suffix(_strip_prefix(word))
+
+
 def _tokens(text):
-	raw = re.split(r"[^\w؀-ۿ]+", text)
-	words = [w for w in raw if w]
-	return set(words) | {_strip_prefix(w) for w in words}
+	raw = [w for w in re.split(r"[^\w]+", text) if w]
+	forms = set(raw)
+	forms |= {_strip_prefix(w) for w in raw}
+	forms |= {_stem(w) for w in raw}
+	return {f for f in forms if len(f) >= 2}
+
+
+def _word_score(word, question_words):
+	"""2 for the word itself, 1 for an inflected form, 0 for nothing."""
+	if not word or len(word) < 2:
+		return 0
+	if word in question_words:
+		return 2
+	if _stem(word) in question_words:
+		return 1
+	if len(word) >= 5 and any(
+		w.startswith(word) or word.startswith(w) for w in question_words if len(w) >= 4
+	):
+		return 1
+	return 0
+
+
+def keyword_score(keyword, question_words):
+	"""
+	A whole phrase scores well; a single word from a phrase scores nothing, so
+	"طلب" on its own can't pull in the skill keyed on "طلبات مفتوحة".
+	"""
+	if not keyword:
+		return 0
+	parts = [p for p in keyword.split() if len(p) >= 2]
+	if not parts:
+		return 0
+	if len(parts) > 1:
+		scores = [_word_score(p, question_words) for p in parts]
+		return 3 if all(scores) else 0
+	return _word_score(parts[0], question_words)
 
 
 def _matches(keyword, question_words):
-	"""A keyword counts when it is one of the words, not merely inside one."""
-	if not keyword:
-		return False
-	parts = keyword.split()
-	if len(parts) > 1:
-		# A multi-word phrase still matches on the whole phrase.
-		return all(_matches(p, question_words) for p in parts)
-	if keyword in question_words:
-		return True
-	# Long keywords may appear with a suffix, e.g. "طلبات" inside "طلباتي".
-	if len(keyword) >= 5:
-		return any(w.startswith(keyword) for w in question_words)
-	return False
+	"""Kept for callers that only need a yes/no."""
+	return keyword_score(keyword, question_words) > 0
+
+
+# A single inflected match is too weak to act on.
+MIN_SCORE = 2
 
 
 def _log(question, answer_name, outcome, lang):
@@ -163,14 +201,15 @@ def ask(question, lang="ar"):
 		filters={"enabled": 1},
 		fields=["name", "keywords_ar", "keywords_en", "answer_ar", "answer_en", "times_used"],
 	):
-		hits = 0
-		for word in _words(row.keywords_ar) + _words(row.keywords_en):
-			if _matches(_normalise(word), question_words):
-				hits += 1
+		hits = max(
+			(keyword_score(_normalise(w), question_words)
+			 for w in _words(row.keywords_ar) + _words(row.keywords_en)),
+			default=0,
+		)
 		if hits > best_hits:
 			best, best_hits = row, hits
 
-	if not best:
+	if not best or best_hits < MIN_SCORE:
 		_log(question, None, "مفيش رد", lang)
 		return {
 			"answered": False,
