@@ -21,6 +21,12 @@ def _store_name():
 	return _settings().get("site_name") or "dpono"
 
 
+def _reply_to():
+	"""Where a customer's reply should land. Set in Webshop Content Settings."""
+	address = (_settings().get("email_address") or "").strip()
+	return address or None
+
+
 def _recipient(sales_order):
 	"""The address the shopper typed at checkout, falling back to their contact."""
 	if sales_order.get("contact_email"):
@@ -106,7 +112,13 @@ def _send(sales_order, template_name, kind):
 	try:
 		subject = frappe.render_template(template.subject, context)
 		message = frappe.render_template(template.response_html or template.response, context)
-		frappe.sendmail(recipients=[recipient], subject=subject, message=message, now=False)
+		frappe.sendmail(
+			recipients=[recipient],
+			subject=subject,
+			message=message,
+			reply_to=_reply_to(),
+			now=False,
+		)
 	except Exception:
 		# A failed email must never roll back or block the order itself.
 		frappe.log_error(
