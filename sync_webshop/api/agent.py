@@ -322,7 +322,9 @@ def answer(question, channel="ERP"):
 		if hits > best_hits:
 			best, best_hits = skill, hits
 
-	if (not best or best_hits < MIN_SCORE) and ai.is_enabled():
+	# Off by default — see Webshop Agent Settings for why.
+	use_ai = ai.is_enabled() and _settings().get("ai_for_erp_agent")
+	if (not best or best_hits < MIN_SCORE) and use_ai:
 		# Keywords came up short. Let the model pick from what we already do.
 		options = frappe.get_all(
 			"Webshop Agent Skill",
@@ -330,9 +332,14 @@ def answer(question, channel="ERP"):
 			fields=["name", "skill_name", "action", "times_used", "example_question"],
 			order_by="name",
 		)
-		choice = ai.classify(question, [o.example_question or o.skill_name for o in options])
-		if choice:
-			best, best_hits = options[choice - 1], MIN_SCORE
+		labels = [o.example_question or o.skill_name for o in options]
+		labels.append("مش موجود في القائمة")
+		choice = ai.classify(question, labels)
+		# The last option is the escape hatch; picking it means "I don't know".
+		if choice and choice < len(labels):
+			picked = options[choice - 1]
+			if ai.confirm(question, picked.example_question or picked.skill_name):
+				best, best_hits = picked, MIN_SCORE
 
 	if not best or best_hits < MIN_SCORE:
 		reply = s.get("fallback") or "مش فاهم السؤال."

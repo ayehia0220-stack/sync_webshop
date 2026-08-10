@@ -108,3 +108,42 @@ def test_understanding(question="عايز اعرف بعت كام النهارد�
 		"picked": skills[choice - 1].skill_name if choice else "مفيش",
 		"enabled": is_enabled(),
 	}
+
+
+CONFIRM_PROMPT = """هل الإجابة على «{option}» ترد فعلاً على سؤال المستخدم؟
+اكتب نعم أو لا فقط.
+
+سؤال المستخدم: {question}
+الإجابة:"""
+
+
+def confirm(question, option):
+	"""
+	Second opinion on the chosen skill.
+
+	Classification alone will always pick *something*. Asking plainly whether
+	that something answers the question catches the near-misses — "average
+	order value" matched against a price lookup, for instance.
+	"""
+	endpoint, model, keep_alive = _config()
+	try:
+		response = requests.post(
+			f"{endpoint}/api/generate",
+			json={
+				"model": model,
+				"prompt": CONFIRM_PROMPT.format(option=option, question=question),
+				"stream": False,
+				"keep_alive": keep_alive,
+				"options": {"temperature": 0, "num_predict": 4},
+			},
+			timeout=TIMEOUT,
+		)
+		reply = str((response.json() or {}).get("response", ""))
+	except Exception:
+		# If the check cannot run, do not act on an unverified guess.
+		return False
+
+	reply = reply.strip()
+	if "لا" in reply and "نعم" not in reply:
+		return False
+	return "نعم" in reply or reply.lower().startswith("yes")
