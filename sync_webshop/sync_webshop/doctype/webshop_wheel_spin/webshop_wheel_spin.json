@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2026-08-11 18:38:05.547124",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "email",
+  "prize_label",
+  "coupon_code",
+  "discount_percent",
+  "spun_on",
+  "used"
+ ],
+ "fields": [
+  {
+   "fieldname": "email",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0625\u064a\u0645\u064a\u0644",
+   "reqd": 1
+  },
+  {
+   "fieldname": "prize_label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u062c\u0627\u064a\u0632\u0629"
+  },
+  {
+   "fieldname": "coupon_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0643\u0648\u062f \u0627\u0644\u0643\u0648\u0628\u0648\u0646"
+  },
+  {
+   "fieldname": "discount_percent",
+   "fieldtype": "Int",
+   "label": "\u0627\u0644\u062e\u0635\u0645 %"
+  },
+  {
+   "fieldname": "spun_on",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0644\u0641\u0651\u0629"
+  },
+  {
+   "fieldname": "used",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "\u0627\u062a\u0633\u062a\u062e\u062f\u0645"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-11 18:38:05.547124",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Wheel Spin",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "email"
+}

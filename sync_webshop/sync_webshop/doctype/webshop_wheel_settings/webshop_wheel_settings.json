@@ -1,0 +1,99 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-08-11 18:38:04.868167",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "title_ar",
+  "subtitle_ar",
+  "cb1",
+  "cooldown_days",
+  "coupon_valid_days",
+  "min_order_amount",
+  "sec_prizes",
+  "prizes"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "\u0634\u063a\u0651\u0644 \u0639\u062c\u0644\u0629 \u0627\u0644\u062d\u0638"
+  },
+  {
+   "default": "\u062c\u0631\u0651\u0628 \u062d\u0638\u0643!",
+   "fieldname": "title_ar",
+   "fieldtype": "Data",
+   "label": "\u0627\u0644\u0639\u0646\u0648\u0627\u0646"
+  },
+  {
+   "default": "\u0644\u0641\u0651\u0629 \u0648\u0627\u062d\u062f\u0629 \u0648\u062e\u062f \u062e\u0635\u0645 \u0639\u0644\u0649 \u0623\u0648\u0644 \u0637\u0644\u0628.",
+   "fieldname": "subtitle_ar",
+   "fieldtype": "Small Text",
+   "label": "\u0633\u0637\u0631 \u062a\u062d\u062a \u0627\u0644\u0639\u0646\u0648\u0627\u0646"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "30",
+   "fieldname": "cooldown_days",
+   "fieldtype": "Int",
+   "label": "\u0643\u0644 \u0642\u062f \u0625\u064a\u0647 \u064a\u0642\u062f\u0631 \u064a\u0644\u0641 \u062a\u0627\u0646\u064a (\u0623\u064a\u0627\u0645)"
+  },
+  {
+   "default": "7",
+   "fieldname": "coupon_valid_days",
+   "fieldtype": "Int",
+   "label": "\u0627\u0644\u0643\u0648\u0628\u0648\u0646 \u0635\u0627\u0644\u062d \u0643\u0627\u0645 \u064a\u0648\u0645"
+  },
+  {
+   "default": "0",
+   "fieldname": "min_order_amount",
+   "fieldtype": "Currency",
+   "label": "\u0623\u0642\u0644 \u0642\u064a\u0645\u0629 \u0637\u0644\u0628 \u0644\u0627\u0633\u062a\u062e\u062f\u0627\u0645 \u0627\u0644\u0643\u0648\u0628\u0648\u0646"
+  },
+  {
+   "description": "\u063a\u064a\u0651\u0631 \u0627\u0644\u0623\u0633\u0645\u0627\u0621 \u0648\u0627\u0644\u0646\u0633\u0628 \u0632\u064a \u0645\u0627 \u062a\u062d\u0628. \u00ab\u0641\u0631\u0635\u0629 \u0627\u0644\u0638\u0647\u0648\u0631\u00bb \u0631\u0642\u0645 \u0646\u0633\u0628\u064a \u2014 \u062c\u0627\u064a\u0632\u0629 \u0628\u0631\u0642\u0645 30 \u0628\u062a\u0637\u0644\u0639 \u0663 \u0623\u0636\u0639\u0627\u0641 \u062c\u0627\u064a\u0632\u0629 \u0628\u0631\u0642\u0645 10.",
+   "fieldname": "sec_prizes",
+   "fieldtype": "Section Break",
+   "label": "\u0627\u0644\u062c\u0648\u0627\u064a\u0632"
+  },
+  {
+   "fieldname": "prizes",
+   "fieldtype": "Table",
+   "label": "\u0627\u0644\u062c\u0648\u0627\u064a\u0632",
+   "options": "Webshop Wheel Prize"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-11 18:38:04.868167",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Wheel Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -36,3 +36,5 @@ sync_webshop.patches.v0_1.fix_stats
 sync_webshop.patches.v0_1.social_address
 sync_webshop.patches.v0_1.make_report
 sync_webshop.patches.v0_1.brand_colors
+sync_webshop.patches.v0_1.make_wheel
+sync_webshop.patches.v0_1.wheel_api
