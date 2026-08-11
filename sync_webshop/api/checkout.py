@@ -77,7 +77,11 @@ def _clean_customer(customer):
 	if len(address) < 10:
 		frappe.throw(frappe._("اكتب عنوان التوصيل بالتفصيل."))
 
-	return {"name": name, "email": email, "phone": phone, "address": address, "city": city}
+	# The district is free text from a fixed list, so it is length-capped like
+	# the rest rather than trusted outright.
+	area = str(customer.get("area") or "").strip()[:140]
+	return {"name": name, "email": email, "phone": phone, "address": address,
+	        "city": city, "area": area}
 
 
 def _clean_items(items):
@@ -404,6 +408,9 @@ def _upsert_address(customer_name, customer):
 		"address_title": title,
 		"address_type": "Shipping",
 		"address_line1": customer["address"][:240],
+		# The district the customer picked. It is what the courier actually
+		# navigates by, so it goes on the address rather than into a note.
+		"address_line2": (customer.get("area") or "")[:140] or None,
 		"city": customer["city"] or "-",
 		"country": frappe.db.get_value("Company", _company(), "country") or "Egypt",
 		"phone": customer["phone"],

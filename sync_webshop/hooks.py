@@ -36,6 +36,13 @@ app_include_js = "/assets/sync_webshop/js/agent_widget.js"
 # Document Events
 # ------------------
 doc_events = {
+	"Territory": {
+		"on_update": "sync_webshop.api.regions.clear_regions_cache",
+		"on_trash": "sync_webshop.api.regions.clear_regions_cache",
+	},
+	"Webshop Shipping Zone": {
+		"on_update": "sync_webshop.api.regions.clear_regions_cache",
+	},
 	"Webshop Content Settings": {
 		"on_update": "sync_webshop.api.utils.clear_webshop_cache"
 	},
