@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+"""Take the address list from Turbo, since Turbo is who has to deliver to it."""
+import io
+
+P = "/home/frappe/frappe-bench-15/apps/sync_webshop/sync_webshop/api/regions.py"
+
+SRC = u'''# -*- coding: utf-8 -*-
 """
 المحافظات والمناطق — sourced from Turbo.
 
@@ -24,14 +30,14 @@ from sync_webshop.api.utils import set_cors_headers
 
 CACHE_KEY = "webshop_regions_v2"
 CACHE_TTL = 86400
-FALLBACK_FILE = frappe.get_site_path("private", "files", "turbo_regions.json")
+FALLBACK_KEY = "webshop_regions_fallback"
 TIMEOUT = 25
 
-COVERED = "\u0645\u063a\u0637\u0627\u0629"          # مغطاة
-PICKUP = "\u0646\u0642\u0637\u0629 \u062a\u0633\u0644\u064a\u0645"  # نقطة تسليم
+COVERED = "\\u0645\\u063a\\u0637\\u0627\\u0629"          # مغطاة
+PICKUP = "\\u0646\\u0642\\u0637\\u0629 \\u062a\\u0633\\u0644\\u064a\\u0645"  # نقطة تسليم
 
 # Turbo carries these as routing buckets, not places a shopper picks.
-SKIP_GOVERNORATES = {"\u0634\u062d\u0646 \u062f\u0648\u0644\u064a"}  # شحن دولي
+SKIP_GOVERNORATES = {"\\u0634\\u062d\\u0646 \\u062f\\u0648\\u0644\\u064a"}  # شحن دولي
 
 
 def _settings():
@@ -56,9 +62,9 @@ def _shipping_zone_names():
 	names = set()
 	for zone in frappe.get_all("Webshop Shipping Zone", pluck="name"):
 		raw = frappe.db.get_value("Webshop Shipping Zone", zone, "governorates") or ""
-		for sep in (",", "\n", "/"):
-			raw = raw.replace(sep, "\u060c")
-		names.update(p.strip() for p in raw.split("\u060c") if p.strip())
+		for sep in (",", "\\n", "/"):
+			raw = raw.replace(sep, "\\u060c")
+		names.update(p.strip() for p in raw.split("\\u060c") if p.strip())
 	return names
 
 
@@ -114,20 +120,11 @@ def get_regions():
 
 	if not data:
 		# Better a slightly stale list than a checkout nobody can complete.
-		try:
-			with open(FALLBACK_FILE, encoding="utf-8") as fh:
-				return json.load(fh)
-		except Exception:
-			return []
+		stale = frappe.db.get_default(FALLBACK_KEY)
+		return json.loads(stale) if stale else []
 
 	frappe.cache().set_value(CACHE_KEY, data, expires_in_sec=CACHE_TTL)
-	try:
-		import os
-		os.makedirs(os.path.dirname(FALLBACK_FILE), exist_ok=True)
-		with open(FALLBACK_FILE, "w", encoding="utf-8") as fh:
-			json.dump(data, fh, ensure_ascii=False)
-	except Exception:
-		pass  # the cache still has it; the fallback is a convenience
+	frappe.db.set_default(FALLBACK_KEY, json.dumps(data))
 	return data
 
 
@@ -154,3 +151,23 @@ def refresh_daily():
 		get_regions()
 	except Exception as exc:
 		frappe.log_error(title="Turbo regions daily refresh", message=str(exc)[:500])
+'''
+
+
+def execute():
+	import frappe
+
+	io.open(P, "w", encoding="utf-8").write(SRC)
+
+	h = "/home/frappe/frappe-bench-15/apps/sync_webshop/sync_webshop/hooks.py"
+	s = io.open(h, encoding="utf-8").read()
+	if "regions.refresh_daily" not in s and '"daily"' in s:
+		s = s.replace('"daily": [', '"daily": [\n\t\t"sync_webshop.api.regions.refresh_daily",', 1)
+		io.open(h, "w", encoding="utf-8").write(s)
+		print("hooks: daily refresh")
+
+	frappe.cache().delete_value("webshop_regions")
+	frappe.cache().delete_value("webshop_regions_v2")
+	frappe.db.commit()
+	frappe.clear_cache()
+	print("TURBO REGIONS READY")

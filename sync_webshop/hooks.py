@@ -74,6 +74,7 @@ doc_events = {
 # ------------------
 scheduler_events = {
 	"daily": [
+		"sync_webshop.api.regions.refresh_daily",
 		"sync_webshop.api.intelligence.daily_refresh",
 	],
 }
