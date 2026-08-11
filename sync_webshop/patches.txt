@@ -23,3 +23,4 @@ sync_webshop.patches.v0_1.wire_ai
 sync_webshop.patches.v0_1.fix_guard
 sync_webshop.patches.v0_1.split_ai_flag
 sync_webshop.patches.v0_1.add_size_settings
+sync_webshop.patches.v0_1.add_hero_settings

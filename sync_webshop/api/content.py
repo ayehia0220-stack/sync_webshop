@@ -330,6 +330,8 @@ def get_content():
 		# Lists
 		"nav_links": nav_links,
 		"social_links": social_links,
+		"hero_animation": settings.get("hero_animation") or "fade",
+		"footer_columns": settings.get("footer_columns") or 3,
 		"banners": banners,
 		"featured_categories": featured_categories,
 		"testimonials": testimonials,
