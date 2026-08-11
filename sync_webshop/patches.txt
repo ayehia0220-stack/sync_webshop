@@ -26,3 +26,4 @@ sync_webshop.patches.v0_1.add_size_settings
 sync_webshop.patches.v0_1.add_hero_settings
 sync_webshop.patches.v0_1.make_categories
 sync_webshop.patches.v0_1.wcat_api
+sync_webshop.patches.v0_1.seed_footer
