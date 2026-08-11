@@ -484,3 +484,20 @@ def get_category(slug, page=1, page_size=20, sort=None, search=None):
 	                     item_codes=_category_members(slug))
 	result["category"] = dict(cat, slug=slug)
 	return result
+
+
+@frappe.whitelist(allow_guest=True)
+def resolve_legacy_product(slug):
+	"""
+	Where an old dpono.com product address should land.
+
+	Matched slugs go straight to the item. The rest were bundle offers that the
+	new catalogue does not carry — those get the shop, because a visitor who
+	still cares about dpono coffee is better served by the catalogue than by a
+	404.
+	"""
+	set_cors_headers()
+	item = frappe.db.get_value("Item", {"legacy_slug": slug, "disabled": 0}, "name")
+	if item:
+		return {"found": True, "item_code": item}
+	return {"found": False, "redirect": "/products"}

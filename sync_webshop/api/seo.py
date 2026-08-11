@@ -67,6 +67,35 @@ def _urls():
 		{"loc": f"{base}/products", "changefreq": "daily", "priority": "0.9"},
 	]
 
+	urls.append({"loc": f"{base}/blog", "changefreq": "weekly", "priority": "0.8"})
+
+	# The articles carried over from dpono.com. Only the canonical /blog/<slug>
+	# goes in — the root path still answers, but listing both would ask Google
+	# to index the same article twice.
+	for post in frappe.get_all(
+		"Webshop Post", filters={"published": 1}, fields=["name", "modified"]
+	):
+		urls.append(
+			{
+				"loc": f"{base}/blog/{quote(post.name, safe='')}",
+				"lastmod": str(post.modified)[:10],
+				"changefreq": "monthly",
+				"priority": "0.7",
+			}
+		)
+
+	for group in frappe.get_all(
+		"Webshop Category", filters={"is_active": 1}, fields=["name", "modified"]
+	):
+		urls.append(
+			{
+				"loc": f"{base}/products?wcat={quote(group.name, safe='')}",
+				"lastmod": str(group.modified)[:10],
+				"changefreq": "weekly",
+				"priority": "0.75",
+			}
+		)
+
 	for group in frappe.get_all(
 		"Item Group", filters={"show_in_website": 1}, fields=["name", "modified"]
 	):
