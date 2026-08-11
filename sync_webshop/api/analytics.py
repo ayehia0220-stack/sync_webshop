@@ -94,11 +94,10 @@ def _compute_stats():
 		WHERE so.docstatus = 1
 	""")[0][0])
 
-	# Where the coffee has travelled — a delivery reach, not a marketing claim.
-	cities = _int(frappe.db.sql(
-		"SELECT COUNT(DISTINCT TRIM(a.city)) FROM (%s) o "
-		"JOIN `tabAddress` a ON a.name = o.shipping_address_name "
-		"WHERE IFNULL(a.city,'') != ''" % shop_orders)[0][0])
+	# Where the shop delivers, read from the shipping zones. Old ERP orders have
+	# no shipping address attached, so counting those gave zero.
+	from sync_webshop.patches.v0_1.coverage_page import count_governorates
+	cities = len(count_governorates())
 
 	# What a visitor can actually browse and buy today.
 	flavours = _int(frappe.db.sql("""
@@ -132,6 +131,7 @@ def get_store_stats():
 
 	# A floor the owner can set so a brand-new shop does not advertise "3 orders".
 	orders = max(raw["orders"], _int(settings.get("stats_min_orders")))
+	cities = _int(settings.get("stats_cities_override")) or raw["cities"]
 	customers = max(raw["customers"], _int(settings.get("stats_min_customers")))
 
 	items = [
@@ -141,7 +141,7 @@ def get_store_stats():
 		 "label_ar": "عميل رجع اشترى تاني", "label_en": "Customers who came back", "icon": "\U0001F501"},
 		{"key": "packs", "value": raw["packs"], "suffix": "+",
 		 "label_ar": "عبوة بن وصلت لبيوتكم", "label_en": "Packs shipped", "icon": "\u2615"},
-		{"key": "cities", "value": raw["cities"], "suffix": "",
+		{"key": "cities", "value": cities, "suffix": "",
 		 "label_ar": "محافظة بنوصلها", "label_en": "Cities we reach", "icon": "\U0001F69A"},
 		{"key": "flavours", "value": raw["flavours"], "suffix": "",
 		 "label_ar": "نكهة ودرجة تحميص", "label_en": "Flavours and roasts", "icon": "\U0001F31F"},

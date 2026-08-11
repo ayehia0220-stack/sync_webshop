@@ -41,3 +41,5 @@ sync_webshop.patches.v0_1.wheel_api
 sync_webshop.patches.v0_1.erp_theme
 sync_webshop.patches.v0_1.order_fields
 sync_webshop.patches.v0_1.whatsapp
+sync_webshop.patches.v0_1.coverage_page
+sync_webshop.patches.v0_1.coverage_stat
