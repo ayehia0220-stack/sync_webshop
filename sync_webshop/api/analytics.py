@@ -37,3 +37,122 @@ def get_analytics_settings():
 		"providers": providers,
 		"require_consent": bool(seo.get("require_cookie_consent")),
 	}
+
+
+# ============================================================================
+# أرقام المتجر — counted, never typed
+# ============================================================================
+
+STATS_CACHE_KEY = "webshop_store_stats"
+STATS_CACHE_TTL = 3600
+
+
+def _int(value):
+	try:
+		return int(value or 0)
+	except (TypeError, ValueError):
+		return 0
+
+
+def _compute_stats():
+	"""Read the real figures out of the submitted sales orders."""
+	settings = frappe.get_single("Webshop API Settings")
+	price_list = settings.default_price_list
+
+	# Only orders that contain something the storefront sells. The ERP also
+	# carries other lines of business under the same company.
+	shop_orders = """
+		SELECT DISTINCT so.name, so.customer, so.shipping_address_name
+		FROM `tabSales Order` so
+		JOIN `tabSales Order Item` soi ON soi.parent = so.name
+		JOIN `tabItem` i ON i.name = soi.item_code
+		JOIN `tabItem Group` g ON g.name = i.item_group AND g.show_in_website = 1
+		WHERE so.docstatus = 1
+	"""
+
+	orders = _int(frappe.db.sql(
+		"SELECT COUNT(*) FROM (%s) o" % shop_orders)[0][0])
+
+	# A customer who came back is the strongest signal a shop can show, so it
+	# is counted properly rather than approximated from the order total.
+	repeat = _int(frappe.db.sql(
+		"SELECT COUNT(*) FROM ("
+		"  SELECT customer FROM (%s) o WHERE IFNULL(customer,'') != ''"
+		"  GROUP BY customer HAVING COUNT(*) > 1"
+		") r" % shop_orders)[0][0])
+
+	customers = _int(frappe.db.sql(
+		"SELECT COUNT(DISTINCT customer) FROM (%s) o" % shop_orders)[0][0])
+
+	# Packs that actually left the roastery.
+	packs = _int(frappe.db.sql("""
+		SELECT COALESCE(SUM(soi.qty), 0)
+		FROM `tabSales Order Item` soi
+		JOIN `tabSales Order` so ON so.name = soi.parent
+		JOIN `tabItem` i ON i.name = soi.item_code
+		JOIN `tabItem Group` g ON g.name = i.item_group AND g.show_in_website = 1
+		WHERE so.docstatus = 1
+	""")[0][0])
+
+	# Where the coffee has travelled — a delivery reach, not a marketing claim.
+	cities = _int(frappe.db.sql(
+		"SELECT COUNT(DISTINCT TRIM(a.city)) FROM (%s) o "
+		"JOIN `tabAddress` a ON a.name = o.shipping_address_name "
+		"WHERE IFNULL(a.city,'') != ''" % shop_orders)[0][0])
+
+	# What a visitor can actually browse and buy today.
+	flavours = _int(frappe.db.sql("""
+		SELECT COUNT(DISTINCT i.name)
+		FROM `tabItem` i
+		JOIN `tabItem Price` p ON p.item_code = i.name AND p.price_list = %s AND p.selling = 1
+		JOIN `tabItem Group` g ON g.name = i.item_group AND g.show_in_website = 1
+		WHERE i.disabled = 0
+	""", price_list)[0][0])
+
+	articles = _int(frappe.db.count("Webshop Post", {"published": 1})) \
+		if frappe.db.exists("DocType", "Webshop Post") else 0
+
+	return {
+		"orders": orders, "repeat": repeat, "customers": customers,
+		"packs": packs, "cities": cities, "flavours": flavours, "articles": articles,
+	}
+
+
+@frappe.whitelist(allow_guest=True)
+def get_store_stats():
+	set_cors_headers()
+	settings = frappe.get_single("Webshop Content Settings")
+	if not settings.get("show_stats"):
+		return {"enabled": False, "items": []}
+
+	raw = frappe.cache().get_value(STATS_CACHE_KEY)
+	if raw is None:
+		raw = _compute_stats()
+		frappe.cache().set_value(STATS_CACHE_KEY, raw, expires_in_sec=STATS_CACHE_TTL)
+
+	# A floor the owner can set so a brand-new shop does not advertise "3 orders".
+	orders = max(raw["orders"], _int(settings.get("stats_min_orders")))
+	customers = max(raw["customers"], _int(settings.get("stats_min_customers")))
+
+	items = [
+		{"key": "orders", "value": orders, "suffix": "+",
+		 "label_ar": "طلب اتسلّم بنجاح", "label_en": "Orders delivered", "icon": "\U0001F4E6"},
+		{"key": "repeat", "value": raw["repeat"], "suffix": "+",
+		 "label_ar": "عميل رجع اشترى تاني", "label_en": "Customers who came back", "icon": "\U0001F501"},
+		{"key": "packs", "value": raw["packs"], "suffix": "+",
+		 "label_ar": "عبوة بن وصلت لبيوتكم", "label_en": "Packs shipped", "icon": "\u2615"},
+		{"key": "cities", "value": raw["cities"], "suffix": "",
+		 "label_ar": "محافظة بنوصلها", "label_en": "Cities we reach", "icon": "\U0001F69A"},
+		{"key": "flavours", "value": raw["flavours"], "suffix": "",
+		 "label_ar": "نكهة ودرجة تحميص", "label_en": "Flavours and roasts", "icon": "\U0001F31F"},
+	]
+	# A zero reads as "nobody buys here" — better to leave the tile out.
+	items = [i for i in items if i["value"] > 0]
+
+	return {
+		"enabled": True,
+		"title_ar": settings.get("stats_title_ar") or "دبونو في أرقام",
+		"title_en": settings.get("stats_title_en") or "dpono in numbers",
+		"customers": customers,
+		"items": items,
+	}
