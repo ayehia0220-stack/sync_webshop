@@ -138,10 +138,8 @@ def build_payload(order, creds):
 		# Collect unless the order is provably paid already. The payment method
 		# is free text ("Cash on Delivery", "cod", …) and cannot be matched
 		# reliably, so the paid flag is what decides.
-		"amount_to_be_collected": (
-			0 if str(order.get("webshop_payment_status") or "").strip().lower()
-			     in ("paid", "مدفوع")
-			else float(order.grand_total or 0)),
+		# The balance, not the order value — see amount_still_owed.
+		"amount_to_be_collected": amount_still_owed(order),
 		"is_order": 0,
 		"is_fragile": 1 if settings.is_fragile else 0,
 		"can_open": 1 if settings.allow_open else 0,
@@ -205,6 +203,7 @@ def create_shipment(order_name):
 		# The waybill print button predates this integration and reads the
 		# older field; leaving it empty switched that button off.
 		"custom_turbo_tracking_code": str(number),
+		"turbo_cod_amount": payload.get("amount_to_be_collected") or 0,
 		"turbo_branch": (feed.get("expected_branch") or "")[:140] or None,
 		"turbo_error": None,
 		"turbo_last_sync": now_datetime(),
@@ -395,3 +394,41 @@ def on_preparation_status(doc, method=None):
 		frappe.msgprint(
 			frappe._("\u062a\u0631\u0628\u0648 \u0631\u0641\u0636 \u0627\u0644\u0634\u062d\u0646\u0629") + ": " + str(result.get("message")),
 			indicator="red", title=frappe._("\u0627\u0644\u0634\u062d\u0646\u0629 \u0645\u0627\u062a\u0645\u062a\u0634"))
+
+
+def amount_still_owed(order):
+	"""
+	What the courier should collect at the door.
+
+	Counts money received three ways, because the shop uses all three: an
+	advance recorded on the order, payments allocated to it, and payments
+	against an invoice raised from it. Anything already in hand must not be
+	asked for twice.
+	"""
+	total = float(order.grand_total or 0)
+
+	# 1. Marked paid by the storefront (card, wallet).
+	if str(order.get("webshop_payment_status") or "").strip().lower() in ("paid", "\u0645\u062f\u0641\u0648\u0639"):
+		return 0.0
+
+	# 2. ERPNext keeps advances against the order here.
+	received = float(order.get("advance_paid") or 0)
+
+	# 3. Payments settled against invoices raised from this order.
+	invoiced = frappe.db.sql(
+		"""
+		SELECT COALESCE(SUM(si.grand_total - si.outstanding_amount), 0)
+		FROM `tabSales Invoice` si
+		JOIN `tabSales Invoice Item` sii ON sii.parent = si.name
+		WHERE si.docstatus = 1 AND sii.sales_order = %s
+		""",
+		order.name,
+	)[0][0]
+
+	# Rounding between an invoice total and its outstanding balance can make
+	# this negative; treat that as "nothing received" rather than a credit.
+	received += max(float(invoiced or 0), 0.0)
+
+	owed = total - received
+	# Between zero and the order value, whatever the arithmetic says.
+	return round(min(max(owed, 0.0), total), 2)
