@@ -202,6 +202,9 @@ def create_shipment(order_name):
 
 	order.db_set({
 		"turbo_order_number": str(number),
+		# The waybill print button predates this integration and reads the
+		# older field; leaving it empty switched that button off.
+		"custom_turbo_tracking_code": str(number),
 		"turbo_branch": (feed.get("expected_branch") or "")[:140] or None,
 		"turbo_error": None,
 		"turbo_last_sync": now_datetime(),
@@ -330,3 +333,30 @@ def on_order_submit(doc, method=None):
 		# The sale already happened; a courier problem must not undo it.
 		frappe.log_error(title="Turbo auto-create failed",
 		                 message="%s\n%s" % (doc.name, str(exc)[:400]))
+
+
+@frappe.whitelist()
+def refresh_status(order_name):
+	"""Ask Turbo about one order now, for the button on the form."""
+	creds = _credentials()
+	if not creds:
+		frappe.throw(frappe._("\u062a\u0631\u0628\u0648 \u0645\u0642\u0641\u0648\u0644."))
+
+	number = frappe.db.get_value("Sales Order", order_name, "turbo_order_number")
+	if not number:
+		frappe.throw(frappe._("\u0645\u0641\u064a\u0634 \u0634\u062d\u0646\u0629 \u0644\u0644\u0637\u0644\u0628 \u062f\u0647."))
+
+	ok, result = _call("/external-api/search-order",
+	                   {"search_Key": str(number)}, creds)
+	if not ok:
+		return {"ok": False, "message": result}
+
+	rows = result.get("result") or result.get("feed") or []
+	if isinstance(rows, dict):
+		rows = [rows]
+	if not rows:
+		return {"ok": False, "message": "not found at Turbo"}
+
+	_apply_status(order_name, rows[0])
+	frappe.db.commit()
+	return {"ok": True}
