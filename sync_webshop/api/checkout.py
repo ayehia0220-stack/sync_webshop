@@ -489,7 +489,8 @@ def _find_or_create_customer(customer):
 @frappe.whitelist(allow_guest=True)
 def create_order(
 	customer, items, payment_method=None, delivery_date=None,
-	note=None, coupon_code=None, idempotency_key=None, submit=True, **kwargs
+	note=None, coupon_code=None, idempotency_key=None, submit=True,
+	notify_via=None, phone_alt=None, **kwargs
 ):
 	"""
 	Turn a cart into a Sales Order. Everything that decides money — prices,
@@ -565,6 +566,8 @@ def create_order(
 			"webshop_payment_status": "COD" if (gateway.gateway_type if gateway else method) in ("Cash on Delivery", "cod") else "Pending",
 			"webshop_idempotency_key": idempotency_key,
 			"webshop_customer_note": (note or "")[:500] or None,
+			"webshop_notify_via": (notify_via or "").strip().lower() or None,
+			"webshop_phone_alt": (phone_alt or "").strip()[:20] or None,
 			"contact_email": clean_customer["email"],
 			"contact_mobile": clean_customer["phone"],
 			"items": [
