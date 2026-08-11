@@ -66,7 +66,10 @@ doc_events = {
 	},
 	"Sales Order": {
 		"on_submit": "sync_webshop.api.notifications.on_sales_order_submit",
-		"on_update_after_submit": "sync_webshop.api.notifications.on_sales_order_update"
+		"on_update_after_submit": [
+			"sync_webshop.api.notifications.on_sales_order_update",
+			"sync_webshop.api.turbo.on_preparation_status",
+		]
 	}
 }
 

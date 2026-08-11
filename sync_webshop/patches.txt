@@ -51,3 +51,5 @@ sync_webshop.patches.v0_1.turbo_api
 sync_webshop.patches.v0_1.fix_turbo
 sync_webshop.patches.v0_1.turbo_buttons
 sync_webshop.patches.v0_1.fix_section
+sync_webshop.patches.v0_1.turbo_trigger
+sync_webshop.patches.v0_1.turbo_workspace
