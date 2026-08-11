@@ -7,6 +7,8 @@ the wording is edited in the Desk, never here. Each message is sent at most
 once per order — a resave, a background retry, or a double submit will not
 send it twice.
 """
+import requests
+
 import frappe
 
 CONFIRMATION_TEMPLATE = "Webshop Order Confirmation"
@@ -171,3 +173,105 @@ def resend_order_email(sales_order, kind="confirmation"):
 	template = CONFIRMATION_TEMPLATE if kind == "confirmation" else SHIPPED_TEMPLATE
 	sent = _send(doc, template, kind)
 	return {"sent": sent, "to": _recipient(doc)}
+
+
+# ============================================================================
+# واتساب — WhatsApp Cloud API
+# ============================================================================
+
+def _wa_settings():
+	s = frappe.get_single("Webshop Content Settings")
+	if not s.get("wa_enabled"):
+		return None
+	token = s.get_password("wa_token", raise_exception=False)
+	phone_id = (s.get("wa_phone_number_id") or "").strip()
+	if not token or not phone_id:
+		return None
+	return frappe._dict({
+		"token": token,
+		"phone_id": phone_id,
+		"language": (s.get("wa_language") or "ar").strip(),
+		"confirm": (s.get("wa_template_confirm") or "").strip(),
+		"shipped": (s.get("wa_template_shipped") or "").strip(),
+	})
+
+
+def normalise_msisdn(phone):
+	"""
+	An Egyptian mobile in the form Meta expects: 20 then ten digits, no plus.
+
+	Customers type 01012345678, +201012345678, 0020..., or with spaces. Sending
+	any of those verbatim gets silently dropped by Meta.
+	"""
+	digits = "".join(ch for ch in str(phone or "") if ch.isdigit())
+	if digits.startswith("00"):
+		digits = digits[2:]
+	if digits.startswith("0") and len(digits) == 11:
+		digits = "20" + digits[1:]
+	elif len(digits) == 10 and digits.startswith("1"):
+		digits = "20" + digits
+	return digits if digits.startswith("20") and len(digits) == 12 else None
+
+
+def send_whatsapp_template(phone, template, params=None):
+	"""
+	One templated message. Returns (ok, detail) — never raises into the caller,
+	because a messaging failure must not roll back an order that was placed.
+	"""
+	settings = _wa_settings()
+	if not settings or not template:
+		return False, "whatsapp not configured"
+
+	to = normalise_msisdn(phone)
+	if not to:
+		return False, "bad number: %s" % phone
+
+	body = {
+		"messaging_product": "whatsapp",
+		"to": to,
+		"type": "template",
+		"template": {
+			"name": template,
+			"language": {"code": settings.language},
+		},
+	}
+	if params:
+		body["template"]["components"] = [{
+			"type": "body",
+			"parameters": [{"type": "text", "text": str(p)} for p in params],
+		}]
+
+	try:
+		res = requests.post(
+			"https://graph.facebook.com/v21.0/%s/messages" % settings.phone_id,
+			headers={
+				"Authorization": "Bearer %s" % settings.token,
+				"Content-Type": "application/json",
+			},
+			data=json.dumps(body),
+			timeout=TIMEOUT,
+		)
+		ok = res.status_code < 300
+		detail = res.text[:400]
+	except Exception as exc:
+		ok, detail = False, str(exc)[:400]
+
+	if not ok:
+		# Logged, not swallowed — the shop needs to know a customer went untold.
+		frappe.log_error(
+			title="WhatsApp send failed",
+			message="to=%s template=%s\n%s" % (to, template, detail),
+		)
+	return ok, detail
+
+
+@frappe.whitelist()
+def send_test(phone):
+	"""Fire one message from the Desk so the setup can be proven before launch."""
+	settings = _wa_settings()
+	if not settings:
+		frappe.throw(frappe._("فعّل واتساب وحط التوكن و Phone Number ID الأول."))
+	if not settings.confirm:
+		frappe.throw(frappe._("اكتب اسم قالب تأكيد الطلب."))
+	ok, detail = send_whatsapp_template(phone, settings.confirm, ["اختبار", "0"])
+	return {"ok": ok, "detail": detail}
