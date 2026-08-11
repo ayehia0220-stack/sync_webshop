@@ -54,3 +54,4 @@ sync_webshop.patches.v0_1.fix_section
 sync_webshop.patches.v0_1.turbo_trigger
 sync_webshop.patches.v0_1.turbo_workspace
 sync_webshop.patches.v0_1.fix_categories
+sync_webshop.patches.v0_1.category_tree

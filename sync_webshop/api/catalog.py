@@ -449,26 +449,44 @@ def _category_members(slug):
 
 @frappe.whitelist(allow_guest=True)
 def get_webshop_categories(with_counts=1):
+	"""
+	The shop's categories, parents with their children nested.
+
+	Empty categories are included unless the owner unticks "اعرضها حتى لو فاضية" —
+	they are building the shelf, and a category that vanishes until a product
+	happens to match a keyword looks broken.
+	"""
 	set_cors_headers()
 	require_catalog_access()
 
-	cats = frappe.get_all(
+	rows = frappe.get_all(
 		"Webshop Category", filters={"is_active": 1},
 		fields=["name as slug", "category_name", "category_name_en", "image", "icon",
-		        "description_ar", "sort_order"],
+		        "description_ar", "sort_order", "parent_category", "show_when_empty"],
 		order_by="sort_order asc, category_name asc")
 
 	price_list = _get_price_list()
-	for c in cats:
+	for c in rows:
 		c["count"] = 0
-		if not int(with_counts or 0):
-			continue
-		codes = _category_members(c["slug"])
-		if codes:
-			# Only count what a shopper could actually buy.
-			c["count"] = frappe.db.count("Item Price", {
-				"item_code": ["in", codes], "price_list": price_list, "selling": 1})
-	return cats
+		if int(with_counts or 0):
+			codes = _category_members(c["slug"])
+			if codes:
+				c["count"] = frappe.db.count("Item Price", {
+					"item_code": ["in", codes], "price_list": price_list, "selling": 1})
+
+	by_slug = {c["slug"]: c for c in rows}
+	tree = []
+	for c in rows:
+		c["children"] = []
+		parent = by_slug.get(c.get("parent_category") or "")
+		(parent["children"] if parent else tree).append(c)
+
+	def keep(c):
+		# A parent earns its place if any child does.
+		c["children"] = [k for k in c["children"] if keep(k)]
+		return bool(c["count"]) or bool(c["children"]) or bool(c.get("show_when_empty"))
+
+	return [c for c in tree if keep(c)]
 
 
 @frappe.whitelist(allow_guest=True)
