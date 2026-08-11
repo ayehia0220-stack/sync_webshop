@@ -329,6 +329,7 @@ def get_content():
 		"show_back_to_top": settings.show_back_to_top,
 		# Lists
 		"nav_links": nav_links,
+		"google_maps_url": settings.get("google_maps_url") or "",
 		"social_links": social_links,
 		"hero_animation": settings.get("hero_animation") or "fade",
 		"footer_columns": settings.get("footer_columns") or 3,
