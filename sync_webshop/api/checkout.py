@@ -80,8 +80,21 @@ def _clean_customer(customer):
 	# The district is free text from a fixed list, so it is length-capped like
 	# the rest rather than trusted outright.
 	area = str(customer.get("area") or "").strip()[:140]
+
+	# An optional map pin. Anything outside real coordinates is discarded
+	# rather than stored as a wrong location.
+	def _coord(value, limit):
+		try:
+			num = float(value)
+		except (TypeError, ValueError):
+			return None
+		return num if -limit <= num <= limit else None
+
+	lat = _coord(customer.get("geo_lat"), 90)
+	lng = _coord(customer.get("geo_lng"), 180)
+
 	return {"name": name, "email": email, "phone": phone, "address": address,
-	        "city": city, "area": area}
+	        "city": city, "area": area, "geo_lat": lat, "geo_lng": lng}
 
 
 def _clean_items(items):
@@ -412,6 +425,10 @@ def _upsert_address(customer_name, customer):
 		# navigates by, so it goes on the address rather than into a note.
 		"address_line2": (customer.get("area") or "")[:140] or None,
 		"city": customer["city"] or "-",
+		# Standard ERPNext address fields, so a courier integration can read
+		# the pin without knowing anything about the webshop app.
+		"latitude": customer.get("geo_lat"),
+		"longitude": customer.get("geo_lng"),
 		"country": frappe.db.get_value("Company", _company(), "country") or "Egypt",
 		"phone": customer["phone"],
 		"email_id": customer["email"],
