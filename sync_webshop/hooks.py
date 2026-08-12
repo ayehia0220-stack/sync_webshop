@@ -65,6 +65,10 @@ doc_events = {
 		"on_update": "sync_webshop.api.utils.clear_webshop_cache"
 	},
 	"Sales Order": {
+		"validate": [
+			"sync_webshop.api.turbo.fill_customer_address",
+			"sync_webshop.api.turbo.check_cod_amount",
+		],
 		"on_submit": "sync_webshop.api.notifications.on_sales_order_submit",
 		"on_update_after_submit": [
 			"sync_webshop.api.notifications.on_sales_order_update",

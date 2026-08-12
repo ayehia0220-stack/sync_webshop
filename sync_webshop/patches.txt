@@ -58,3 +58,5 @@ sync_webshop.patches.v0_1.category_tree
 sync_webshop.patches.v0_1.fix_cod
 sync_webshop.patches.v0_1.flavour_folders
 sync_webshop.patches.v0_1.seo_preview
+sync_webshop.patches.v0_1.auto_address
+sync_webshop.patches.v0_1.cod_editable

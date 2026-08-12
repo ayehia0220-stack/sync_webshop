@@ -1,0 +1,45 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-08-13 00:49:57.015136",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "topic",
+  "answer"
+ ],
+ "fields": [
+  {
+   "description": "\u0645\u062b\u0627\u0644: \u0627\u0644\u0634\u062d\u0646\u060c \u0645\u0648\u0627\u0639\u064a\u062f \u0627\u0644\u062a\u0633\u0644\u064a\u0645\u060c \u0627\u0644\u062f\u0641\u0639\u060c \u0631\u0642\u0645 \u062e\u062f\u0645\u0629 \u0627\u0644\u0639\u0645\u0644\u0627\u0621",
+   "fieldname": "topic",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0645\u0648\u0636\u0648\u0639 / Topic",
+   "reqd": 1
+  },
+  {
+   "description": "\u0627\u0643\u062a\u0628 \u0627\u0644\u062d\u0642\u064a\u0642\u0629 \u0628\u0627\u0644\u0638\u0628\u0637. \u0627\u0644\u0645\u0633\u0627\u0639\u062f \u0645\u0645\u0646\u0648\u0639 \u064a\u0642\u0648\u0644 \u063a\u064a\u0631 \u0627\u0644\u0644\u064a \u0645\u0643\u062a\u0648\u0628 \u0647\u0646\u0627.",
+   "fieldname": "answer",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0645\u0639\u0644\u0648\u0645\u0629 \u0627\u0644\u0635\u062d / The Answer",
+   "reqd": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-08-13 00:49:57.015136",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Agent Fact",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -106,6 +106,10 @@ def build_payload(order, creds):
 	if not addr:
 		return None, "\u0627\u0644\u0637\u0644\u0628 \u0645\u0641\u064a\u0647\u0648\u0634 \u0639\u0646\u0648\u0627\u0646 \u0634\u062d\u0646"
 
+	# Nobody ships on a number nobody read.
+	if not order.get("turbo_cod_confirmed"):
+		return None, "علّم على مراجعة مبلغ التحصيل الأول"
+
 	pieces = [order.get("webshop_customer_note") or ""]
 	link = _map_note(addr, settings)
 	if link and settings.map_link_field == "notes":
@@ -139,7 +143,10 @@ def build_payload(order, creds):
 		# is free text ("Cash on Delivery", "cod", …) and cannot be matched
 		# reliably, so the paid flag is what decides.
 		# The balance, not the order value — see amount_still_owed.
-		"amount_to_be_collected": amount_still_owed(order),
+		# What the desk reviewed and saved, not a fresh calculation — a
+		# deliberate correction has to survive the trip.
+		"amount_to_be_collected": float(
+			order.get("turbo_cod_amount") or amount_still_owed(order)),
 		"is_order": 0,
 		"is_fragile": 1 if settings.is_fragile else 0,
 		"can_open": 1 if settings.allow_open else 0,
@@ -432,3 +439,145 @@ def amount_still_owed(order):
 	owed = total - received
 	# Between zero and the order value, whatever the arithmetic says.
 	return round(min(max(owed, 0.0), total), 2)
+
+
+# ============================================================================
+# عنوان العميل — filled from the customer record
+# ============================================================================
+
+def _preferred_address(customer):
+	"""
+	The address to put on the order.
+
+	Shipping beats billing because this field is what the courier reads, and
+	the primary flag beats the rest. Falls back to whatever exists rather than
+	leaving the field empty.
+	"""
+	rows = frappe.db.sql(
+		"""
+		SELECT a.name, a.address_type, a.is_primary_address, a.is_shipping_address
+		FROM `tabAddress` a
+		JOIN `tabDynamic Link` dl ON dl.parent = a.name AND dl.parenttype = 'Address'
+		WHERE dl.link_doctype = 'Customer' AND dl.link_name = %s
+		  AND IFNULL(a.disabled, 0) = 0
+		ORDER BY a.is_shipping_address DESC, a.is_primary_address DESC, a.modified DESC
+		LIMIT 1
+		""",
+		customer, as_dict=True)
+	return rows[0].name if rows else None
+
+
+def format_address(address_name):
+	"""One readable line: street, area, city."""
+	if not address_name:
+		return ""
+	addr = frappe.db.get_value(
+		"Address", address_name,
+		["address_line1", "address_line2", "city"], as_dict=True)
+	if not addr:
+		return ""
+	parts = [(addr.address_line1 or "").strip(),
+	         (addr.address_line2 or "").strip(),
+	         (addr.city or "").strip()]
+	# "-" is what the checkout writes when a city is unknown; it reads as noise.
+	return " - ".join(p for p in parts if p and p != "-")
+
+
+@frappe.whitelist()
+def address_for_customer(customer):
+	"""Called by the form the moment a customer is chosen."""
+	if not customer:
+		return {"address": ""}
+	text = format_address(_preferred_address(customer))
+	return {"address": text or _address_from_last_order(customer)}
+
+
+def fill_customer_address(doc, method=None):
+	"""Fill the field on save, but never over something a person typed."""
+	if doc.get("custom_address_for_customer_"):
+		return
+	if not doc.get("customer"):
+		return
+
+	# An address already chosen on the order is more specific than the
+	# customer's default, so it wins.
+	source = doc.get("shipping_address_name") or doc.get("customer_address") \
+		or _preferred_address(doc.customer)
+	text = format_address(source) or _address_from_last_order(doc.customer, doc.name)
+	if text:
+		doc.custom_address_for_customer_ = text[:140]
+
+
+def _address_from_last_order(customer, exclude=None):
+	"""The address typed on this customer's most recent order."""
+	rows = frappe.db.sql(
+		"""
+		SELECT custom_address_for_customer_ AS addr
+		FROM `tabSales Order`
+		WHERE customer = %(customer)s
+		  AND IFNULL(custom_address_for_customer_, '') != ''
+		  AND name != %(exclude)s
+		ORDER BY creation DESC
+		LIMIT 1
+		""",
+		{"customer": customer, "exclude": exclude or ""}, as_dict=True)
+	if not rows:
+		return ""
+	text = (rows[0].addr or "").strip()
+	return text if _looks_like_address(text) else ""
+
+
+def _looks_like_address(text):
+	"""
+	Enough to route a courier by.
+
+	Not a validator — just a filter against the placeholders sitting in old
+	records ("..", "تجديد"). An address has some length and more than one word.
+	"""
+	text = (text or "").strip()
+	if len(text) < 10:
+		return False
+	if len(text.split()) < 2:
+		return False
+	# Mostly punctuation or digits is not a place.
+	letters = sum(1 for ch in text if ch.isalpha())
+	return letters >= 6
+
+
+def check_cod_amount(doc, method=None):
+	"""
+	Keep the collection amount honest.
+
+	Empty means nobody has set it, so it takes the computed balance. A number
+	below that balance is refused — raising it is a business call (a surcharge,
+	a rounding up), lowering it is money the shop will not see.
+	"""
+	if doc.docstatus == 2:
+		return
+
+	expected = amount_still_owed(doc)
+	current = doc.get("turbo_cod_amount")
+
+	if current in (None, ""):
+		doc.turbo_cod_amount = expected
+		return
+
+	if float(current) < expected - 0.01:
+		frappe.throw(
+			frappe._(
+				"\u0627\u0644\u0645\u0637\u0644\u0648\u0628 \u062a\u062d\u0635\u064a\u0644\u0647 \u0645\u0627\u064a\u0646\u0641\u0639\u0634 \u064a\u0642\u0644 \u0639\u0646 {0}. "
+				"\u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a {1} \u0646\u0627\u0642\u0635 \u0627\u0644\u0645\u062f\u0641\u0648\u0639 {2}."
+			).format(
+				frappe.format_value(expected, {"fieldtype": "Currency"}),
+				frappe.format_value(doc.grand_total or 0, {"fieldtype": "Currency"}),
+				frappe.format_value((doc.grand_total or 0) - expected, {"fieldtype": "Currency"}),
+			),
+			title=frappe._("\u0645\u0628\u0644\u063a \u0627\u0644\u062a\u062d\u0635\u064a\u0644"),
+		)
+
+
+@frappe.whitelist()
+def expected_cod(order_name):
+	"""The floor for this order, for the form to show and default to."""
+	order = frappe.get_doc("Sales Order", order_name)
+	return {"owed": amount_still_owed(order)}
