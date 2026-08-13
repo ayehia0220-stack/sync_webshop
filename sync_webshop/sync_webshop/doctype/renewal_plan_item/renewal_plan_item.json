@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-08-13 01:41:46.926600",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "qty",
+  "rate"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0635\u0646\u0641 / Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0643\u0645\u064a\u0629"
+  },
+  {
+   "description": "\u0633\u064a\u0628\u0647 \u0641\u0627\u0636\u064a \u0639\u0634\u0627\u0646 \u064a\u0627\u062e\u062f \u0633\u0639\u0631 \u0627\u0644\u0635\u0646\u0641 \u0645\u0646 \u0642\u0627\u0626\u0645\u0629 \u0623\u0633\u0639\u0627\u0631 ERPNext.",
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0633\u0639\u0631"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-08-13 01:41:46.926600",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Renewal Plan Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

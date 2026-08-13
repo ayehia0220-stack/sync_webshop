@@ -1,0 +1,336 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-08-13 01:17:50.244520",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "cb0",
+  "instance_name",
+  "sec_timing",
+  "send_hours",
+  "cb1",
+  "skip_friday",
+  "sec_safety",
+  "daily_limit",
+  "min_delay_seconds",
+  "cb2",
+  "max_delay_seconds",
+  "batch_pause_every",
+  "batch_pause_minutes",
+  "sec_choices",
+  "choices_text",
+  "sec_prices",
+  "price_yearly",
+  "price_lifetime",
+  "cb3",
+  "lifetime_until_year",
+  "prices_text",
+  "sec_payment",
+  "payment_image",
+  "cb4",
+  "payment_text",
+  "sec_optout",
+  "optout_reply",
+  "cb5",
+  "support_reply",
+  "sec_ticket",
+  "create_ticket",
+  "ticket_owner",
+  "sec_sales",
+  "auto_sales_order",
+  "yearly_items",
+  "sec_life_items",
+  "lifetime_items",
+  "cb6",
+  "auto_payment_entry",
+  "payment_account"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "description": "\u0633\u064a\u0628\u0647\u0627 \u0645\u0642\u0641\u0648\u0644\u0629 \u0644\u062d\u062f \u0645\u0627 \u062a\u062c\u0631\u0628 \u0648\u062a\u062a\u0637\u0645\u0646.",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "\u0627\u0644\u062d\u0645\u0644\u0629 \u0634\u063a\u0651\u0627\u0644\u0629"
+  },
+  {
+   "fieldname": "cb0",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "97",
+   "description": "\u0627\u0633\u0645 \u0627\u0644\u0640 instance \u0641\u064a Evolution. \u0627\u0644\u062d\u0627\u0644\u064a: 97",
+   "fieldname": "instance_name",
+   "fieldtype": "Data",
+   "label": "\u0631\u0642\u0645 \u0627\u0644\u0648\u0627\u062a\u0633\u0627\u0628 \u0627\u0644\u0645\u064f\u0631\u0633\u0650\u0644"
+  },
+  {
+   "description": "\u0627\u0644\u0631\u0633\u0627\u064a\u0644 \u0628\u062a\u062a\u0628\u0639\u062a \u0641\u064a \u0633\u0627\u0639\u0629 \u0645\u062e\u062a\u0644\u0641\u0629 \u0643\u0644 \u064a\u0648\u0645 \u0639\u0634\u0627\u0646 \u0645\u062a\u0628\u0642\u0627\u0634 \u0646\u0645\u0637 \u062b\u0627\u0628\u062a.",
+   "fieldname": "sec_timing",
+   "fieldtype": "Section Break",
+   "label": "\u0627\u0644\u062a\u0648\u0642\u064a\u062a / Timing"
+  },
+  {
+   "default": "5,6,7",
+   "description": "\u0623\u0631\u0642\u0627\u0645 \u0627\u0644\u0633\u0627\u0639\u0627\u062a \u0645\u0641\u0635\u0648\u0644\u0629 \u0628\u0641\u0627\u0635\u0644\u0629. \u0643\u0644 \u064a\u0648\u0645 \u0628\u064a\u062a\u062e\u062a\u0627\u0631 \u0648\u0627\u062d\u062f\u0629 \u0645\u0646\u0647\u0645.",
+   "fieldname": "send_hours",
+   "fieldtype": "Data",
+   "label": "\u0633\u0627\u0639\u0627\u062a \u0627\u0644\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0645\u0633\u0645\u0648\u062d\u0629"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "skip_friday",
+   "fieldtype": "Check",
+   "label": "\u0645\u062a\u0628\u0639\u062a\u0634 \u064a\u0648\u0645 \u0627\u0644\u062c\u0645\u0639\u0629"
+  },
+  {
+   "description": "\u0623\u0647\u0645 \u0642\u0633\u0645. \u0639\u0646\u062f\u0643 \u0623\u0643\u062a\u0631 \u0645\u0646 1000 \u0627\u0634\u062a\u0631\u0627\u0643 \u2014 \u0627\u0644\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0645\u062a\u0633\u0631\u0651\u0639 \u0628\u064a\u062a\u062d\u0638\u0631.",
+   "fieldname": "sec_safety",
+   "fieldtype": "Section Break",
+   "label": "\u062d\u0645\u0627\u064a\u0629 \u0627\u0644\u0631\u0642\u0645 \u0645\u0646 \u0627\u0644\u062d\u0638\u0631 / Anti-Ban"
+  },
+  {
+   "default": "80",
+   "description": "\u0627\u0628\u062f\u0623 \u0628\u0640 40-80 \u0648\u0632\u0648\u0651\u062f \u0628\u0627\u0644\u0631\u0627\u062d\u0629 \u0639\u0644\u0649 \u0645\u062f\u0649 \u0623\u0633\u0627\u0628\u064a\u0639. \u0645\u062a\u0639\u062f\u0651\u064a\u0634 200.",
+   "fieldname": "daily_limit",
+   "fieldtype": "Int",
+   "label": "\u0623\u0642\u0635\u0649 \u0639\u062f\u062f \u0631\u0633\u0627\u064a\u0644 \u0641\u064a \u0627\u0644\u064a\u0648\u0645"
+  },
+  {
+   "default": "45",
+   "fieldname": "min_delay_seconds",
+   "fieldtype": "Int",
+   "label": "\u0623\u0642\u0644 \u0627\u0646\u062a\u0638\u0627\u0631 \u0628\u064a\u0646 \u0631\u0633\u0627\u0644\u062a\u064a\u0646 (\u062b\u0627\u0646\u064a\u0629)"
+  },
+  {
+   "fieldname": "cb2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "150",
+   "fieldname": "max_delay_seconds",
+   "fieldtype": "Int",
+   "label": "\u0623\u0643\u0628\u0631 \u0627\u0646\u062a\u0638\u0627\u0631 \u0628\u064a\u0646 \u0631\u0633\u0627\u0644\u062a\u064a\u0646 (\u062b\u0627\u0646\u064a\u0629)"
+  },
+  {
+   "default": "15",
+   "fieldname": "batch_pause_every",
+   "fieldtype": "Int",
+   "label": "\u0627\u0633\u062a\u0631\u064a\u062d \u0628\u0639\u062f \u0643\u0644 \u0643\u0627\u0645 \u0631\u0633\u0627\u0644\u0629"
+  },
+  {
+   "default": "10",
+   "fieldname": "batch_pause_minutes",
+   "fieldtype": "Int",
+   "label": "\u0645\u062f\u0629 \u0627\u0644\u0627\u0633\u062a\u0631\u0627\u062d\u0629 (\u062f\u0642\u064a\u0642\u0629)"
+  },
+  {
+   "description": "\u0628\u064a\u062a\u0636\u0627\u0641 \u0641\u064a \u0622\u062e\u0631 \u0643\u0644 \u0631\u0633\u0627\u0644\u0629 \u062a\u062c\u062f\u064a\u062f.",
+   "fieldname": "sec_choices",
+   "fieldtype": "Section Break",
+   "label": "\u0633\u0637\u0631 \u0627\u0644\u0627\u062e\u062a\u064a\u0627\u0631\u0627\u062a / Reply Options"
+  },
+  {
+   "default": "\u0631\u062f\u0651 \u0628\u0640 1 \u0644\u0644\u062a\u062c\u062f\u064a\u062f \u0648\u0627\u0644\u0627\u0637\u0644\u0627\u0639 \u0639\u0644\u0649 \u0627\u0644\u0623\u0633\u0639\u0627\u0631\n\u0631\u062f\u0651 \u0628\u0640 2 \u0644\u0648 \u0645\u0634 \u0639\u0627\u064a\u0632 \u0631\u0633\u0627\u064a\u0644 \u062a\u0627\u0646\u064a\u0629",
+   "fieldname": "choices_text",
+   "fieldtype": "Small Text",
+   "label": "\u0646\u0635 \u0627\u0644\u0627\u062e\u062a\u064a\u0627\u0631\u0627\u062a"
+  },
+  {
+   "fieldname": "sec_prices",
+   "fieldtype": "Section Break",
+   "label": "\u0627\u0644\u0623\u0633\u0639\u0627\u0631 / Prices"
+  },
+  {
+   "default": "1040",
+   "fieldname": "price_yearly",
+   "fieldtype": "Currency",
+   "label": "\u0627\u0634\u062a\u0631\u0627\u0643 \u0633\u0646\u0629"
+  },
+  {
+   "default": "2440",
+   "fieldname": "price_lifetime",
+   "fieldtype": "Currency",
+   "label": "\u0627\u0634\u062a\u0631\u0627\u0643 \u0645\u062f\u0649 \u0627\u0644\u062d\u064a\u0627\u0629"
+  },
+  {
+   "fieldname": "cb3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "2099",
+   "fieldname": "lifetime_until_year",
+   "fieldtype": "Int",
+   "label": "\u0645\u062f\u0649 \u0627\u0644\u062d\u064a\u0627\u0629 \u0644\u062d\u062f \u0633\u0646\u0629"
+  },
+  {
+   "default": "\u0623\u0647\u0644\u0627\u064b {\u0627\u0644\u0627\u0633\u0645} \ud83d\ude4f\n\n\u0623\u0633\u0639\u0627\u0631 \u062a\u062c\u062f\u064a\u062f \u0627\u0644\u0627\u0634\u062a\u0631\u0627\u0643:\n\u25aa\ufe0f \u0633\u0646\u0629 \u0648\u0627\u062d\u062f\u0629: {\u0633\u0639\u0631_\u0627\u0644\u0633\u0646\u0629} \u062c\u0646\u064a\u0647\n\u25aa\ufe0f \u0645\u062f\u0649 \u0627\u0644\u062d\u064a\u0627\u0629 \u062d\u062a\u0649 {\u0633\u0646\u0629_\u0627\u0644\u0646\u0647\u0627\u064a\u0629}: {\u0633\u0639\u0631_\u0645\u062f\u0649_\u0627\u0644\u062d\u064a\u0627\u0629} \u062c\u0646\u064a\u0647\n\n\u0631\u062f\u0651 \u0628\u0640 1 \u0639\u0634\u0627\u0646 \u0646\u0628\u0639\u062a\u0644\u0643 \u0637\u0631\u0642 \u0627\u0644\u062f\u0641\u0639\n\u0631\u062f\u0651 \u0628\u0640 2 \u0639\u0634\u0627\u0646 \u064a\u062a\u0635\u0644 \u0628\u064a\u0643 \u0645\u0648\u0638\u0641 \u062e\u062f\u0645\u0629 \u0627\u0644\u0639\u0645\u0644\u0627\u0621",
+   "description": "\u0645\u062a\u0627\u062d: {\u0627\u0644\u0627\u0633\u0645} {\u0633\u0639\u0631_\u0627\u0644\u0633\u0646\u0629} {\u0633\u0639\u0631_\u0645\u062f\u0649_\u0627\u0644\u062d\u064a\u0627\u0629} {\u0633\u0646\u0629_\u0627\u0644\u0646\u0647\u0627\u064a\u0629}",
+   "fieldname": "prices_text",
+   "fieldtype": "Text",
+   "label": "\u0646\u0635 \u0631\u0633\u0627\u0644\u0629 \u0627\u0644\u0623\u0633\u0639\u0627\u0631"
+  },
+  {
+   "fieldname": "sec_payment",
+   "fieldtype": "Section Break",
+   "label": "\u0637\u0631\u0642 \u0627\u0644\u062f\u0641\u0639 / Payment"
+  },
+  {
+   "description": "\u0627\u0631\u0641\u0639 \u0627\u0644\u0635\u0648\u0631\u0629 \u0647\u0646\u0627 \u0648\u0647\u064a \u0627\u0644\u0644\u064a \u0647\u062a\u062a\u0628\u0639\u062a \u0644\u0644\u0639\u0645\u064a\u0644 \u0644\u0645\u0627 \u064a\u0637\u0644\u0628 \u0637\u0631\u0642 \u0627\u0644\u062f\u0641\u0639.",
+   "fieldname": "payment_image",
+   "fieldtype": "Attach Image",
+   "label": "\u0635\u0648\u0631\u0629 \u0637\u0631\u0642 \u0627\u0644\u062f\u0641\u0639"
+  },
+  {
+   "fieldname": "cb4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "\u0637\u0631\u0642 \u0627\u0644\u062f\u0641\u0639 \u0627\u0644\u0645\u062a\u0627\u062d\u0629 \ud83d\udc47\n\n\u0628\u0639\u062f \u0627\u0644\u062a\u062d\u0648\u064a\u0644 \u0627\u0628\u0639\u062a\u0644\u0646\u0627 \u0635\u0648\u0631\u0629 \u0627\u0644\u0625\u064a\u0635\u0627\u0644 \u0648\u0647\u0646\u0641\u0639\u0651\u0644 \u0627\u0634\u062a\u0631\u0627\u0643\u0643 \u0641\u0648\u0631\u064b\u0627 \u2705",
+   "description": "\u0628\u064a\u062a\u0628\u0639\u062a \u0645\u0639 \u0627\u0644\u0635\u0648\u0631\u0629\u060c \u0623\u0648 \u0644\u0648\u062d\u062f\u0647 \u0644\u0648 \u0645\u0641\u064a\u0634 \u0635\u0648\u0631\u0629.",
+   "fieldname": "payment_text",
+   "fieldtype": "Text",
+   "label": "\u0646\u0635 \u0637\u0631\u0642 \u0627\u0644\u062f\u0641\u0639"
+  },
+  {
+   "fieldname": "sec_optout",
+   "fieldtype": "Section Break",
+   "label": "\u0644\u0648 \u0627\u0644\u0639\u0645\u064a\u0644 \u0631\u0641\u0636 / Opt-out"
+  },
+  {
+   "default": "\u062a\u0645\u0627\u0645\u060c \u0645\u0634 \u0647\u0646\u0628\u0639\u062a\u0644\u0643 \u0631\u0633\u0627\u064a\u0644 \u062a\u0627\u0646\u064a\u0629 \u0639\u0646 \u0627\u0644\u062a\u062c\u062f\u064a\u062f. \u0644\u0648 \u0627\u062d\u062a\u062c\u062a\u0646\u0627 \u0641\u064a \u0623\u064a \u0648\u0642\u062a \u0625\u062d\u0646\u0627 \u0645\u0648\u062c\u0648\u062f\u064a\u0646 \ud83c\udf39",
+   "fieldname": "optout_reply",
+   "fieldtype": "Small Text",
+   "label": "\u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0645\u0646 \u064a\u0631\u0641\u0636"
+  },
+  {
+   "fieldname": "cb5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "\u062a\u0645\u0627\u0645 \ud83d\udc4d \u062d\u0648\u0651\u0644\u062a \u0637\u0644\u0628\u0643 \u0644\u062e\u062f\u0645\u0629 \u0627\u0644\u0639\u0645\u0644\u0627\u0621\u060c \u0648\u062d\u062f \u0645\u0646 \u0627\u0644\u0641\u0631\u064a\u0642 \u0647\u064a\u062a\u0635\u0644 \u0628\u064a\u0643 \u0641\u064a \u0623\u0642\u0631\u0628 \u0648\u0642\u062a.",
+   "fieldname": "support_reply",
+   "fieldtype": "Small Text",
+   "label": "\u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0637\u0644\u0628 \u062e\u062f\u0645\u0629 \u0627\u0644\u0639\u0645\u0644\u0627\u0621"
+  },
+  {
+   "fieldname": "sec_ticket",
+   "fieldtype": "Section Break",
+   "label": "\u062a\u0630\u0643\u0631\u0629 \u0627\u0644\u0645\u0648\u0638\u0641 / Ticket"
+  },
+  {
+   "default": "1",
+   "description": "\u0628\u062a\u062a\u0639\u0645\u0644 \u0643\u0640 ToDo \u0639\u0644\u0649 \u0627\u0644\u0645\u0648\u0638\u0641 \u0627\u0644\u0645\u0633\u0624\u0648\u0644.",
+   "fieldname": "create_ticket",
+   "fieldtype": "Check",
+   "label": "\u0627\u0639\u0645\u0644 \u062a\u0630\u0643\u0631\u0629 \u0644\u0644\u0645\u0648\u0638\u0641"
+  },
+  {
+   "description": "\u0627\u0644\u062a\u0630\u0627\u0643\u0631 \u0647\u062a\u062a\u0633\u0646\u062f \u0644\u0647. \u0633\u064a\u0628\u0647\u0627 \u0641\u0627\u0636\u064a\u0629 \u0639\u0634\u0627\u0646 \u062a\u0631\u0648\u062d \u0644\u0643\u0644 \u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645.",
+   "fieldname": "ticket_owner",
+   "fieldtype": "Link",
+   "label": "\u0627\u0644\u0645\u0648\u0638\u0641 \u0627\u0644\u0645\u0633\u0624\u0648\u0644",
+   "options": "User"
+  },
+  {
+   "fieldname": "sec_sales",
+   "fieldtype": "Section Break",
+   "label": "\u0644\u0645\u0627 \u0627\u0644\u0639\u0645\u064a\u0644 \u064a\u062f\u0641\u0639 / On Payment"
+  },
+  {
+   "default": "1",
+   "fieldname": "auto_sales_order",
+   "fieldtype": "Check",
+   "label": "\u0627\u0639\u0645\u0644 \u0623\u0645\u0631 \u0628\u064a\u0639 \u062a\u0644\u0642\u0627\u0626\u064a"
+  },
+  {
+   "fieldname": "cb6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "description": "\u0633\u064a\u0628\u0647\u0627 \u0645\u0642\u0641\u0648\u0644\u0629 \u0644\u062d\u062f \u0645\u0627 \u062a\u062a\u0637\u0645\u0646 \u2014 \u0627\u0644\u0642\u064a\u062f \u0628\u064a\u0623\u062b\u0631 \u0639\u0644\u0649 \u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a.",
+   "fieldname": "auto_payment_entry",
+   "fieldtype": "Check",
+   "label": "\u0627\u0639\u0645\u0644 \u0642\u064a\u062f \u062f\u0641\u0639 \u062a\u0644\u0642\u0627\u0626\u064a"
+  },
+  {
+   "fieldname": "payment_account",
+   "fieldtype": "Link",
+   "label": "\u062d\u0633\u0627\u0628 \u0627\u0633\u062a\u0644\u0627\u0645 \u0627\u0644\u0641\u0644\u0648\u0633",
+   "options": "Account"
+  },
+  {
+   "description": "\u0627\u0644\u0628\u0646\u0648\u062f \u0627\u0644\u0644\u064a \u0628\u062a\u062a\u062d\u0637 \u0641\u064a \u0623\u0645\u0631 \u0627\u0644\u0628\u064a\u0639 \u0644\u0645\u0627 \u0627\u0644\u0639\u0645\u064a\u0644 \u064a\u062c\u062f\u062f \u0633\u0646\u0629.",
+   "fieldname": "yearly_items",
+   "fieldtype": "Table",
+   "label": "\u0623\u0635\u0646\u0627\u0641 \u062e\u0637\u0629 \u0627\u0644\u0633\u0646\u0629",
+   "options": "Renewal Plan Item"
+  },
+  {
+   "fieldname": "sec_life_items",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "\u0645\u0645\u0643\u0646 \u062a\u062d\u0637 \u0623\u0643\u062a\u0631 \u0645\u0646 \u0635\u0646\u0641 \u2014 \u0627\u0644\u0645\u062c\u0645\u0648\u0639 \u0647\u0648 \u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0646\u0647\u0627\u0626\u064a.",
+   "fieldname": "lifetime_items",
+   "fieldtype": "Table",
+   "label": "\u0623\u0635\u0646\u0627\u0641 \u062e\u0637\u0629 \u0645\u062f\u0649 \u0627\u0644\u062d\u064a\u0627\u0629",
+   "options": "Renewal Plan Item"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-13 01:41:47.665938",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Renewal Campaign Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

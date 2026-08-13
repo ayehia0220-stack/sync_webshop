@@ -1,0 +1,119 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2026-08-13 01:17:50.584243",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "mobile_number",
+  "customer_name",
+  "cb1",
+  "direction",
+  "subscription",
+  "sec_body",
+  "body",
+  "state_after"
+ ],
+ "fields": [
+  {
+   "fieldname": "mobile_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0631\u0642\u0645 \u0627\u0644\u0645\u0648\u0628\u0627\u064a\u0644",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0627\u0633\u0645 \u0627\u0644\u0639\u0645\u064a\u0644"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "direction",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0627\u062a\u062c\u0627\u0647",
+   "options": "\u0635\u0627\u062f\u0631\n\u0648\u0627\u0631\u062f"
+  },
+  {
+   "fieldname": "subscription",
+   "fieldtype": "Link",
+   "label": "\u0627\u0644\u0627\u0634\u062a\u0631\u0627\u0643",
+   "options": "Customer Subscription"
+  },
+  {
+   "fieldname": "sec_body",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "body",
+   "fieldtype": "Text",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0646\u0635"
+  },
+  {
+   "fieldname": "state_after",
+   "fieldtype": "Data",
+   "label": "\u062d\u0627\u0644\u0629 \u0627\u0644\u0645\u062d\u0627\u062f\u062b\u0629 \u0628\u0639\u062f\u0647\u0627"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-13 01:17:50.584243",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Renewal Conversation Log",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "mobile_number",
+ "track_changes": 1
+}

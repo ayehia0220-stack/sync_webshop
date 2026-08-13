@@ -648,6 +648,10 @@ def create_order(
 
 	frappe.db.commit()
 
+	# إشعار المالك — فشله مبيأثرش على الطلب
+	from sync_webshop.api.owner_alerts import notify_owner_new_order
+	notify_owner_new_order(so, payment_method=payment_method)
+
 	return {
 		"sales_order": so.name,
 		"customer": customer_name,
