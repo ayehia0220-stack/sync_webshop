@@ -37,11 +37,22 @@ def execute():
 	for folder in (INBOX, DONE, FAILED):
 		os.makedirs(folder, exist_ok=True)
 
-	items = frappe.get_all("Item", filters={"disabled": 0}, fields=["name", "item_name"])
+	# Every name a photo might reasonably be filed under: the factory code, the
+	# ERP name, the shop title, and the URL slug. Naming a file after what the
+	# customer sees should work as well as naming it after the item code.
+	items = frappe.get_all(
+		"Item", filters={"disabled": 0},
+		fields=["name", "item_name", "website_title", "web_slug"])
 	by_name = {}
 	for item in items:
-		by_name.setdefault(norm(item.item_name), []).append(item.name)
-		by_name.setdefault(norm(item.name), []).append(item.name)
+		for label in (item.item_name, item.name, item.website_title, item.web_slug):
+			if not label:
+				continue
+			by_name.setdefault(norm(label), []).append(item.name)
+			# Shop titles carry a "| brand 125 جم" tail that a filename usually drops.
+			head = str(label).split("|")[0]
+			if head != label:
+				by_name.setdefault(norm(head), []).append(item.name)
 
 	imported, unmatched, ambiguous = [], [], []
 
@@ -73,14 +84,25 @@ def execute():
 		target = os.path.join(BASE, "files", safe)
 		shutil.copyfile(path, target)
 
-		if not frappe.db.exists("File", {"file_name": safe}):
-			frappe.get_doc({
+		# Frappe renames the File when the name is already taken, so the record
+		# can end up pointing somewhere other than the path written above. Use
+		# whatever URL it settled on — otherwise the item carries two copies of
+		# the same photo and the gallery shows it twice.
+		existing = frappe.db.get_value(
+			"File", {"file_name": safe, "attached_to_name": item_code}, "file_url")
+		if existing:
+			file_url = existing
+		else:
+			doc = frappe.get_doc({
 				"doctype": "File", "file_name": safe, "file_url": "/files/" + safe,
 				"is_private": 0, "file_size": os.path.getsize(target),
 				"attached_to_doctype": "Item", "attached_to_name": item_code,
 			}).insert(ignore_permissions=True)
+			file_url = doc.file_url
+			if file_url != "/files/" + safe and os.path.exists(target):
+				os.remove(target)
 
-		frappe.db.set_value("Item", item_code, "image", "/files/" + safe, update_modified=False)
+		frappe.db.set_value("Item", item_code, "image", file_url, update_modified=False)
 		imported.append({"file": filename, "item": item_code})
 		shutil.move(path, os.path.join(DONE, filename))
 

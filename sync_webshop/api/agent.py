@@ -370,7 +370,20 @@ def answer(question, channel="ERP"):
 
 @frappe.whitelist()
 def ask(question):
-	"""Called from the Desk. Never allow_guest — this reads business data."""
+	"""Called from the Desk. Never allow_guest — this reads business data.
+
+	The unified assistant understands the question instead of matching
+	keywords, so it goes first. `answer` below stays as the fallback for
+	when the model is unreachable.
+	"""
+	try:
+		from sync_webshop.api.assistant import ask as smart_ask
+
+		result = smart_ask(question, channel="ERP")
+		if result and result.get("reply"):
+			return result
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "agent.ask -> assistant")
 	return answer(question, channel="ERP")
 
 

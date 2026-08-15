@@ -7,13 +7,18 @@ from sync_webshop.api.utils import set_cors_headers, full_url, require_catalog_a
 # Sorting is user supplied, so it is mapped through this whitelist and never
 # interpolated from the request.
 SORT_OPTIONS = {
+	# Shuffled, but seeded on the date so it stays stable while a shopper pages
+	# through the list — a genuinely random ORDER BY would repeat and drop items
+	# across pages. Sold-out items are mixed in rather than pushed to the end,
+	# so the shelf reads as a full range instead of a short one with a tail.
+	"shuffle": "MD5(CONCAT(i.item_code, CURDATE()))",
 	"name_asc": "i.item_name ASC",
 	"name_desc": "i.item_name DESC",
 	"price_asc": "price IS NULL, price ASC",
 	"price_desc": "price IS NULL, price DESC",
 	"newest": "i.creation DESC",
 }
-DEFAULT_SORT = "name_asc"
+DEFAULT_SORT = "shuffle"
 
 MAX_PAGE_SIZE = 100
 
@@ -105,7 +110,7 @@ BASE_FROM = """
 			it.name AS item_code,
 			COALESCE(NULLIF(it.website_title, ''), it.item_name) AS item_name,
 			COALESCE(NULLIF(it.website_short_description, ''), it.description) AS description,
-			it.image,
+			it.image, it.web_slug, it.size_variant_225,
 			it.item_group, it.stock_uom, it.creation, it.disabled,
 			ip.price_list_rate AS price, ip.currency,
 			COALESCE(bin.qty, 0) AS stock_qty
@@ -145,7 +150,8 @@ def get_catalog(
 
 	rows = frappe.db.sql(
 		f"""
-		SELECT i.item_code, i.item_name, i.description, i.image, i.item_group,
+		SELECT i.item_code, i.item_name, i.description, i.image, i.web_slug,
+		       i.size_variant_225, i.item_group,
 		       i.stock_uom, i.price, i.currency, i.stock_qty
 		{BASE_FROM}
 		WHERE {where}
@@ -160,9 +166,15 @@ def get_catalog(
 		f"SELECT COUNT(*) {BASE_FROM} WHERE {where}", params
 	)[0][0]
 
+	big_map = _big_sizes([r.size_variant_225 for r in rows], price_list)
+
 	items = [
 		{
 			"item_code": r.item_code,
+			# What the address bar should show. Falls back to the code so a
+			# product without a slug still has a working link.
+			"slug": r.web_slug or r.item_code,
+			"sizes": _sizes_for(r.item_code, r.price, r.currency, r.size_variant_225, big_map, r.item_name),
 			"item_name": r.item_name,
 			"description": r.description,
 			"image": full_url(r.image),
@@ -189,6 +201,70 @@ def get_catalog(
 	}
 
 
+def _big_sizes(big_codes, price_list):
+	"""
+	Price and stock for a batch of 225g packs, keyed by item code.
+
+	Batched on purpose: a twenty-product page would otherwise fire two extra
+	queries per card.
+	"""
+	codes = sorted({c for c in big_codes if c})
+	if not codes:
+		return {}
+	rows = frappe.db.sql("""
+		SELECT it.name, ip.price_list_rate, ip.currency,
+		       COALESCE(bin.qty, 0) AS stock_qty
+		FROM `tabItem` it
+		JOIN `tabItem Price` ip
+			ON ip.item_code = it.name AND ip.price_list = %(price_list)s AND ip.selling = 1
+		LEFT JOIN (
+			SELECT item_code, SUM(actual_qty) AS qty FROM `tabBin` GROUP BY item_code
+		) bin ON bin.item_code = it.name
+		WHERE it.name IN %(codes)s AND it.disabled = 0
+	""", {"price_list": price_list, "codes": tuple(codes)}, as_dict=True)
+	return {r.name: r for r in rows}
+
+
+def _name_for_225(name):
+	"""
+	The 125g name rewritten for the bigger pack.
+
+	Shop titles are built as "… | بن دي بونو 125 جم", so swapping the weight
+	keeps the cart line honest without giving the 225g item its own title —
+	it is not published as a product in its own right.
+	"""
+	if not name:
+		return name
+	out = name.replace("125 جم", "225 جم").replace("125g", "225g")
+	return out if out != name else "%s — 225 جم" % name
+
+
+def _sizes_for(item_code, base_price, currency, big_code, big_map, item_name=None):
+	"""
+	The pack sizes a shopper can pick between, smallest first.
+
+	The 125g pack is the product they landed on; the 225g pack is a separate
+	item in the ERP with its own price and stock, so it is offered only when it
+	is actually sellable — a size that fails at checkout is worse than no size.
+	"""
+	sizes = [{
+		"label_ar": "125 جم", "label_en": "125g",
+		"item_code": item_code, "item_name": item_name,
+		"price": float(base_price) if base_price is not None else None,
+		"currency": currency, "in_stock": True, "default": True,
+	}]
+	big = big_map.get(big_code) if big_code else None
+	if big:
+		sizes.append({
+			"label_ar": "225 جم", "label_en": "225g",
+			"item_code": big_code, "item_name": _name_for_225(item_name),
+			"price": float(big.price_list_rate),
+			"currency": big.currency or currency,
+			"in_stock": (big.stock_qty or 0) > 0, "default": False,
+		})
+	return sizes
+
+
 def _get_price_range(price_list, item_group=None):
 	"""Cheapest and dearest sellable item, used to seed the price filter."""
 	groups = _allowed_groups(item_group)
@@ -208,20 +284,27 @@ def _get_price_range(price_list, item_group=None):
 
 @frappe.whitelist(allow_guest=True)
 def get_item(item_code):
-	"""Full detail for a single item, for the product detail page."""
+	"""
+	Full detail for a single item, for the product detail page.
+
+	Accepts either the readable slug or the raw item code, so the links we
+	published before slugs existed keep resolving.
+	"""
 	set_cors_headers()
 	require_catalog_access()
 
+	FIELDS = ["name", "item_name", "website_title", "description", "website_short_description",
+	          "item_group", "image", "stock_uom", "brand", "web_slug", "size_variant_225"]
+
 	allowed = _website_item_groups()
-	item = frappe.db.get_value(
-		"Item",
-		{"name": item_code, "disabled": 0},
-		["name", "item_name", "website_title", "description", "website_short_description",
-		 "item_group", "image", "stock_uom", "brand"],
-		as_dict=True,
-	)
+	item = frappe.db.get_value("Item", {"web_slug": item_code, "disabled": 0}, FIELDS, as_dict=True)
+	if not item:
+		item = frappe.db.get_value("Item", {"name": item_code, "disabled": 0}, FIELDS, as_dict=True)
 	if not item or (allowed is not None and item.item_group not in allowed):
 		frappe.throw("Item not found", frappe.DoesNotExistError)
+
+	# Everything below keys off the real code, not whatever the caller passed.
+	item_code = item.name
 
 	price_list = _get_price_list()
 	price = frappe.db.get_value(
@@ -245,8 +328,19 @@ def get_item(item_code):
 		)
 		crumbs = [{"name": a.name, "label": a.website_title or a.item_group_name} for a in ancestors]
 
+	big_map = _big_sizes([item.size_variant_225], price_list)
+
 	return {
 		"item_code": item.name,
+		"slug": item.web_slug or item.name,
+		"sizes": _sizes_for(
+			item.name,
+			price.price_list_rate if price else None,
+			price.currency if price else None,
+			item.size_variant_225,
+			big_map,
+			item.website_title or item.item_name,
+		),
 		"item_name": item.website_title or item.item_name,
 		"description": item.website_short_description or item.description,
 		"item_group": item.item_group,
@@ -375,20 +469,27 @@ def get_search_suggestions(search):
 			}
 		)
 
-	item_filters = {"disabled": 0, "item_name": ["like", f"%{search}%"]}
+	# Match the name the shopper actually sees, not the factory code — searching
+	# "قهوة" must find products whose internal name is "عبوة منتج تام-125-...".
+	base_filters = {"disabled": 0}
 	if allowed is not None:
-		item_filters["item_group"] = ["in", allowed]
+		base_filters["item_group"] = ["in", allowed]
+	fields = ["name as item_code", "item_name", "website_title", "web_slug", "image", "item_group"]
 	items = frappe.get_all(
 		"Item",
-		filters=item_filters,
-		fields=["name as item_code", "item_name", "website_title", "image", "item_group"],
+		filters=base_filters,
+		or_filters={
+			"website_title": ["like", f"%{search}%"],
+			"item_name": ["like", f"%{search}%"],
+		},
+		fields=fields,
 		limit_page_length=5,
 	)
 	for i in items:
 		results.append(
 			{
 				"type": "item",
-				"id": i.item_code,
+				"id": i.web_slug or i.item_code,
 				"name": i.website_title or i.item_name,
 				"image": full_url(i.image) if i.image else None,
 				"category": i.item_group,
@@ -515,7 +616,12 @@ def resolve_legacy_product(slug):
 	404.
 	"""
 	set_cors_headers()
-	item = frappe.db.get_value("Item", {"legacy_slug": slug, "disabled": 0}, "name")
+	item = frappe.db.get_value(
+		"Item", {"legacy_slug": slug, "disabled": 0}, ["name", "web_slug"], as_dict=True)
+	if not item:
+		# Some old addresses already match the new slug — honour those too.
+		item = frappe.db.get_value(
+			"Item", {"web_slug": slug, "disabled": 0}, ["name", "web_slug"], as_dict=True)
 	if item:
-		return {"found": True, "item_code": item}
+		return {"found": True, "item_code": item.web_slug or item.name}
 	return {"found": False, "redirect": "/products"}

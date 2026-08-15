@@ -1,0 +1,122 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "hash",
+ "creation": "2026-08-13 17:24:05.490166",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "to_number",
+  "extension",
+  "status",
+  "cb1",
+  "requested_by",
+  "customer",
+  "sec_result",
+  "error"
+ ],
+ "fields": [
+  {
+   "fieldname": "to_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u0631\u0642\u0645 \u0627\u0644\u0645\u0637\u0644\u0648\u0628",
+   "reqd": 1
+  },
+  {
+   "fieldname": "extension",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "\u0645\u0646 \u062a\u062d\u0648\u064a\u0644\u0629",
+   "reqd": 1
+  },
+  {
+   "default": "\u0641\u064a \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "\u0627\u0644\u062d\u0627\u0644\u0629",
+   "options": "\u0641\u064a \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631\n\u0627\u062a\u0646\u0641\u0630\n\u0641\u0634\u0644"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "requested_by",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "\u0637\u0644\u0628\u0647\u0627",
+   "options": "User"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "\u0627\u0644\u0639\u0645\u064a\u0644",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "sec_result",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "error",
+   "fieldtype": "Small Text",
+   "label": "\u0627\u0644\u062e\u0637\u0623",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-08-13 17:24:05.490166",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Call Request",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "to_number"
+}

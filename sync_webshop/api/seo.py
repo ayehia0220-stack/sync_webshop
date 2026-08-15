@@ -47,7 +47,7 @@ def _sellable_items():
 
 	return frappe.db.sql(
 		f"""
-		SELECT i.name AS item_code, i.modified
+		SELECT i.name AS item_code, i.web_slug, i.modified
 		FROM `tabItem` i
 		JOIN `tabItem Price` ip
 			ON ip.item_code = i.name AND ip.price_list = %(price_list)s AND ip.selling = 1
@@ -111,7 +111,8 @@ def _urls():
 	for item in _sellable_items():
 		urls.append(
 			{
-				"loc": f"{base}/products/{quote(item.item_code, safe='')}",
+				# The readable slug is the canonical address; the code is only a fallback.
+				"loc": f"{base}/products/{quote(item.web_slug or item.item_code, safe='')}",
 				"lastmod": str(item.modified)[:10],
 				"changefreq": "weekly",
 				"priority": "0.8",

@@ -54,21 +54,45 @@ def _int(value):
 		return 0
 
 
+def _finished_goods_groups():
+	"""Every item group under the finished-goods tree — the coffee we make."""
+	root = frappe.db.get_value("Item Group", "منتج تام", ["lft", "rgt"], as_dict=True)
+	if not root:
+		return frappe.get_all("Item Group", filters={"show_in_website": 1}, pluck="name")
+	return frappe.get_all(
+		"Item Group",
+		filters={"lft": [">=", root.lft], "rgt": ["<=", root.rgt]},
+		pluck="name",
+	)
+
+
+def _sql_tuple(values):
+	"""An escaped IN (...) list. Values come from the item tree, never from a request."""
+	if not values:
+		return "('__none__')"
+	return "(%s)" % ", ".join(frappe.db.escape(v) for v in values)
+
+
 def _compute_stats():
 	"""Read the real figures out of the submitted sales orders."""
 	settings = frappe.get_single("Webshop API Settings")
 	price_list = settings.default_price_list
 
-	# Only orders that contain something the storefront sells. The ERP also
-	# carries other lines of business under the same company.
+	# Only orders for the coffee side of the business — the ERP also carries the
+	# GPS line under the same company.
+	#
+	# Scoped to the finished-goods tree, NOT to "show_in_website". Those figures
+	# describe what the roastery has actually done over the years; narrowing the
+	# shop window to one item group must not erase the history behind it.
+	coffee_tree = _finished_goods_groups()
+
 	shop_orders = """
 		SELECT DISTINCT so.name, so.customer, so.shipping_address_name
 		FROM `tabSales Order` so
 		JOIN `tabSales Order Item` soi ON soi.parent = so.name
 		JOIN `tabItem` i ON i.name = soi.item_code
-		JOIN `tabItem Group` g ON g.name = i.item_group AND g.show_in_website = 1
-		WHERE so.docstatus = 1
-	"""
+		WHERE so.docstatus = 1 AND i.item_group IN %(groups)s
+	""" % {"groups": _sql_tuple(coffee_tree)}
 
 	orders = _int(frappe.db.sql(
 		"SELECT COUNT(*) FROM (%s) o" % shop_orders)[0][0])
@@ -90,23 +114,26 @@ def _compute_stats():
 		FROM `tabSales Order Item` soi
 		JOIN `tabSales Order` so ON so.name = soi.parent
 		JOIN `tabItem` i ON i.name = soi.item_code
-		JOIN `tabItem Group` g ON g.name = i.item_group AND g.show_in_website = 1
-		WHERE so.docstatus = 1
-	""")[0][0])
+		WHERE so.docstatus = 1 AND i.item_group IN %(groups)s
+	""" % {"groups": _sql_tuple(coffee_tree)})[0][0])
 
 	# Where the shop delivers, read from the shipping zones. Old ERP orders have
 	# no shipping address attached, so counting those gave zero.
 	from sync_webshop.patches.v0_1.coverage_page import count_governorates
 	cities = len(count_governorates())
 
-	# What a visitor can actually browse and buy today.
+	# What a visitor can actually browse and buy today. "Show in website" is
+	# inherited down the group tree, so a plain join on the flag misses every
+	# product sitting in a child group and reports zero.
+	from sync_webshop.api.catalog import _website_item_groups
+	shown = _website_item_groups()
 	flavours = _int(frappe.db.sql("""
 		SELECT COUNT(DISTINCT i.name)
 		FROM `tabItem` i
-		JOIN `tabItem Price` p ON p.item_code = i.name AND p.price_list = %s AND p.selling = 1
-		JOIN `tabItem Group` g ON g.name = i.item_group AND g.show_in_website = 1
-		WHERE i.disabled = 0
-	""", price_list)[0][0])
+		JOIN `tabItem Price` p ON p.item_code = i.name AND p.price_list = %%s AND p.selling = 1
+		WHERE i.disabled = 0 AND i.item_group IN %(groups)s
+	""" % {"groups": _sql_tuple(shown) if shown is not None else "(SELECT name FROM `tabItem Group`)"},
+		price_list)[0][0])
 
 	articles = _int(frappe.db.count("Webshop Post", {"published": 1})) \
 		if frappe.db.exists("DocType", "Webshop Post") else 0

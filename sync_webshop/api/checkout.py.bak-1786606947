@@ -233,20 +233,14 @@ def _gateways_from_documents():
 		fields=[
 			"name", "gateway_type", "label_ar", "label_en",
 			"instructions_ar", "instructions_en", "extra_fee", "public_key", "mode",
-			"mode_of_payment",
 		],
 		order_by="sort_order asc, name asc",
 	)
 	gateways = []
 	for row in rows:
-		# طريقة الدفع الرسمية عايشة في Mode of Payment بتاع ERPNext؛ المستند ده
-		# بيتحكم في شكلها للعميل بس. بوابة مش مربوطة = فلوس متعرفش تترحّل فين.
-		if not row.get("mode_of_payment"):
-			continue
 		gateways.append(
 			{
 				"name": row.name,
-				"mode_of_payment": row.mode_of_payment,
 				"type": row.gateway_type,
 				"label_ar": row.label_ar or row.name,
 				"label_en": row.label_en or row.label_ar or row.name,

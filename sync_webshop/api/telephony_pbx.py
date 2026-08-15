@@ -1,0 +1,267 @@
+# -*- coding: utf-8 -*-
+"""
+استقبال المكالمات من سنترال Issabel وتسجيلها في `Call Log` بتاع ERPNext.
+
+السنترال على شبكة داخلية والـ ERP على سيرفر برّه، فالاتجاه دايمًا
+سنترال ← ERP. محدش بيدخل على السنترال، هو اللي بيبعت — وده بيخلينا
+منعرّضهوش على الإنترنت.
+
+بيستخدم `Call Log` الأصلي بتاع ERPNext مش دوك تايب جديد.
+"""
+import re
+
+import frappe
+from frappe.utils import now_datetime
+
+MEDIUM = "Issabel"
+
+# حالات معناها إن المكالمة اترد عليها — مبتترجعش لورا مهما جه حدث بعدها
+FINAL_WINS = ("Completed", "In Progress")
+
+
+def _token():
+	return frappe.db.get_single_value("Webshop Content Settings", "telephony_token")
+
+
+def _check(token):
+	expected = _token()
+	if not expected:
+		frappe.throw("التليفونات مش مفعّلة — حط توكن في إعدادات محتوى الموقع")
+	if str(token or "") != str(expected):
+		frappe.throw("توكن غلط", frappe.AuthenticationError)
+
+
+def _int(value, default=0):
+	try:
+		return int(value or default)
+	except (TypeError, ValueError):
+		return default
+
+
+def _digits(value):
+	return re.sub(r"\D", "", str(value or ""))
+
+
+def _local(number):
+	"""يرجّع الرقم بصيغة موحّدة للمقارنة: آخر 10 أرقام."""
+	d = _digits(number)
+	return d[-10:] if len(d) >= 10 else d
+
+
+def find_customer(number):
+	"""يدوّر على العميل برقمه في الأماكن اللي دبونو بيحفظ فيها الأرقام."""
+	target = _local(number)
+	if len(target) < 8:
+		return None, None
+
+	like = f"%{target}"
+	row = frappe.db.sql("""
+		select name, customer_name from `tabCustomer`
+		where replace(replace(replace(ifnull(custom_mobile_phone,''),' ',''),'-',''),'+','') like %s
+		limit 1
+	""", (like,), as_dict=True)
+	if row:
+		return row[0].name, row[0].customer_name
+
+	row = frappe.db.sql("""
+		select c.name, c.customer_name from `tabCustomer` c
+		join `tabDynamic Link` dl on dl.link_name = c.name and dl.link_doctype = 'Customer'
+		join `tabContact Phone` p on p.parent = dl.parent
+		where dl.parenttype = 'Contact'
+		  and replace(replace(replace(p.phone,' ',''),'-',''),'+','') like %s
+		limit 1
+	""", (like,), as_dict=True)
+	if row:
+		return row[0].name, row[0].customer_name
+
+	sub = frappe.db.sql("""
+		select customer_name from `tabCustomer Subscription`
+		where replace(replace(replace(ifnull(mobile_number,''),' ',''),'-',''),'+','') like %s
+		limit 1
+	""", (like,), as_dict=True)
+	if sub:
+		name = frappe.db.get_value("Customer", {"customer_name": sub[0].customer_name}, "name")
+		return name, sub[0].customer_name
+
+	return None, None
+
+
+
+def _alert_missed(doc, caller, customer_name):
+	"""تنبيه واتساب لما مكالمة تضيع.
+
+	بيتبعت مرة واحدة لكل مكالمة، ومبيرميش استثناء للنداء — تنبيه مش واصل
+	أهون من مكالمة مش متسجّلة.
+	"""
+	try:
+		content = frappe.get_single("Webshop Content Settings")
+		if not content.get("owner_alert_enabled"):
+			return
+		from sync_webshop.api.owner_alerts import _recipients, _send
+		numbers = _recipients(content)
+		if not numbers:
+			return
+
+		who = customer_name or "رقم مش عندنا"
+		ext = (doc.get("summary") or "").replace("الداخلي:", "").strip()
+		text = (
+			"📵 *مكالمة ضاعت*\n\n"
+			f"من: {caller}\n"
+			f"العميل: {who}\n"
+			+ (f"رنّت على: {ext}\n" if ext else "")
+			+ f"الوقت: {frappe.utils.now_datetime().strftime('%H:%M')}\n\n"
+			f"https://erp1.dpono.com/app/call-log/{doc.name}"
+		)
+		for number in numbers:
+			_send(content, number, text)
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), "_alert_missed")
+
+
+@frappe.whitelist(allow_guest=True)
+def call_event(token=None, uniqueid=None, direction="Incoming", from_number=None,
+               to_number=None, status=None, duration=0, extension=None, recording=None,
+               trunk=None):
+	"""بيتنده من السنترال عند بداية ونهاية كل مكالمة.
+
+	نفس الـ uniqueid بيتبعت مرتين (بداية ونهاية) — التانية بتحدّث الأولى.
+	"""
+	_check(token)
+
+	caller = from_number if direction == "Incoming" else to_number
+	customer, customer_name = find_customer(caller)
+
+	existing = frappe.db.exists("Call Log", {"id": uniqueid}) if uniqueid else None
+	doc = frappe.get_doc("Call Log", existing) if existing else frappe.new_doc("Call Log")
+
+	if not existing:
+		doc.id = uniqueid or frappe.generate_hash(length=16)
+		doc.start_time = now_datetime()
+		doc.medium = MEDIUM
+		doc.type = "Incoming" if direction == "Incoming" else "Outgoing"
+
+	doc.set("from", _digits(from_number))
+	doc.to = _digits(to_number)
+	if extension:
+		# السنترال بيبعت رقم داخلي؛ ERPNext بيدوّر بالموبايل. بنترجم من حقل
+		# الداخلي على كارت الموظف، وبنخلي `to` رقم موبايله عشان شاشة المكالمة
+		# المدمجة تلاقيه وتفتح عنده.
+		emp = frappe.db.get_value("Employee", {"custom_extension": str(extension)},
+		                          ["name", "user_id", "cell_number"], as_dict=True)
+		if emp and emp.user_id:
+			# call_received_by بيربط بكارت الموظف، و employee_user_id بحساب المستخدم
+			doc.call_received_by = emp.name
+			doc.employee_user_id = emp.user_id
+			if emp.cell_number and direction == "Incoming":
+				doc.to = _digits(emp.cell_number)
+			doc.summary = f"الداخلي: {extension}"
+		else:
+			doc.summary = f"الداخلي: {extension}"
+	if status:
+		mapped = {
+			"ANSWER": "Completed", "ANSWERED": "Completed",
+			"NO ANSWER": "No Answer", "NOANSWER": "No Answer",
+			"BUSY": "Busy", "FAILED": "Failed", "CONGESTION": "Failed",
+			"ringing": "Ringing", "start": "Ringing",
+		}.get(status, status if status in ("Ringing", "In Progress", "Completed",
+		                                   "Failed", "Busy", "No Answer", "Queued",
+		                                   "Canceled") else "Completed")
+		# المكالمة الواحدة بتيجي كذا حدث: رنّة، وCDR لكل رجل فيها. لو رجل
+		# واحدة اترد عليها تبقى المكالمة مردود عليها مهما جه بعدها — ومن غير
+		# الحرس ده حدث متأخر ممكن يرجّعها «فايتة» ويبعت تنبيه ضياع غلط.
+		if not (doc.status in FINAL_WINS and mapped not in FINAL_WINS):
+			doc.status = mapped
+	if duration:
+		doc.duration = max(float(duration), float(doc.duration or 0))
+		doc.end_time = now_datetime()
+	if trunk:
+		doc.custom_trunk = trunk
+	if recording:
+		doc.recording_url = recording
+	if customer:
+		doc.customer = customer
+
+	was_missed = bool(existing) and frappe.db.get_value("Call Log", existing, "status") in ("No Answer", "Missed")
+
+	doc.flags.ignore_permissions = True
+	doc.flags.ignore_mandatory = True
+	doc.save()
+	frappe.db.commit()
+
+	# تنبيه مرة واحدة بس، لما الحالة تتحول لضايعة
+	if doc.status in ("No Answer", "Missed") and doc.type == "Incoming" and not was_missed:
+		_alert_missed(doc, _digits(from_number), customer_name)
+
+	return {
+		"ok": True,
+		"call_log": doc.name,
+		"customer": customer_name or "(رقم مش عندنا)",
+		"known": bool(customer),
+	}
+
+
+@frappe.whitelist()
+def status():
+	"""لقطة سريعة — بتتنده من ERPNext عشان تتأكد إن الربط شغال."""
+	total = frappe.db.count("Call Log", {"medium": MEDIUM})
+	last = frappe.get_all("Call Log", filters={"medium": MEDIUM},
+	                      fields=["name", "from", "to", "status", "duration", "customer", "start_time"],
+	                      order_by="start_time desc", limit=5)
+	return {
+		"token_set": bool(_token()),
+		"total_calls": total,
+		"recent": last,
+	}
+
+
+# ————————————————————— الاتصال بضغطة —————————————————————
+
+def _my_extension():
+	"""تحويلة المستخدم الحالي من كارت الموظف بتاعه."""
+	return frappe.db.get_value("Employee", {"user_id": frappe.session.user}, "custom_extension")
+
+
+@frappe.whitelist()
+def request_call(to_number, customer=None):
+	"""بيسجّل طلب اتصال؛ الجسر على السنترال بينفّذه خلال ثواني."""
+	extension = _my_extension()
+	if not extension:
+		frappe.throw("مفيش تحويلة مسجّلة على كارت الموظف بتاعك — اكتبها في خانة «الرقم الداخلي في السنترال»")
+
+	target = _digits(to_number)
+	if len(target) < 7:
+		frappe.throw(f"الرقم مش مظبوط: {to_number}")
+
+	doc = frappe.new_doc("Call Request")
+	doc.to_number = target
+	doc.extension = extension
+	doc.status = "في الانتظار"
+	doc.requested_by = frappe.session.user
+	doc.customer = customer
+	doc.flags.ignore_permissions = True
+	doc.insert()
+	frappe.db.commit()
+	return {"ok": True, "request": doc.name, "extension": extension, "to": target}
+
+
+@frappe.whitelist(allow_guest=True)
+def pending_calls(token=None):
+	"""الجسر بيسأل بيها كل تلات ثواني."""
+	_check(token)
+	rows = frappe.get_all("Call Request", filters={"status": "في الانتظار"},
+	                      fields=["name", "to_number", "extension"], limit=5)
+	return {"calls": rows}
+
+
+@frappe.whitelist(allow_guest=True)
+def mark_call_placed(token=None, request=None, ok=1, error=None):
+	"""الجسر بيقول نفّذ ولا فشل."""
+	_check(token)
+	if not frappe.db.exists("Call Request", request):
+		return {"ok": False}
+	frappe.db.set_value("Call Request", request, {
+		"status": "اتنفذ" if _int(ok, 1) else "فشل",
+		"error": (error or "")[:400],
+	}, update_modified=False)
+	frappe.db.commit()
+	return {"ok": True}
