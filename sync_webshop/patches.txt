@@ -62,3 +62,4 @@ sync_webshop.patches.v0_1.auto_address
 sync_webshop.patches.v0_1.cod_editable
 sync_webshop.patches.v0_1.renewal_ws
 sync_webshop.patches.v0_1.cod_ux
+sync_webshop.patches.v0_1.fix_block_perms
