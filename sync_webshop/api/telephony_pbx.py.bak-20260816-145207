@@ -376,18 +376,3 @@ def voicemail_alert(token=None, mailbox=None, caller=None, duration=None,
 	except Exception:
 		frappe.log_error(frappe.get_traceback(), "voicemail_alert")
 		return {"ok": 0, "reason": "فشل الإرسال — اتسجّل في سجل الأخطاء"}
-
-
-@frappe.whitelist(allow_guest=True)
-def pending_recordings(token=None, limit=500):
-	"""أرقام المكالمات اللي لسه من غير تسجيل — عشان السنترال يرفعلها بس.
-
-	من غير كده السنترال هيرفع كل تسجيل عنده (8.5 جيجا) وأغلبها لمكالمات
-	قديمة مش متسجّلة في ERPNext أصلًا.
-	"""
-	_check(token)
-	rows = frappe.get_all("Call Log",
-		filters={"recording_url": ["in", ["", None]], "duration": [">", 0]},
-		fields=["id"], order_by="start_time desc",
-		limit=frappe.utils.cint(limit) or 500)
-	return {"calls": [r.id for r in rows if r.id]}

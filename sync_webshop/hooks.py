@@ -64,6 +64,9 @@ doc_events = {
 	"Item Group": {
 		"on_update": "sync_webshop.api.utils.clear_webshop_cache"
 	},
+	"Sales Invoice": {
+		"validate": "sync_webshop.api.turbo.fill_invoice_contact",
+	},
 	"Sales Order": {
 		"validate": [
 			"sync_webshop.api.turbo.fill_customer_address",

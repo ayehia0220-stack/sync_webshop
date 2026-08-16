@@ -581,3 +581,59 @@ def expected_cod(order_name):
 	"""The floor for this order, for the form to show and default to."""
 	order = frappe.get_doc("Sales Order", order_name)
 	return {"owed": amount_still_owed(order)}
+
+
+# ============================================================================
+# بيانات العميل على الفاتورة
+# ============================================================================
+
+def _source_order(doc):
+	"""The sales order this invoice came from, if any."""
+	for row in doc.get("items") or []:
+		if row.get("sales_order"):
+			return row.sales_order
+	return None
+
+
+def fill_invoice_contact(doc, method=None):
+	"""Phone and address on the invoice, from wherever they actually exist."""
+	want_phone = not (doc.get("custom_customer_phone_number") or "").strip()
+	want_addr = not (doc.get("custom_address_for_customer_") or "").strip()
+	if not (want_phone or want_addr) or not doc.get("customer"):
+		return
+
+	phone = addr = ""
+
+	order = _source_order(doc)
+	if order:
+		row = frappe.db.get_value(
+			"Sales Order", order,
+			["custom_customer_phone_number", "custom_address_for_customer_"],
+			as_dict=True) or {}
+		phone = (row.get("custom_customer_phone_number") or "").strip()
+		candidate = (row.get("custom_address_for_customer_") or "").strip()
+		# Same bar as everywhere else — a placeholder is not an address.
+		addr = candidate if _looks_like_address(candidate) else ""
+
+	if not addr:
+		addr = format_address(_preferred_address(doc.customer))
+	if not addr:
+		addr = _address_from_last_order(doc.customer)
+
+	if not phone:
+		phone = (frappe.db.get_value("Customer", doc.customer, "mobile_no") or "").strip()
+	if not phone:
+		# The most recent order that recorded one.
+		rows = frappe.db.sql(
+			"""
+			SELECT custom_customer_phone_number AS p FROM `tabSales Order`
+			WHERE customer = %s AND IFNULL(custom_customer_phone_number,'') != ''
+			ORDER BY creation DESC LIMIT 1
+			""",
+			doc.customer, as_dict=True)
+		phone = (rows[0].p or "").strip() if rows else ""
+
+	if want_phone and phone:
+		doc.custom_customer_phone_number = phone[:60]
+	if want_addr and addr:
+		doc.custom_address_for_customer_ = addr[:200]
