@@ -184,39 +184,6 @@ def _clean_label(label):
 	return re.sub(r"\s*\((موظف|مورّد|عميل محتمل)\)$", "", str(label or "")).strip()
 
 
-def _looks_nameless(text):
-	"""اسم مفيهوش أي حرف عربي ولا إنجليزي = مش اسم (نقط، أرقام، فاضي)."""
-	return not re.search(r"[A-Za-z\u0600-\u06FF]", str(text or ""))
-
-
-def _name_the_contact(contact, label):
-	"""يحطّ الاسم الحقيقي على جهة اتصال اسمها نقط، ويعيد تسميتها.
-
-	بيرجّع الاسم الجديد، أو القديم لو محصلش/مالوش لازمة.
-	"""
-	if not _looks_nameless(contact) or _looks_nameless(label):
-		return contact
-	try:
-		doc = frappe.get_doc("Contact", contact)
-		parts = label.split(None, 1)
-		doc.first_name = parts[0][:60]
-		doc.last_name = parts[1][:60] if len(parts) > 1 else None
-		doc.flags.ignore_permissions = True
-		doc.flags.ignore_mandatory = True
-		doc.save()
-
-		target = label[:120]
-		if frappe.db.exists("Contact", target):
-			return contact          # الاسم محجوز — نسيبها بدوكنيمها القديم
-		# rename_doc بيحدّث كل الروابط اللي بتشاور عليها
-		# النسخة دي من فرابي مبتاخدش ignore_permissions
-		frappe.rename_doc("Contact", contact, target, force=True)
-		return target
-	except Exception:
-		frappe.log_error(frappe.get_traceback(), "_name_the_contact")
-		return contact
-
-
 def _ensure_contact(who, number):
 	"""يتأكد إن فيه جهة اتصال بالرقم ده — ده اللي بيخلي الشاشة تعرف الاسم.
 
@@ -235,9 +202,7 @@ def _ensure_contact(who, number):
 		from frappe.contacts.doctype.contact.contact import get_contact_with_phone_number
 		existing = get_contact_with_phone_number(digits)
 		if existing:
-			# لقيناها بالرقم — بس لو اسمها نقط، الشاشة هتعرض نقط.
-			# نحطّ الاسم الحقيقي اللي عرفناه من كارت العميل.
-			return _name_the_contact(existing, label)
+			return existing
 
 		# العميل عنده جهة اتصال بالفعل؟ نضيف الرقم عليها بدل واحدة جديدة
 		target = None
