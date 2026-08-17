@@ -559,3 +559,121 @@ def customer_chat(customer, limit=100):
 		order_by="creation asc",
 		limit=int(limit))
 	return {"messages": rows}
+
+
+@frappe.whitelist(allow_guest=True)
+def evolution_webhook(instance=None):
+	"""
+	Evolution posts here when a message arrives.
+
+	Always answers 200. An error code makes Evolution retry the same message
+	repeatedly, which would multiply every log entry.
+	"""
+	from sync_webshop.api.utils import set_cors_headers
+	set_cors_headers()
+
+	payload = {}
+	try:
+		payload = frappe.request.get_json(force=True, silent=True) or {}
+	except Exception:
+		pass
+
+	try:
+		_handle_evolution(payload, instance)
+	except Exception:
+		frappe.log_error(title="Evolution webhook",
+		                 message=frappe.get_traceback()[:2000])
+
+	return {"ok": True}
+
+
+def _handle_evolution(payload, instance=None):
+	instance = instance or payload.get("instance") or ""
+	event = (payload.get("event") or "").lower()
+	data = payload.get("data") or {}
+
+	# Evolution sends one message or a list, depending on the event.
+	messages = data if isinstance(data, list) else [data]
+
+	for msg in messages:
+		if not isinstance(msg, dict):
+			continue
+		key = msg.get("key") or {}
+		remote = key.get("remoteJid") or ""
+
+		# Groups and status broadcasts are not customer conversations.
+		if "@g.us" in remote or "status@" in remote:
+			continue
+
+		phone = remote.split("@")[0]
+		if not phone:
+			continue
+
+		body = _message_text(msg.get("message") or {})
+		if not body:
+			continue
+
+		from_me = bool(key.get("fromMe"))
+		# SEND_MESSAGE echoes back what we sent, and the sender already logged
+		# it — recording it again would double every outgoing message.
+		if from_me and event == "send.message":
+			continue
+
+		log_whatsapp(phone, body, sent=from_me)
+
+	frappe.db.commit()
+	_forward(payload, instance)
+
+
+def _message_text(message):
+	"""The readable part of whatever kind of message arrived."""
+	if not isinstance(message, dict):
+		return ""
+	for key in ("conversation",):
+		if message.get(key):
+			return str(message[key])
+	for key in ("extendedTextMessage", "imageMessage", "videoMessage",
+	            "documentMessage", "buttonsResponseMessage", "listResponseMessage"):
+		# Only the key the payload actually carries — checking a missing one
+		# used to return its placeholder and swallow the real caption.
+		if key not in message:
+			continue
+		part = message.get(key) or {}
+		if isinstance(part, dict):
+			text = (part.get("text") or part.get("caption")
+			        or part.get("selectedDisplayText") or part.get("title"))
+			if text:
+				return str(text)
+		return "[%s]" % key.replace("Message", "")
+	if "audioMessage" in message:
+		return "[رسالة صوتية]"
+	if "stickerMessage" in message:
+		return "[ملصق]"
+	if message.get("locationMessage"):
+		loc = message["locationMessage"]
+		return "[موقع] %s,%s" % (loc.get("degreesLatitude"), loc.get("degreesLongitude"))
+	return ""
+
+
+def _forward(payload, instance):
+	"""Pass the payload on to whatever was listening before."""
+	settings = frappe.get_single("Webshop Content Settings")
+	url = None
+	for line in settings.get("wa_lines") or []:
+		if (line.evo_instance or "") == str(instance):
+			url = (line.forward_to or "").strip()
+			break
+	if not url:
+		return
+
+	frappe.enqueue(
+		"sync_webshop.api.notifications._forward_now",
+		queue="short", url=url, payload=payload, enqueue_after_commit=True)
+
+
+def _forward_now(url, payload):
+	try:
+		requests.post(url, json=payload, timeout=20)
+	except Exception as exc:
+		frappe.log_error(title="Evolution forward failed",
+		                 message="%s\n%s" % (url, str(exc)[:400]))
