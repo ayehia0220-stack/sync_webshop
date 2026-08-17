@@ -68,3 +68,4 @@ sync_webshop.patches.v0_1.invoice_print
 sync_webshop.patches.v0_1.project_series
 sync_webshop.patches.v0_1.backfill_invoices
 sync_webshop.patches.v0_1.wa_log
+sync_webshop.patches.v0_1.wa_lines

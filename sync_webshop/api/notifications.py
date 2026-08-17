@@ -385,3 +385,85 @@ def incoming_webhook():
 		frappe.log_error(title="WhatsApp webhook", message=frappe.get_traceback()[:2000])
 
 	return {"ok": True}
+
+
+# ============================================================================
+# اختيار خط الواتساب حسب نوع الشغل
+# ============================================================================
+
+def _split(text):
+	return [p.strip() for p in str(text or "").replace("\n", ",").split(",") if p.strip()]
+
+
+def whatsapp_line_for(order_name=None, customer=None):
+	"""
+	Which WhatsApp number should speak to this customer.
+
+	Decided from the order first, because that is the concrete thing: a box of
+	coffee is a coffee conversation whatever group the customer sits in. The
+	customer group is the fallback, and a default line catches the rest.
+	"""
+	settings = frappe.get_single("Webshop Content Settings")
+	lines = [l for l in (settings.get("wa_lines") or []) if l.enabled]
+	if not lines:
+		return None
+
+	groups = set()
+	if order_name:
+		groups.update(frappe.db.sql_list(
+			"""
+			SELECT DISTINCT i.item_group FROM `tabSales Order Item` soi
+			JOIN `tabItem` i ON i.name = soi.item_code
+			WHERE soi.parent = %s
+			""",
+			order_name))
+		customer = customer or frappe.db.get_value("Sales Order", order_name, "customer")
+
+	if groups:
+		for line in lines:
+			wanted = set(_split(line.item_groups))
+			if wanted & groups:
+				return line
+		# An item group can sit under a configured parent rather than match it.
+		for line in lines:
+			for wanted in _split(line.item_groups):
+				lft, rgt = frappe.db.get_value(
+					"Item Group", wanted, ["lft", "rgt"]) or (None, None)
+				if not lft:
+					continue
+				under = frappe.db.sql_list(
+					"SELECT name FROM `tabItem Group` WHERE lft >= %s AND rgt <= %s",
+					(lft, rgt))
+				if groups & set(under):
+					return line
+
+	if customer:
+		cg = frappe.db.get_value("Customer", customer, "customer_group")
+		for line in lines:
+			if cg in _split(line.customer_groups):
+				return line
+
+	for line in lines:
+		if line.is_default:
+			return line
+	return lines[0]
+
+
+def communication_permission_query(user=None):
+	"""
+	A WhatsApp log is as private as the customer it belongs to.
+
+	Communication is readable by anyone with desk access out of the box, which
+	would have put every customer conversation in front of every employee. This
+	narrows the chat records to customers the user can already open, and leaves
+	email and everything else untouched.
+	"""
+	user = user or frappe.session.user
+	if "System Manager" in frappe.get_roles(user):
+		return ""
+
+	if frappe.has_permission("Customer", "read", user=user):
+		return ""
+
+	# No access to customers at all — hide the chat records, keep the rest.
+	return "(`tabCommunication`.communication_medium != 'Chat')"

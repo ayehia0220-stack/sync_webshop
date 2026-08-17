@@ -99,3 +99,7 @@ scheduler_events = {
 doctype_js = {
 	"Customer": "public/js/customer_call.js",
 }
+
+permission_query_conditions = {
+	"Communication": "sync_webshop.api.notifications.communication_permission_query",
+}
