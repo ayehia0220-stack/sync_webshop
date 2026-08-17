@@ -467,3 +467,75 @@ def communication_permission_query(user=None):
 
 	# No access to customers at all — hide the chat records, keep the rest.
 	return "(`tabCommunication`.communication_medium != 'Chat')"
+
+
+# ============================================================================
+# Evolution API — الإرسال من السيرفر
+# ============================================================================
+
+def _evo():
+	s = frappe.get_single("Webshop Content Settings")
+	if (s.get("wa_provider") or "evolution") != "evolution":
+		return None
+	key = s.get_password("evo_api_key", raise_exception=False)
+	if not key:
+		return None
+	return frappe._dict({
+		"url": (s.get("evo_url") or "http://127.0.0.1:8080").rstrip("/"),
+		"key": key,
+	})
+
+
+def send_whatsapp_text(phone, text, line=None, order_name=None, customer=None):
+	"""
+	One plain WhatsApp message down the right line.
+
+	Returns (ok, detail) and never raises — a message that fails to send must
+	not roll back the order it was telling someone about.
+	"""
+	evo = _evo()
+	if not evo:
+		return False, "evolution not configured"
+
+	line = line or whatsapp_line_for(order_name=order_name, customer=customer)
+	instance = (line or {}).get("evo_instance") if line else None
+	if not instance:
+		return False, "no line for this order"
+
+	to = normalise_msisdn(phone)
+	if not to:
+		return False, "bad number: %s" % phone
+
+	try:
+		res = requests.post(
+			"%s/message/sendText/%s" % (evo.url, instance),
+			headers={"apikey": evo.key, "Content-Type": "application/json"},
+			json={"number": to, "text": text},
+			timeout=20,
+		)
+		ok = res.status_code < 300
+		detail = res.text[:300]
+	except Exception as exc:
+		ok, detail = False, str(exc)[:300]
+
+	# Logged either way — a failed send is the one worth finding later.
+	log_whatsapp(to, text, sent=True, customer=customer, reference=order_name)
+
+	if not ok:
+		frappe.log_error(title="WhatsApp send failed",
+		                 message="line=%s to=%s\n%s" % (instance, to, detail))
+	return ok, detail
+
+
+@frappe.whitelist()
+def send_test_message(phone, text=None, line_name=None):
+	"""Fire one real message from the Desk, to prove the wiring."""
+	settings = frappe.get_single("Webshop Content Settings")
+	line = None
+	for row in settings.get("wa_lines") or []:
+		if not line_name or row.line_name == line_name:
+			line = row
+			break
+	ok, detail = send_whatsapp_text(
+		phone, text or "رسالة تجريبية من نظام دبونو ✅", line=line)
+	return {"ok": ok, "detail": detail, "line": line.line_name if line else None}
