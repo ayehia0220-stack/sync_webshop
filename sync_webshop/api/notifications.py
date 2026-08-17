@@ -336,6 +336,8 @@ def log_whatsapp(phone, message, sent=True, customer=None, reference=None):
 		doc.flags.ignore_permissions = True
 		doc.flags.ignore_mandatory = True
 		doc.insert()
+		# Not every caller commits — a scheduled send would otherwise lose this.
+		frappe.db.commit()
 
 		# Also pin it to the order it was about, when there is one.
 		if reference and frappe.db.exists("Sales Order", reference):
