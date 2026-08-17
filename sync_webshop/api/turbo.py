@@ -637,3 +637,35 @@ def fill_invoice_contact(doc, method=None):
 		doc.custom_customer_phone_number = phone[:60]
 	if want_addr and addr:
 		doc.custom_address_for_customer_ = addr[:200]
+
+
+# ============================================================================
+# ترقيم المشاريع
+# ============================================================================
+
+def keep_project_series_ahead(doc, method=None):
+	"""
+	Stop the naming counter colliding with a name already in use.
+
+	The counter lives apart from the documents, so a restore, an import, or a
+	renamed project can leave it behind — and every new project then fails with
+	"already exists". Nudging it past the highest number in use costs nothing
+	and turns a blocking error into a gap in the sequence.
+	"""
+	import re
+
+	prefix = (doc.get("naming_series") or "PROJ-.####").split(".")[0]
+	rows = frappe.db.sql(
+		"SELECT name FROM `tabProject` WHERE name LIKE %s", prefix + "%", as_dict=True)
+	pattern = re.compile(r"^%s(\d+)$" % re.escape(prefix))
+	used = [int(m.group(1)) for r in rows if (m := pattern.match(r.name or ""))]
+	if not used:
+		return
+
+	current = frappe.db.sql(
+		"SELECT current FROM `tabSeries` WHERE name = %s", prefix)
+	current = current[0][0] if current else 0
+
+	if current < max(used):
+		frappe.db.sql(
+			"UPDATE `tabSeries` SET current = %s WHERE name = %s", (max(used), prefix))

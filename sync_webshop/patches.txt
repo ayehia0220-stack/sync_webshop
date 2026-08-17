@@ -65,3 +65,4 @@ sync_webshop.patches.v0_1.cod_ux
 sync_webshop.patches.v0_1.fix_block_perms
 sync_webshop.patches.v0_1.invoice_contact
 sync_webshop.patches.v0_1.invoice_print
+sync_webshop.patches.v0_1.project_series
