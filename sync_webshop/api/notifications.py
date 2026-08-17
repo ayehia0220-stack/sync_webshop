@@ -541,3 +541,21 @@ def send_test_message(phone, text=None, line_name=None):
 	ok, detail = send_whatsapp_text(
 		phone, text or "رسالة تجريبية من نظام دبونو ✅", line=line)
 	return {"ok": ok, "detail": detail, "line": line.line_name if line else None}
+
+
+@frappe.whitelist()
+def customer_chat(customer, limit=100):
+	"""The WhatsApp messages for one customer, oldest first."""
+	frappe.has_permission("Customer", "read", doc=customer, throw=True)
+
+	rows = frappe.get_all(
+		"Communication",
+		filters={
+			"communication_medium": "Chat",
+			"reference_doctype": "Customer",
+			"reference_name": customer,
+		},
+		fields=["name", "sent_or_received", "content", "phone_no", "creation"],
+		order_by="creation asc",
+		limit=int(limit))
+	return {"messages": rows}
