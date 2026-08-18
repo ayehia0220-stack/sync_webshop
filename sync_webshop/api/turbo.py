@@ -669,3 +669,58 @@ def keep_project_series_ahead(doc, method=None):
 	if current < max(used):
 		frappe.db.sql(
 			"UPDATE `tabSeries` SET current = %s WHERE name = %s", (max(used), prefix))
+
+
+# ============================================================================
+# رقم العميل — شكل واحد، ومحصلش تكرار
+# ============================================================================
+
+ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩"
+                              "۰۱۲۳۴۵۶۷۸۹",
+                              "01234567890123456789")
+
+# Accounts that share a line on purpose — a marketplace, not a person.
+PHONE_EXEMPT = {"amazon", "noon"}
+
+
+def normalise_customer_phone(value):
+	"""One canonical form: 01XXXXXXXXX, or "" if it is not an Egyptian mobile."""
+	import re as _re
+	d = str(value or "").translate(ARABIC_DIGITS)
+	d = _re.sub(r"\D", "", d)
+	if d.startswith("0020"):
+		d = d[4:]
+	if d.startswith("20") and len(d) == 12:
+		d = d[2:]
+	if len(d) == 10 and d[0] == "1":
+		d = "0" + d
+	return d if _re.fullmatch(r"01[0-9]{9}", d) else ""
+
+
+def enforce_unique_phone(doc, method=None):
+	raw = (doc.get("mobile_no") or "").strip()
+	if not raw:
+		return
+
+	clean = normalise_customer_phone(raw)
+	if not clean:
+		# Left as typed rather than rejected — some records hold two numbers in
+		# one field, and refusing the save would block work over formatting.
+		return
+
+	doc.mobile_no = clean
+
+	if (doc.get("customer_name") or "").strip().lower() in PHONE_EXEMPT:
+		return
+
+	other = frappe.db.sql(
+		"""
+		SELECT name, customer_name FROM `tabCustomer`
+		WHERE mobile_no = %s AND name != %s LIMIT 1
+		""",
+		(clean, doc.name or ""), as_dict=True)
+	if other:
+		frappe.throw(
+			frappe._("الرقم {0} مسجّل بالفعل للعميل: {1}")
+			.format(clean, other[0].customer_name or other[0].name),
+			title=frappe._("رقم مكرر"))

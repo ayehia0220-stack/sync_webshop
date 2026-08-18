@@ -67,6 +67,9 @@ doc_events = {
 	"Project": {
 		"before_insert": "sync_webshop.api.turbo.keep_project_series_ahead",
 	},
+	"Customer": {
+		"validate": "sync_webshop.api.turbo.enforce_unique_phone",
+	},
 	"Sales Invoice": {
 		"validate": "sync_webshop.api.turbo.fill_invoice_contact",
 	},
