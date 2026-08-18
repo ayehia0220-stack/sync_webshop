@@ -683,33 +683,79 @@ ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩"
 PHONE_EXEMPT = {"amazon", "noon"}
 
 
-def normalise_customer_phone(value):
-	"""One canonical form: 01XXXXXXXXX, or "" if it is not an Egyptian mobile."""
+def normalise_customer_phone(value, country=None):
+	"""
+	One canonical form per country.
+
+	Egypt keeps the local 01XXXXXXXXX shape the team is used to reading.
+	Everywhere else is stored with its country code, because a bare Saudi
+	number is ambiguous the moment it leaves this database.
+	"""
 	import re as _re
+
 	d = str(value or "").translate(ARABIC_DIGITS)
 	d = _re.sub(r"\D", "", d)
-	if d.startswith("0020"):
-		d = d[4:]
-	if d.startswith("20") and len(d) == 12:
-		d = d[2:]
-	if len(d) == 10 and d[0] == "1":
-		d = "0" + d
-	return d if _re.fullmatch(r"01[0-9]{9}", d) else ""
+	if not d:
+		return ""
+
+	code = ""
+	if country and "+" in str(country):
+		code = str(country).split("+")[-1].strip()
+
+	# Egypt, or no country chosen — the historical default.
+	if not code or code == "20":
+		if d.startswith("0020"):
+			d = d[4:]
+		if d.startswith("20") and len(d) == 12:
+			d = d[2:]
+		if len(d) == 10 and d[0] == "1":
+			d = "0" + d
+		return d if _re.fullmatch(r"01[0-9]{9}", d) else ""
+
+	# Anything else: strip the code however it was written, then put it back.
+	if d.startswith("00" + code):
+		d = d[len(code) + 2:]
+	elif d.startswith(code):
+		d = d[len(code):]
+	d = d.lstrip("0")
+	# Too short to be a mobile anywhere — treat as unusable rather than store it.
+	return ("+" + code + d) if len(d) >= 8 else ""
 
 
 def enforce_unique_phone(doc, method=None):
-	raw = (doc.get("mobile_no") or "").strip()
-	if not raw:
+	"""
+	One shape, no duplicates, and nothing too short to dial.
+
+	Rejecting a bad number outright is deliberate: the old rule let anything it
+	could not parse through untouched, which is how "0128279270" — a mobile
+	with a digit missing — sat in the table looking fine.
+	"""
+	country = doc.get("custom_phone_country")
+
+	for field, label in (("mobile_no", "الموبايل"),
+	                     ("custom_mobile_alt", "الرقم البديل")):
+		raw = (doc.get(field) or "").strip()
+		if not raw:
+			continue
+		clean = normalise_customer_phone(raw, country)
+		if not clean:
+			frappe.throw(
+				frappe._("{0} مش صحيح: {1}. "
+				         "الرقم المصري "
+				         "لازم 11 رقم يبدأ بـ 01. "
+				         "لو الرقم مش مصري، "
+				         "غيّر الدولة فوق.")
+				.format(label, raw),
+				title=frappe._("رقم غير صحيح"))
+		doc.set(field, clean)
+
+	# The two numbers on one customer must not be the same number.
+	if doc.get("custom_mobile_alt") and doc.get("custom_mobile_alt") == doc.get("mobile_no"):
+		doc.custom_mobile_alt = ""
+
+	primary = (doc.get("mobile_no") or "").strip()
+	if not primary:
 		return
-
-	clean = normalise_customer_phone(raw)
-	if not clean:
-		# Left as typed rather than rejected — some records hold two numbers in
-		# one field, and refusing the save would block work over formatting.
-		return
-
-	doc.mobile_no = clean
-
 	if (doc.get("customer_name") or "").strip().lower() in PHONE_EXEMPT:
 		return
 
@@ -718,9 +764,9 @@ def enforce_unique_phone(doc, method=None):
 		SELECT name, customer_name FROM `tabCustomer`
 		WHERE mobile_no = %s AND name != %s LIMIT 1
 		""",
-		(clean, doc.name or ""), as_dict=True)
+		(primary, doc.name or ""), as_dict=True)
 	if other:
 		frappe.throw(
 			frappe._("الرقم {0} مسجّل بالفعل للعميل: {1}")
-			.format(clean, other[0].customer_name or other[0].name),
+			.format(primary, other[0].customer_name or other[0].name),
 			title=frappe._("رقم مكرر"))
