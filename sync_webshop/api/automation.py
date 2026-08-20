@@ -195,6 +195,36 @@ def _pull_erpnext(rows):
 			"detail": "مهمة مجدولة — %s" % (job.frequency or ""),
 		})
 
+	# رسايل ما بعد العمليات — خطّافات مستندات، عدّادها من التعليقات
+	# اللي بنختم بيها كل مستند اتبعتت عنه رسالة
+	master = cint(frappe.db.get_single_value(
+		"Webshop Content Settings", "lifecycle_messages_on"))
+	since = add_days(now_datetime(), -WINDOW_DAYS)
+	for msg_event in ("تسجيل عميل", "طلب بيع", "قيد دفع", "فاتورة بيع"):
+		lines = frappe.get_all("Webshop Lifecycle Message",
+		                       filters={"event": msg_event, "enabled": 1},
+		                       pluck="line_name")
+		stamp = "lifecycle-whatsapp:%s" % msg_event
+		runs = frappe.db.count("Comment", {"content": stamp,
+		                                   "creation": [">=", since]})
+		last = frappe.db.get_value("Comment", {"content": stamp},
+		                           "creation", order_by="creation desc")
+		active = 1 if (master and lines) else 0
+		rows.append({
+			"job_key": "erp:lifecycle:%s" % msg_event,
+			"source": SOURCE_ERP,
+			"job_name": "رسالة واتساب بعد: %s" % msg_event,
+			"is_active": active,
+			"last_run": last,
+			"runs_7d": runs, "success_7d": runs, "error_7d": 0,
+			"node_count": 0,
+			# لسه ماشتغلتش ولا مرة = مستنية أول طلب، مش ميتة
+			"health": _health(active, last, runs, 0,
+			                  has_run_data=bool(last)),
+			"open_url": "/app/webshop-lifecycle-message?event=%s" % msg_event,
+			"detail": "الخطوط: %s" % (", ".join(lines) or "مفيش نص"),
+		})
+
 	for hook in frappe.get_all(
 			"Webhook", fields=["name", "webhook_doctype", "webhook_docevent",
 			                   "request_url", "enabled"]):

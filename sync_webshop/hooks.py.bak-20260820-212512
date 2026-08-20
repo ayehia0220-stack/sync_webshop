@@ -106,23 +106,3 @@ doctype_js = {
 permission_query_conditions = {
 	"Communication": "sync_webshop.api.notifications.communication_permission_query",
 }
-
-# —— رسايل واتساب بعد العمليات ——
-# بتتدمج مع أي خطّاف موجود بدل ما تستبدله.
-_lifecycle_events = (
-	("Customer", "after_insert", "sync_webshop.api.lifecycle.on_customer_insert"),
-	("Sales Order", "on_submit", "sync_webshop.api.lifecycle.on_sales_order_submit"),
-	("Payment Entry", "on_submit", "sync_webshop.api.lifecycle.on_payment_entry_submit"),
-	("Sales Invoice", "on_submit", "sync_webshop.api.lifecycle.on_sales_invoice_submit"),
-)
-
-for _dt, _event, _handler in _lifecycle_events:
-	_slot = doc_events.setdefault(_dt, {})
-	_current = _slot.get(_event)
-	if _current is None:
-		_slot[_event] = _handler
-	elif isinstance(_current, list):
-		if _handler not in _current:
-			_current.append(_handler)
-	elif _current != _handler:
-		_slot[_event] = [_current, _handler]

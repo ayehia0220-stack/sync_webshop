@@ -45,11 +45,17 @@ def _recipient(sales_order):
 	return contact[0][0] if contact else None
 
 
+def _shop_name(item_code, fallback):
+	"""الاسم اللي الزبون شافه على الموقع، مش كود المصنع."""
+	title = frappe.db.get_value("Item", item_code, "website_title")
+	return (title or "").strip() or fallback
+
+
 def _context(sales_order):
 	"""Values the template can use. Nothing here is invented — all from the order."""
 	items = [
 		{
-			"item_name": row.item_name,
+			"item_name": _shop_name(row.item_code, row.item_name),
 			"qty": int(row.qty),
 			"rate": frappe.utils.fmt_money(row.rate, currency=sales_order.currency),
 			"amount": frappe.utils.fmt_money(row.amount, currency=sales_order.currency),
@@ -67,7 +73,7 @@ def _context(sales_order):
 		"delivery_date": frappe.utils.formatdate(sales_order.delivery_date),
 		"tracking_number": sales_order.get("tracking_number"),
 		"payment_method": sales_order.get("webshop_payment_method"),
-		"track_url": "https://shop.dpono.com/track",
+		"track_url": "https://dpono.com/track",
 	}
 
 
@@ -133,6 +139,67 @@ def _send(sales_order, template_name, kind):
 	return True
 
 
+def _order_phone(sales_order):
+	"""رقم الزبون: اللي كتبه في الشيك آوت الأول، وبعدين بيانات جهة الاتصال."""
+	for field in ("contact_mobile", "custom_customer_phone_number",
+	              "contact_phone", "webshop_phone_alt"):
+		value = (sales_order.get(field) or "").strip()
+		if value:
+			return value
+	return None
+
+
+def _whatsapp_confirmation(sales_order):
+	"""
+	رسالة تأكيد على الواتساب.
+
+	الزبون بيختار في الشيك آوت عايز نبلّغه إزاي. الاختيار كان بيتسجّل
+	على الطلب ومحدش بيقراه — فاللي طلب واتساب كان بياخد إيميل وبس.
+
+	«sms» بتروح واتساب برضه: مفيش خدمة رسائل نصية مركّبة، والرقم واحد،
+	وواتساب أقرب حاجة لللي طلبه بدل ما ميوصلوش حاجة خالص.
+	"""
+	choice = (sales_order.get("webshop_notify_via") or "").strip().lower()
+	if choice == "email":
+		return False          # الزبون طلب إيميل صراحةً، والإيميل اتبعت
+
+	if _already_sent(sales_order.name, "confirmation-wa"):
+		return False
+
+	phone = _order_phone(sales_order)
+	if not phone:
+		return False
+
+	ctx = _context(sales_order)
+	lines = [
+		"✅ *استلمنا طلبك*",
+		"",
+		"رقم الطلب: *%s*" % ctx["order_id"],
+	]
+	for item in ctx["items"]:
+		lines.append("• %s × %s" % (item["item_name"], item["qty"]))
+	lines += [
+		"",
+		"الإجمالي: *%s*" % ctx["grand_total"],
+	]
+	if ctx.get("payment_method"):
+		lines.append("طريقة الدفع: %s" % ctx["payment_method"])
+	lines += [
+		"",
+		"تقدر تتابع طلبك من هنا:",
+		ctx["track_url"],
+		"",
+		"شكراً إنك اخترت %s ☕" % ctx["store_name"],
+	]
+
+	ok, _detail = send_whatsapp_text(
+		phone, "\n".join(lines),
+		order_name=sales_order.name, customer=sales_order.customer)
+	if ok:
+		_mark_sent(sales_order.name, "confirmation-wa")
+	return ok
+
+
 def on_sales_order_submit(doc, method=None):
 	"""Order confirmation, only for orders placed through the store."""
 	if not doc.get("is_webshop_order"):
@@ -140,6 +207,13 @@ def on_sales_order_submit(doc, method=None):
 	if not _settings().get("send_order_confirmation"):
 		return
 	_send(doc, CONFIRMATION_TEMPLATE, "confirmation")
+
+	# الواتساب في try مستقل: رسالة مش واصلة مالهاش حق توقّف طلب متسجّل.
+	try:
+		_whatsapp_confirmation(doc)
+	except Exception:
+		frappe.log_error(title="Webshop whatsapp confirmation failed for %s" % doc.name,
+		                 message=frappe.get_traceback())
 
 
 def on_sales_order_update(doc, method=None):
