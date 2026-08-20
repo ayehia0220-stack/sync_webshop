@@ -700,6 +700,15 @@ def create_order(
 	from sync_webshop.api.owner_alerts import notify_owner_new_order
 	notify_owner_new_order(so, payment_method=payment_method)
 
+	# السلة المتروكة بتاعته بقت طلب — تتقفل عشان محدش يلاحقه بعد
+	# ما اشترى. وفشلها مالوش حق يلغي طلب اتسجّل.
+	try:
+		from sync_webshop.api.marketing import mark_cart_converted
+		mark_cart_converted(clean_customer.get("email"))
+	except Exception:
+		frappe.log_error(title="Abandoned cart close failed for %s" % so.name,
+		                 message=frappe.get_traceback())
+
 	return {
 		"sales_order": so.name,
 		"customer": customer_name,

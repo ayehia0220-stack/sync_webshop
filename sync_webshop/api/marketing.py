@@ -152,6 +152,77 @@ def sync_cart(cart_data):
 
 
 @frappe.whitelist(allow_guest=True)
+def save_guest_cart(email, cart_data):
+	"""
+	يحفظ سلة زبون مش مسجّل، بالإيميل اللي كتبه في صفحة الدفع.
+
+	بيتنادى وهو بيملا البيانات، فممكن ييجي كذا مرة للسلة الواحدة —
+	بنحدّث نفس السجل بدل ما نعمل واحد جديد كل مرة.
+	"""
+	set_cors_headers()
+
+	settings = frappe.get_single("Webshop Content Settings")
+	if not settings.get("enable_abandoned_cart_recovery"):
+		return
+
+	email = (email or "").strip().lower()
+	if not email or "@" not in email or len(email) > 140:
+		return
+
+	# نفس حد المحاولات بتاع باقي نقاط الزوار — الحفظ رخيص بس مش مجاني
+	cache = frappe.cache()
+	key = "guest_cart:%s" % email
+	hits = int(cache.get_value(key) or 0)
+	if hits > 60:
+		return
+	cache.set_value(key, hits + 1, expires_in_sec=3600)
+
+	if isinstance(cart_data, str):
+		try:
+			cart_data = json.loads(cart_data)
+		except ValueError:
+			return
+	if not cart_data:
+		return
+
+	existing = frappe.db.get_value(
+		"Webshop Abandoned Cart", {"email": email, "status": "Abandoned"}, "name"
+	)
+	payload = json.dumps(cart_data, ensure_ascii=False)
+	if existing:
+		doc = frappe.get_doc("Webshop Abandoned Cart", existing)
+		doc.cart_data = payload
+		doc.last_updated = frappe.utils.now()
+		doc.save(ignore_permissions=True)
+	else:
+		frappe.get_doc({
+			"doctype": "Webshop Abandoned Cart",
+			"email": email,
+			"cart_data": payload,
+			"status": "Abandoned",
+			"last_updated": frappe.utils.now(),
+		}).insert(ignore_permissions=True)
+	frappe.db.commit()
+	return {"saved": True}
+
+
+def mark_cart_converted(email):
+	"""
+	السلة بقت طلب فعلاً — تتقفل عشان محدش يلاحق زبون اشترى خلاص.
+
+	بتتنادى من إنشاء الطلب، وأي فشل فيها مالوش حق يوقّف الطلب.
+	"""
+	email = (email or "").strip().lower()
+	if not email:
+		return
+	for row in frappe.get_all("Webshop Abandoned Cart",
+	                          filters={"email": email, "status": "Abandoned"},
+	                          pluck="name"):
+		frappe.db.set_value("Webshop Abandoned Cart", row, "status", "Converted",
+		                    update_modified=False)
+
+
+@frappe.whitelist(allow_guest=True)
 def subscribe_newsletter(email):
 	"""
 	Store the subscription locally. Mailchimp is only called when it is

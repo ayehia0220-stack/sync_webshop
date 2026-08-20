@@ -45,6 +45,20 @@ def _recipient(sales_order):
 	return contact[0][0] if contact else None
 
 
+def _tracking_number(sales_order):
+	"""
+	رقم الشحنة من أي خانة فيها قيمة.
+
+	الخانة الأصلية `tracking_number` بتتملى لما حد يكتب الرقم بإيده،
+	وتربو بتكتب في خاناتها هي. الاتنين نفس المعنى للزبون.
+	"""
+	for field in ("tracking_number", "custom_turbo_tracking_code", "turbo_order_number"):
+		value = (sales_order.get(field) or "").strip()
+		if value:
+			return value
+	return None
+
+
 def _shop_name(item_code, fallback):
 	"""الاسم اللي الزبون شافه على الموقع، مش كود المصنع."""
 	title = frappe.db.get_value("Item", item_code, "website_title")
@@ -71,7 +85,7 @@ def _context(sales_order):
 		"grand_total": frappe.utils.fmt_money(sales_order.grand_total, currency=sales_order.currency),
 		"currency": sales_order.currency,
 		"delivery_date": frappe.utils.formatdate(sales_order.delivery_date),
-		"tracking_number": sales_order.get("tracking_number"),
+		"tracking_number": _tracking_number(sales_order),
 		"payment_method": sales_order.get("webshop_payment_method"),
 		"track_url": "https://dpono.com/track",
 	}
@@ -216,15 +230,73 @@ def on_sales_order_submit(doc, method=None):
 		                 message=frappe.get_traceback())
 
 
-def on_sales_order_update(doc, method=None):
-	"""Let the customer know once a tracking number appears."""
-	if not doc.get("is_webshop_order") or doc.docstatus != 1:
-		return
+def _whatsapp_shipped(sales_order):
+	"""«طلبك في الطريق» على الواتساب — زي تأكيد الطلب بالظبط."""
+	if (sales_order.get("webshop_notify_via") or "").strip().lower() == "email":
+		return False
+	if _already_sent(sales_order.name, "shipped-wa"):
+		return False
+
+	phone = _order_phone(sales_order)
+	if not phone:
+		return False
+
+	ctx = _context(sales_order)
+	lines = [
+		"🚚 *طلبك في الطريق*",
+		"",
+		"رقم الطلب: *%s*" % ctx["order_id"],
+	]
+	if ctx.get("tracking_number"):
+		lines.append("رقم الشحنة: *%s*" % ctx["tracking_number"])
+	lines += [
+		"",
+		"تقدر تتابعه من هنا:",
+		ctx["track_url"],
+		"",
+		"لو محتاج أي حاجة إحنا موجودين.",
+	]
+
+	ok, _detail = send_whatsapp_text(
+		phone, "\n".join(lines),
+		order_name=sales_order.name, customer=sales_order.customer)
+	if ok:
+		_mark_sent(sales_order.name, "shipped-wa")
+	return ok
+
+
+def notify_shipped(sales_order):
+	"""
+	يبلّغ الزبون إن طلبه اتشحن.
+
+	بيتنادى صراحةً من تربو أول ما رقم الشحنة يظهر، لأن الكتابة هناك
+	بتعدّي على القاعدة مباشرة من غير ما تشغّل أحداث المستند. وبيتنادى
+	كمان من الهوك العادي لو حد كتب الرقم بإيده في ERPNext.
+
+	بيتبعت مرة واحدة لكل طلب مهما اتنادى كام مرة.
+	"""
+	if isinstance(sales_order, str):
+		sales_order = frappe.get_doc("Sales Order", sales_order)
+
+	if not sales_order.get("is_webshop_order") or sales_order.docstatus != 1:
+		return False
 	if not _settings().get("send_shipping_notification"):
-		return
-	if not doc.get("tracking_number"):
-		return
-	_send(doc, SHIPPED_TEMPLATE, "shipped")
+		return False
+	if not _tracking_number(sales_order):
+		return False
+
+	_send(sales_order, SHIPPED_TEMPLATE, "shipped")
+	try:
+		_whatsapp_shipped(sales_order)
+	except Exception:
+		frappe.log_error(title="Webshop shipped whatsapp failed for %s" % sales_order.name,
+		                 message=frappe.get_traceback())
+	return True
+
+
+def on_sales_order_update(doc, method=None):
+	"""لما حد يكتب رقم الشحنة بإيده في ERPNext."""
+	notify_shipped(doc)
 
 
 @frappe.whitelist()

@@ -217,6 +217,17 @@ def create_shipment(order_name):
 	}, update_modified=False)
 	creds.settings.db_set("last_sync", now_datetime(), update_modified=False)
 	frappe.db.commit()
+
+	# الكتابة فوق بتعدّي على القاعدة مباشرة، فأحداث المستند مبتشتغلش
+	# وإشعار «طلبك في الطريق» مكانش بيتنادى خالص. بنناديه بنفسنا.
+	# وأي فشل فيه مالوش حق يلغي شحنة اتعملت فعلاً عند تربو.
+	try:
+		from sync_webshop.api.notifications import notify_shipped
+		notify_shipped(frappe.get_doc("Sales Order", order.name))
+	except Exception:
+		frappe.log_error(title="Turbo: shipped notice failed for %s" % order.name,
+		                 message=frappe.get_traceback())
+
 	return {"ok": True, "order_number": number}
 
 
