@@ -178,7 +178,9 @@ def _quote(item_qty, coupon_code=None, city=None, payment_method=None):
 		lines.append(
 			{
 				"item_code": code,
-				"item_name": frappe.db.get_value("Item", code, "item_name"),
+				# اللي الزبون شافه على الموقع، مش كود المصنع
+				"item_name": (frappe.db.get_value("Item", code, "website_title")
+				              or frappe.db.get_value("Item", code, "item_name")),
 				"qty": qty,
 				"rate": rate,
 				"amount": amount,

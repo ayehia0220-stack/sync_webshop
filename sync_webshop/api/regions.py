@@ -71,8 +71,17 @@ def _build():
 		name = (gov.get("name") or "").strip()
 		if not name or name in SKIP_GOVERNORATES:
 			continue
-		# No shipping zone means no price, and an order we cannot quote.
+		# No shipping zone means no price, and an order we cannot quote — so
+		# the governorate stays out. But dropping it silently is how «أطراف
+		# القاهرة والجيزة» disappeared with 163 areas behind it and nobody
+		# noticed for weeks. Anything Turbo adds gets logged loudly instead.
 		if priced and name not in priced:
+			frappe.log_error(
+				message="%s: %s\n\n%s" % (
+					"محافظة عند تربو ومفيش لها سعر شحن فمش ظاهرة للزبون",
+					name,
+					"ضيفها من: شركة الشحن «تربو» ← مناطق الشحن."),
+				title="محافظة بدون سعر شحن")
 			continue
 
 		areas = []

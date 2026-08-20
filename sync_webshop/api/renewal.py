@@ -267,10 +267,10 @@ def _alert_instance_down(name, reason, url, key):
 	import json
 	import requests
 	stamp = frappe.utils.now_datetime().strftime("%Y-%m-%d %H")
-	flag = f"instance_down_alert_{name}_{stamp}"
-	if frappe.cache().get_value(flag):
+	flag = f"alert_down_{name}"
+	if frappe.db.get_default(flag) == stamp:
 		return False
-	frappe.cache().set_value(flag, 1, expires_in_sec=4000)
+	frappe.db.set_default(flag, stamp)
 
 	settings = _settings()
 	targets = []
@@ -595,15 +595,129 @@ def _ticket_unknown(mobile, body):
 	return todo.name
 
 
-def _flag_needs_call(sub, reason, mobile):
-	"""علامة على الاشتراك + تذكرة في ERPNext + إشعار واتساب لخدمة العملاء."""
+INTENT_MULTI = r"(كل جهاز|لكل جهاز|للجهاز الواحد|الاربعه|الأربعة|"\
+              r"اكتر من جهاز|أكتر من جهاز|اكثر من جهاز|كل الاجهزة|كل الأجهزة|"\
+              r"الاجهزة كلها|جهازين|تلات اجهزة|٣ اجهزة)"
+INTENT_IGNORED = r"(مردتيش|مردتوش|محدش رد|مش بترد|مفيش رد|مستني رد|"\
+                 r"بقالي كتير|مش بيردوا)"
+
+
+INTENT_EXPIRY = r"(هينتهي|هاينتهي|ينتهي|بينتهي|هيخلص|بيخلص|امته|إمتى|امتى|"\
+                r"تاريخ الانتهاء|فاضل كام|باقي كام|لسه كام)"
+INTENT_PAID = r"(دفعت|حولت|حوّلت|حولتلك|بعتلك الصورة|بعتلك صورة|بعثت لك صوره|"\
+              r"بعتلك الإيصال|تم التحويل|تم الدفع|حولت الفلوس)"
+INTENT_CHURN = r"(جددت مع|جدات مع|اشتركت مع|مع شركة|شركة تانية|شركه تانيه|"\
+               r"غيرت الشركة|سبت الشركة)"
+INTENT_TROUBLE = r"(مش شغال|مش بيشتغل|ما اشتغلش|مااشتغلش|واقف|عطلان|بايظ|"\
+                 r"مش بيرسل|مش ظاهر|اتسرق|سرقه|سرقة|ضاع|مش لاقي العربية)"
+
+
+def _smart_reply(sub, body, mobile, settings):
+	"""يرد على الأسئلة الشائعة بدل ما يحوّل كل حاجة لموظف.
+
+	بيرجّع dict فيه الرد والإجراء، أو None لو مفيش حاجة مفهومة.
+	"""
+	text = str(body or "")
+
+	# «السعر ده لكل جهاز؟» — سؤال متكرر وإجابته عندنا بالظبط
+	if re.search(INTENT_MULTI, text):
+		mine = frappe.get_all(
+			"Customer Subscription",
+			filters={"mobile_number": sub.get("mobile_number"), "renewed": 0,
+			         "customer_refused_to_renew": 0},
+			fields=["imei", "end_date"], order_by="end_date asc",
+			limit_page_length=20)
+		count = len(mine) or 1
+		yearly = _money(settings.price_yearly)
+		total = _money(_int(settings.price_yearly) * count)
+		lines = [f"السعر ده **لكل جهاز**، مش للكل مع بعض 🙏", ""]
+		lines.append(f"عندك {count} جهاز:")
+		for row in mine[:10]:
+			end = getdate(row.end_date) if row.end_date else None
+			days = (end - getdate(nowdate())).days if end else None
+			when = ("" if days is None else
+			        f" — باقي {days} يوم" if days > 0 else
+			        " — بينتهي النهاردة" if days == 0 else
+			        f" — منتهي من {abs(days)} يوم")
+			lines.append(f"• {row.imei or ''}{when}")
+		if count > 10:
+			lines.append(f"• وكمان {count - 10} جهاز")
+		lines.append("")
+		lines.append(f"سنة لكل جهاز: {yearly} جنيه")
+		if count > 1:
+			lines.append(f"إجمالي {count} أجهزة: {total} جنيه")
+		lines.append("")
+		lines.append(settings.get("choices_text") or "")
+		return {"reply": "\n".join(lines).strip(), "action": "multi_device_answered",
+		        "urgent": False}
+
+	# عميل زعلان إن محدش رد عليه — ده يستاهل إشعار فوري
+	if re.search(INTENT_IGNORED, text):
+		return {"reply": "معلش والله 🙏 حصل تأخير، وأنا حوّلتك لخدمة العملاء "
+		                 "وهيكلموك حالًا.",
+		        "action": "complaint_no_reply", "urgent": True,
+		        "reason": f"😞 عميل زعلان إن محدش رد عليه: {text[:110]}"}
+
+	# «امتى بينتهي؟» — إجابة موجودة عندنا، مش محتاجة موظف
+	if re.search(INTENT_EXPIRY, text):
+		end = getdate(sub.get("end_date")) if sub.get("end_date") else None
+		if end:
+			days = (end - getdate(nowdate())).days
+			pretty = frappe.utils.formatdate(end, "d MMMM yyyy")
+			if days > 0:
+				when = f"باقي {days} يوم — بينتهي يوم {pretty}"
+			elif days == 0:
+				when = f"بينتهي النهاردة ({pretty})"
+			else:
+				when = f"منتهي من {abs(days)} يوم — كان يوم {pretty}"
+			reply = (f"اشتراك جهاز {sub.get('imei') or ''} {when}.\n\n"
+			         + (settings.get("choices_text") or ""))
+			return {"reply": reply.strip(), "action": "expiry_answered",
+			        "urgent": False}
+
+	# «أنا دفعت» — ده بلاغ دفع، مش كلام عادي
+	if re.search(INTENT_PAID, text):
+		out = report_payment(mobile, note=text)
+		return {"reply": out.get("reply"), "action": "payment_reported",
+		        "urgent": False, "handled": True}
+
+	# «جددت مع شركة تانية» — نوقف الرسايل بدل ما نفضل نزعّجه
+	if re.search(INTENT_CHURN, text):
+		frappe.db.set_value("Customer Subscription", sub.name, {
+			"customer_refused_to_renew": 1,
+			"reminder_active": 0,
+			"conversation_state": STATE_REFUSED,
+			"customer_feedback": f"جدد مع جهة تانية: {text[:200]}",
+		}, update_modified=False)
+		_make_ticket(sub, f"عميل جدد مع شركة تانية: {text[:150]}", mobile)
+		return {"reply": "تمام، شكرًا لصراحتك 🌹 وقّفنا رسايل التجديد. "
+		                 "لو احتجتنا في أي وقت إحنا موجودين.",
+		        "action": "churned", "urgent": False, "handled": True}
+
+	# عطل أو سرقة — ده بيعطّل العميل فعلاً، يستاهل إشعار فوري
+	if re.search(INTENT_TROUBLE, text):
+		return {"reply": "وصلتنا مشكلتك ✅ حوّلتها للفني حالًا وهنكلمك في أقرب وقت.",
+		        "action": "trouble_reported", "urgent": True,
+		        "reason": f"🔧 مشكلة في الجهاز: {text[:120]}"}
+
+	return None
+
+
+def _flag_needs_call(sub, reason, mobile, urgent=True):
+	"""علامة على الاشتراك + تذكرة، والإشعار الفوري للحاجات المهمة بس.
+
+	`urgent=False` معناها: سجّل التذكرة عشان محدش يضيع، بس متبعتش
+	واتساب. الكلام العادي اللي البوت مش فاهمه مش سبب كافي إن موبايل
+	المالك يرن.
+	"""
 	frappe.db.set_value("Customer Subscription", sub.name, {
 		"conversation_state": STATE_SUPPORT,
 		"needs_call": 1,
 		"needs_call_since": now_datetime(),
 	}, update_modified=False)
 	_make_ticket(sub, reason, mobile)
-	_alert_support(sub, mobile, reason)
+	if urgent:
+		_alert_support(sub, mobile, reason)
 
 
 def _alert_support(sub, mobile, reason):
@@ -612,6 +726,14 @@ def _alert_support(sub, mobile, reason):
 	التذكرة في ERPNext لوحدها مش كفاية — محدش بيفتح ERPNext كل شوية.
 	"""
 	settings = _settings()
+
+	# إشعار واحد للعميل الواحد في اليوم — العميل اللي بيكتب جملته على
+	# خمس رسايل مكانش ينفع يبعت خمس إشعارات.
+	flag = f"alert_sup_{sub.get('name')}"
+	if frappe.db.get_default(flag) == nowdate():
+		return False
+	frappe.db.set_default(flag, nowdate())
+
 	# التنبيه بيروح لخدمة العملاء + المالك وضحى (owner_alert_numbers)
 	targets = []
 	for raw in [settings.get("support_alert_number")] + \
@@ -753,8 +875,18 @@ def handle_reply(mobile, text=None):
 
 	# ——— أي كلام تاني: تذكرة، ومنبعتش رد آلي ———
 	else:
-		_flag_needs_call(sub, f"رد بكلام محتاج رد بشري: {body[:120]}", clean_mobile)
-		result.update(reply=None, action="handover")
+		smart = _smart_reply(sub, body, clean_mobile, settings)
+		if smart:
+			if not smart.get("handled"):
+				if smart.get("urgent"):
+					_flag_needs_call(sub, smart.get("reason") or body[:120],
+					                 clean_mobile, urgent=True)
+			result.update(reply=smart.get("reply"), action=smart["action"])
+		else:
+			# مش فاهمين — تذكرة عشان محدش يضيع، من غير إشعار مزعج
+			_flag_needs_call(sub, f"رد بكلام محتاج رد بشري: {body[:120]}",
+			                 clean_mobile, urgent=False)
+			result.update(reply=None, action="handover")
 
 	if result["reply"]:
 		_log(clean_mobile, result["reply"], "صادر", sub.name, sub.customer_name, result["action"])
