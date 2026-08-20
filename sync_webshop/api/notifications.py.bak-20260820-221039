@@ -154,17 +154,11 @@ def _send(sales_order, template_name, kind):
 
 
 def _order_phone(sales_order):
-	"""
-	رقم الزبون اللي نقدر نوصله فعلاً.
-
-	مش أول رقم نلاقيه — أول رقم **صالح**. في طلبات قديمة الرقم الأساسي
-	ناقص خانة والرقم التاني سليم؛ الأول كان بيتاخد وترجع الرسالة فاشلة.
-	"""
+	"""رقم الزبون: اللي كتبه في الشيك آوت الأول، وبعدين بيانات جهة الاتصال."""
 	for field in ("contact_mobile", "custom_customer_phone_number",
-	              "contact_phone", "webshop_phone_alt",
-	              "custom_second_customer_phone_number"):
+	              "contact_phone", "webshop_phone_alt"):
 		value = (sales_order.get(field) or "").strip()
-		if value and normalise_msisdn(value):
+		if value:
 			return value
 	return None
 
@@ -797,15 +791,6 @@ def _handle_evolution(payload, instance=None):
 	except Exception:
 		frappe.log_error(title="Social whatsapp",
 		                 message=frappe.get_traceback()[:2000])
-
-	# رقم حملة التجديد ليه منطقه الخاص — شجرة اختيارات وصور دفع
-	if not handled:
-		try:
-			from sync_webshop.api.renewal_runner import handle_reply
-			handled = handle_reply(payload, instance)
-		except Exception:
-			frappe.log_error(title="Renewal reply",
-			                 message=frappe.get_traceback()[:2000])
 
 	if not handled:
 		_forward(payload, instance)

@@ -71,9 +71,14 @@ def _clean_customer(customer):
 	if not email or not EMAIL_RE.match(email):
 		frappe.throw(frappe._("اكتب بريد إلكتروني صحيح."))
 
-	digits = "".join(ch for ch in phone if ch.isdigit())
-	if len(digits) < 9:
-		frappe.throw(frappe._("اكتب رقم موبايل صحيح."))
+	# نفس القاعدة اللي النظام بيخزّن بيها الأرقام: 01 وبعدها 9 أرقام.
+	# «9 أرقام أو أكتر» كانت بتعدّي أرقام ناقصة، والمندوب مش بيوصل.
+	from sync_webshop.api.turbo import normalise_customer_phone
+	if not normalise_customer_phone(phone):
+		frappe.throw(frappe._("رقم الموبايل لازم يكون 11 رقم ويبدأ بـ 01."))
+	phone_alt = (customer.get("phone_alt") or "").strip()
+	if phone_alt and not normalise_customer_phone(phone_alt):
+		frappe.throw(frappe._("الرقم التاني لازم يكون 11 رقم ويبدأ بـ 01، أو تسيبه فاضي."))
 	if len(address) < 10:
 		frappe.throw(frappe._("اكتب عنوان التوصيل بالتفصيل."))
 

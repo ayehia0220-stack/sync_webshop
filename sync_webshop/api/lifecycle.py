@@ -140,8 +140,15 @@ def _mark_sent(doctype, name, event):
 		"content": _stamp(event)}).insert(ignore_permissions=True)
 
 
-def deliver(doctype, name, event, force=0, dry_run=0):
-	"""بينده من الطابور بعد ما المستند يتحفظ فعلًا."""
+def deliver(doctype, name, event_name, force=0, dry_run=0):
+	"""
+	بينده من الطابور بعد ما المستند يتحفظ فعلًا.
+
+	الباراميتر اسمه `event_name` مش `event` عن قصد: `event` اسم محجوز
+	في `frappe.enqueue`، فلو اتسمّى كده القيمة بتتبلع في الطريق
+	والدالة بتقع. متغيّرش الاسم ده.
+	"""
+	event = event_name
 	if not cint(force) and _already_sent(doctype, name, event):
 		return {"ok": False, "why": "اتبعتت قبل كده"}
 
@@ -190,7 +197,7 @@ def _queue(doc, event):
 		return
 	frappe.enqueue("sync_webshop.api.lifecycle.deliver", queue="short",
 	               enqueue_after_commit=True, doctype=doc.doctype,
-	               name=doc.name, event=event)
+	               name=doc.name, event_name=event)
 
 
 # ————————————————————————————— الخطّافات —————————————————————————————
@@ -223,13 +230,13 @@ def on_sales_invoice_submit(doc, method=None):
 def preview(doctype, name, event):
 	"""يوريك الرسالة والرقم من غير ما يبعت حاجة."""
 	frappe.only_for("System Manager")
-	return deliver(doctype, name, event, force=1, dry_run=1)
+	return deliver(doctype, name, event_name=event, force=1, dry_run=1)
 
 
 @frappe.whitelist()
 def send_now(doctype, name, event):
 	frappe.only_for("System Manager")
-	return deliver(doctype, name, event, force=1, dry_run=0)
+	return deliver(doctype, name, event_name=event, force=1, dry_run=0)
 
 
 @frappe.whitelist()
