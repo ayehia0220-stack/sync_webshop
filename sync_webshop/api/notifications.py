@@ -413,10 +413,23 @@ def log_whatsapp(phone, message, sent=True, customer=None, reference=None):
 		# Not every caller commits — a scheduled send would otherwise lose this.
 		frappe.db.commit()
 
-		# Also pin it to the order it was about, when there is one.
+		# وكمان بنعلّقها على الطلب اللي بتتكلم عنه، لو فيه طلب.
+		#
+		# فرابي شال `timeline_doctype` و`timeline_name` وحطّ مكانهم جدول
+		# `timeline_links`. بنتأكد من اللي موجود فعلاً بدل ما نفترض، عشان
+		# الكود يفضل شغال لو النسخة اتغيّرت تاني.
 		if reference and frappe.db.exists("Sales Order", reference):
-			doc.db_set("timeline_doctype", "Sales Order", update_modified=False)
-			doc.db_set("timeline_name", reference, update_modified=False)
+			meta = frappe.get_meta("Communication")
+			if meta.get_field("timeline_links"):
+				doc.append("timeline_links", {
+					"link_doctype": "Sales Order",
+					"link_name": reference,
+				})
+				doc.save(ignore_permissions=True)
+				frappe.db.commit()
+			elif meta.get_field("timeline_doctype"):
+				doc.db_set("timeline_doctype", "Sales Order", update_modified=False)
+				doc.db_set("timeline_name", reference, update_modified=False)
 		return doc.name
 	except Exception:
 		frappe.log_error(title="WhatsApp log failed",
