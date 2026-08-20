@@ -196,6 +196,9 @@ def _run_skill(action, args, question, allowed=None):
 	if not fn:
 		return None
 	try:
+		# «مساعدة» لازم تعرف مين بيسأل عشان تعرض المهارات بتاعته هو بس
+		if action == "help":
+			return fn(args.get("question") or question, allowed=allowed)
 		return fn(args.get("question") or question)
 	except frappe.PermissionError:
 		return "المعلومة دي مش ضمن صلاحياتك."
@@ -306,6 +309,33 @@ def _first_part(payload):
 		return {}
 
 
+# الأكواد الجوّانية زي website و whatsapp لازم تتحوّل للاختيار المكتوب
+# في الحقل بالظبط، وإلا فرابي بيرفض الصف كله.
+_CHANNELS = {
+	"erp": "ERP",
+	"website": "Website",
+	"whatsapp": "WhatsApp",
+	"telegram": "Telegram",
+	"facebook": "Facebook",
+}
+
+
+def _skill_record(action):
+	"""
+	الكود بيعرف المهارة بكودها الإنجليزي (item_price)، والسجل اسمه
+	عربي («سعر صنف»). خانة action في سجل المهارة فيها الكود، فبنترجم
+	بيها. لو مفيش مهارة مطابقة بنرجّع فاضي بدل ما نكسّر التسجيل.
+	"""
+	if not action:
+		return None
+	try:
+		if frappe.db.exists("Webshop Agent Skill", action):
+			return action
+		return frappe.db.get_value("Webshop Agent Skill", {"action": action}, "name")
+	except Exception:
+		return None
+
+
 def _log(question, reply, channel, action=None):
 	if not _settings().get("log_conversations"):
 		return
@@ -313,12 +343,19 @@ def _log(question, reply, channel, action=None):
 		doc = frappe.new_doc("Webshop Agent Log")
 		doc.question = question[:500]
 		doc.response = str(reply)[:2000]
-		for field, value in (("channel", channel), ("skill", action), ("outcome", "answered")):
-			if doc.meta.get_field(field):
+		values = (
+			("channel", _CHANNELS.get(str(channel or "").lower(), "ERP")),
+			("skill", _skill_record(action)),
+			("outcome", "نجح"),
+		)
+		for field, value in values:
+			if value and doc.meta.get_field(field):
 				doc.set(field, value)
 		doc.flags.ignore_permissions = True
 		doc.insert()
 	except Exception:
+		# محادثة مش متسجّلة أهون من رد مش واصل — بنبلع الخطأ ونكمّل،
+		# بس بنسجّله مرة واحدة عشان ميغرقش سجل الأخطاء.
 		frappe.log_error(frappe.get_traceback(), "assistant log")
 
 

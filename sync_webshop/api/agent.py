@@ -264,17 +264,37 @@ def act_webshop_orders(_question):
 	return "\n".join(lines)
 
 
-def act_help(_question):
+def act_help(_question, allowed=None):
+	"""
+	قايمة اللي المساعد يعرف يعمله.
+
+	`allowed` هي أكواد المهارات المسموحة للسائل. لازم تتبعت للزبون،
+	وإلا هنعرض عليه تقارير الإدارة — مبيعات وعملاء ومخزون — وهي مش
+	بتشتغل معاه أصلاً وبتوحّشله التجربة.
+	"""
+	filters = {"enabled": 1, "action": ["!=", "help"]}
+	if allowed is not None:
+		usable = [a for a in allowed if a != "help"]
+		if not usable:
+			return "اسألني عن سعر منتج أو حالة طلبك وأنا تحت أمرك."
+		filters["action"] = ["in", usable]
+
 	skills = frappe.get_all(
 		"Webshop Agent Skill",
-		filters={"enabled": 1, "action": ["!=", "help"]},
+		filters=filters,
 		fields=["skill_name", "example_question"],
 		order_by="skill_name",
 	)
+	if not skills:
+		return "اسألني عن سعر منتج أو حالة طلبك وأنا تحت أمرك."
+
 	lines = ["أقدر أجاوبك على:"]
 	for s in skills:
 		lines.append(f"• {s.skill_name}" + (f" — مثال: «{s.example_question}»" if s.example_question else ""))
-	lines.append("\nبشوف اللي مسموحلك تشوفه في ERPNext بس، ومش بنفّذ أي تعديل.")
+	if allowed is None:
+		lines.append("\nبشوف اللي مسموحلك تشوفه في ERPNext بس، ومش بنفّذ أي تعديل.")
+	else:
+		lines.append("\nولو محتاج حاجة تانية، اكتبها وحد من الفريق هيتواصل معاك.")
 	return "\n".join(lines)
 
 

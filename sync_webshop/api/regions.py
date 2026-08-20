@@ -24,7 +24,7 @@ from sync_webshop.api.utils import set_cors_headers
 
 CACHE_KEY = "webshop_regions_v2"
 CACHE_TTL = 86400
-FALLBACK_FILE = frappe.get_site_path("private", "files", "turbo_regions.json")
+FALLBACK_KEY = "webshop_regions_fallback"
 TIMEOUT = 25
 
 COVERED = "\u0645\u063a\u0637\u0627\u0629"          # مغطاة
@@ -71,17 +71,8 @@ def _build():
 		name = (gov.get("name") or "").strip()
 		if not name or name in SKIP_GOVERNORATES:
 			continue
-		# No shipping zone means no price, and an order we cannot quote — so
-		# the governorate stays out. But dropping it silently is how «أطراف
-		# القاهرة والجيزة» disappeared with 163 areas behind it and nobody
-		# noticed for weeks. Anything Turbo adds gets logged loudly instead.
+		# No shipping zone means no price, and an order we cannot quote.
 		if priced and name not in priced:
-			frappe.log_error(
-				message="%s: %s\n\n%s" % (
-					"محافظة عند تربو ومفيش لها سعر شحن فمش ظاهرة للزبون",
-					name,
-					"ضيفها من: شركة الشحن «تربو» ← مناطق الشحن."),
-				title="محافظة بدون سعر شحن")
 			continue
 
 		areas = []
@@ -123,20 +114,11 @@ def get_regions():
 
 	if not data:
 		# Better a slightly stale list than a checkout nobody can complete.
-		try:
-			with open(FALLBACK_FILE, encoding="utf-8") as fh:
-				return json.load(fh)
-		except Exception:
-			return []
+		stale = frappe.db.get_default(FALLBACK_KEY)
+		return json.loads(stale) if stale else []
 
 	frappe.cache().set_value(CACHE_KEY, data, expires_in_sec=CACHE_TTL)
-	try:
-		import os
-		os.makedirs(os.path.dirname(FALLBACK_FILE), exist_ok=True)
-		with open(FALLBACK_FILE, "w", encoding="utf-8") as fh:
-			json.dump(data, fh, ensure_ascii=False)
-	except Exception:
-		pass  # the cache still has it; the fallback is a convenience
+	frappe.db.set_default(FALLBACK_KEY, json.dumps(data))
 	return data
 
 
