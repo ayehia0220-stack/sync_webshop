@@ -1,0 +1,330 @@
+# -*- coding: utf-8 -*-
+"""
+الرد على العملاء — كومنتات فيسبوك ورسايل واتساب — من جوّه الـ ERP.
+
+كانت ورك فلو n8n من 17 نود، لكن العقل كله كان هنا أصلًا: كانت بتاخد
+الكلام وتبعته لـ `assistant.ask_public` وترجّع الرد. اللي كان في n8n
+هو الأنابيب بس — الفلترة، نداء الجراف، وتقسيم الرد لعام وخاص.
+
+الفلترة اتنقلت زي ما هي بالحرف، لأنها متجرَّبة على شهور من الكومنتات:
+الرد على الكومنت المباشر بس، مش على ردود الردود، ومش على الصفحة
+نفسها، ومش على كلام أقل من حرفين أو أرقام لوحدها.
+"""
+
+import json
+import re
+
+import frappe
+import requests
+from frappe.utils import cint, now_datetime
+
+GRAPH = "https://graph.facebook.com/v21.0"
+
+CH_FACEBOOK = "فيسبوك"
+CH_WHATSAPP = "واتساب"
+
+ST_REPLIED = "تم الرد"
+ST_IGNORED = "متجاهل"
+ST_FAILED = "فشل"
+
+# كلام مش بني آدم بيكتبه: حرف مكرر، أرقام لوحدها، أو سبام صريح
+JUNK = (
+	re.compile(r"^(.)\1{4,}$"),
+	re.compile(r"^[0-9\s]+$"),
+	re.compile(r"spam|bot|test123", re.I),
+)
+
+PUBLIC_MAX = 120
+REPLY_MAX = 900
+
+
+# ————————————————————————————— الإعدادات —————————————————————————————
+
+def _settings():
+	return frappe.get_single("Webshop Content Settings")
+
+
+def _on():
+	return cint(frappe.db.get_single_value(
+		"Webshop Content Settings", "social_replies_on"))
+
+
+def _fb():
+	s = _settings()
+	try:
+		token = s.get_password("fb_page_token", raise_exception=False)
+	except Exception:
+		token = None
+	return frappe._dict({
+		"token": token,
+		"verify": (s.get("fb_verify_token") or "").strip(),
+		"pages": [p.strip() for p in
+		          re.split(r"[,\s]+", s.get("fb_page_ids") or "") if p.strip()],
+	})
+
+
+def _bot_instances():
+	raw = frappe.db.get_single_value("Webshop Content Settings",
+	                                 "wa_bot_instances") or "1212"
+	return [i.strip() for i in re.split(r"[,\s]+", raw) if i.strip()]
+
+
+# ————————————————————————————— السجل —————————————————————————————
+
+def _seen(external_id):
+	return bool(frappe.db.exists("Social Interaction",
+	                             {"external_id": external_id}))
+
+
+def _log(channel, external_id, user_name, user_ref, incoming,
+         reply=None, status=ST_REPLIED, reason=None, post_id=None):
+	try:
+		frappe.get_doc({
+			"doctype": "Social Interaction", "channel": channel,
+			"external_id": external_id, "user_name": (user_name or "")[:140],
+			"user_ref": (user_ref or "")[:140], "incoming": (incoming or "")[:1000],
+			"reply": (reply or "")[:1000], "status": status,
+			"reason": (reason or "")[:140], "post_id": (post_id or "")[:140],
+		}).insert(ignore_permissions=True)
+		frappe.db.commit()
+	except frappe.DuplicateEntryError:
+		pass
+	except Exception:
+		frappe.log_error(title="Social log", message=frappe.get_traceback()[:2000])
+
+
+# ————————————————————————————— المساعد —————————————————————————————
+
+def _ask(text, channel):
+	from sync_webshop.api.assistant import ask_public
+	try:
+		res = ask_public(text, channel=channel) or {}
+	except Exception:
+		frappe.log_error(title="Social assistant",
+		                 message=frappe.get_traceback()[:2000])
+		return ""
+	reply = str(res.get("reply") or "").replace("\r", "")
+	reply = re.sub(r"\n{3,}", "\n\n", reply).strip()
+	return reply[:REPLY_MAX]
+
+
+# ردود معناها «مافيش إجابة» — ماينفعش تتنشر تحت منشور ولا تروح لعميل
+BAD_REPLY = (
+	"مالقيتش", "مفيش نتائج", "مش قادر أجاوب", "مش فاهم", "مش عارف",
+	"لا يوجد", "غير موجود",
+)
+
+
+def _usable(reply):
+	low = (reply or "").strip()
+	if len(low) < 4:
+		return False
+	return not any(bad in low for bad in BAD_REPLY)
+
+
+def _fallback(user_name):
+	first = (user_name or "صديقي").split(" ")[0]
+	return "أهلاً يا %s 🌹 وصلتنا رسالتك وحد من الفريق هيرد عليك حالًا." % first
+
+
+# ————————————————————————————— فيسبوك —————————————————————————————
+
+@frappe.whitelist(allow_guest=True)
+def facebook_webhook():
+	"""
+	ميتا بتنده هنا. الـ GET للتحقق مرة واحدة، والـ POST لكل كومنت.
+
+	بنرد 200 دايمًا مهما حصل — أي كود تاني بيخلي ميتا تعيد نفس الحدث
+	مرة ورا مرة، وده كان هيضاعف كل رد.
+	"""
+	from werkzeug.wrappers import Response
+
+	args = frappe.local.form_dict or {}
+	method = (frappe.request.method or "GET").upper()
+
+	if method == "GET":
+		cfg = _fb()
+		challenge = str(args.get("hub.challenge") or "")
+		if (args.get("hub.mode") == "subscribe"
+				and cfg.verify and args.get("hub.verify_token") == cfg.verify):
+			return Response(challenge, status=200, mimetype="text/plain")
+		return Response("forbidden", status=403, mimetype="text/plain")
+
+	try:
+		payload = frappe.request.get_json(force=True, silent=True) or {}
+	except Exception:
+		payload = {}
+
+	try:
+		if _on():
+			frappe.enqueue("sync_webshop.api.social.handle_facebook",
+			               queue="short", payload=payload)
+	except Exception:
+		frappe.log_error(title="Facebook webhook",
+		                 message=frappe.get_traceback()[:2000])
+
+	return Response("EVENT_RECEIVED", status=200, mimetype="text/plain")
+
+
+def _junk(text):
+	text = (text or "").strip()
+	if len(text) < 2:
+		return True
+	return any(p.search(text) for p in JUNK)
+
+
+def handle_facebook(payload):
+	cfg = _fb()
+	for entry in (payload.get("entry") or []):
+		for change in (entry.get("changes") or []):
+			value = change.get("value") or {}
+			sender = value.get("from") or {}
+
+			# كومنت جديد على منشور، مش لايك ولا تعديل ولا مشاركة
+			if (change.get("field") != "feed"
+					or value.get("item") != "comment"
+					or value.get("verb") != "add"):
+				continue
+
+			comment_id = str(value.get("comment_id") or "")
+			user_id = str(sender.get("id") or "")
+			text = value.get("message") or ""
+			post_id = str(value.get("post_id") or "")
+			parent_id = str(value.get("parent_id") or "")
+			user_name = sender.get("name") or ""
+
+			if not comment_id or not user_id:
+				continue
+			# الصفحة بتعلّق على نفسها لما بترد — مانردش على نفسنا
+			if user_id in cfg.pages:
+				continue
+			if _junk(text):
+				_log(CH_FACEBOOK, comment_id, user_name, user_id, text,
+				     status=ST_IGNORED, reason="كلام مش مفهوم", post_id=post_id)
+				continue
+			# رد على رد مش كومنت على المنشور — سيبه للموظف
+			if parent_id and parent_id != post_id:
+				_log(CH_FACEBOOK, comment_id, user_name, user_id, text,
+				     status=ST_IGNORED, reason="رد على رد", post_id=post_id)
+				continue
+			if _seen(comment_id):
+				continue
+
+			reply = _ask(text, "facebook")
+			if not _usable(reply):
+				reply = _fallback(user_name)
+			first = (user_name or "صديقي").split(" ")[0]
+			# الرد العام قصير عشان مايبقاش حيطة كلام تحت المنشور،
+			# والتفاصيل بتروح في الخاص
+			public = (reply if len(reply) <= PUBLIC_MAX
+			          else "أهلاً يا %s! 💬 بعتنالك التفاصيل في رسالة خاصة." % first)
+
+			ok_pub = _fb_post("%s/%s/comments" % (GRAPH, comment_id),
+			                  {"message": public, "access_token": cfg.token})
+			ok_dm = _fb_post("%s/me/messages" % GRAPH, None, json_body={
+				"recipient": {"comment_id": comment_id},
+				"message": {"text": reply},
+				"access_token": cfg.token})
+
+			_log(CH_FACEBOOK, comment_id, user_name, user_id, text,
+			     reply=reply, post_id=post_id,
+			     status=ST_REPLIED if (ok_pub or ok_dm) else ST_FAILED,
+			     reason="" if (ok_pub or ok_dm) else "الجراف رفض")
+
+
+def _fb_post(url, data, json_body=None):
+	try:
+		if json_body is not None:
+			res = requests.post(url, json=json_body, timeout=25)
+		else:
+			res = requests.post(url, data=data, timeout=25)
+		if res.status_code >= 300:
+			frappe.log_error(title="Facebook reply failed",
+			                 message="%s\n%s" % (url, res.text[:600]))
+			return False
+		return True
+	except Exception:
+		frappe.log_error(title="Facebook reply failed",
+		                 message=frappe.get_traceback()[:2000])
+		return False
+
+
+# ————————————————————————————— واتساب —————————————————————————————
+
+def handle_whatsapp(payload, instance):
+	"""
+	بينده من `notifications._handle_evolution` بدل ما الرسالة تتمرّر لـ n8n.
+
+	بيشتغل على أرقام البوت بس (البن 1212). رقم الـ GPS ليه حملة
+	التجديد بمنطقها الخاص وماينفعش المساعد العام يرد فيها.
+	"""
+	if not _on() or str(instance) not in _bot_instances():
+		return False
+
+	data = payload.get("data") or {}
+	messages = data if isinstance(data, list) else [data]
+
+	for msg in messages:
+		if not isinstance(msg, dict):
+			continue
+		key = msg.get("key") or {}
+		if key.get("fromMe"):
+			continue
+		jid = str(key.get("remoteJid") or "")
+		if not jid.endswith("@s.whatsapp.net"):   # مش جروبات ولا حالات
+			continue
+
+		body = msg.get("message") or {}
+		text = (body.get("conversation")
+		        or (body.get("extendedTextMessage") or {}).get("text") or "")
+		text = str(text).strip()
+		if not text:
+			continue
+
+		external = str(key.get("id") or "") or "%s-%s" % (jid, now_datetime())
+		if _seen(external):
+			continue
+
+		phone = "+" + jid.split("@")[0]
+		user_name = msg.get("pushName") or "عميلنا"
+		reply = _ask(text, "whatsapp")
+		if not _usable(reply):
+			reply = _fallback(user_name)
+
+		from sync_webshop.api.notifications import send_whatsapp_text
+		line = None
+		for row in _settings().get("wa_lines") or []:
+			if (row.evo_instance or "") == str(instance):
+				line = row
+				break
+		ok, detail = send_whatsapp_text(phone, reply, line=line)
+
+		_log(CH_WHATSAPP, external, user_name, phone, text, reply=reply,
+		     status=ST_REPLIED if ok else ST_FAILED,
+		     reason="" if ok else str(detail)[:140])
+	return True
+
+
+# ————————————————————————————— للتجربة —————————————————————————————
+
+@frappe.whitelist()
+def try_reply(text, channel="facebook"):
+	"""يوريك رد المساعد من غير ما ينشر حاجة."""
+	frappe.only_for("System Manager")
+	reply = _ask(text, channel)
+	first_line = reply if len(reply) <= PUBLIC_MAX else "…مختصر + رسالة خاصة"
+	return {"reply": reply or "(فاضي — هيستخدم الرد الاحتياطي)",
+	        "public": first_line, "length": len(reply)}
+
+
+@frappe.whitelist()
+def stats(days=7):
+	from frappe.utils import add_days, nowdate
+	since = add_days(nowdate(), -cint(days))
+	out = {}
+	for row in frappe.get_all("Social Interaction",
+	                          filters={"creation": [">=", since]},
+	                          fields=["channel", "status"]):
+		key = "%s / %s" % (row.channel, row.status)
+		out[key] = out.get(key, 0) + 1
+	return out

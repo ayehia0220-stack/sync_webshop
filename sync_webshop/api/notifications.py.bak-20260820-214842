@@ -696,19 +696,7 @@ def _handle_evolution(payload, instance=None):
 		log_whatsapp(phone, body, sent=from_me)
 
 	frappe.db.commit()
-
-	# المساعد جوّه الـ ERP بياخد فرصته الأول. لو رد، مافيش داعي
-	# نمرّر الرسالة لـ n8n وترد تاني.
-	handled = False
-	try:
-		from sync_webshop.api.social import handle_whatsapp
-		handled = handle_whatsapp(payload, instance)
-	except Exception:
-		frappe.log_error(title="Social whatsapp",
-		                 message=frappe.get_traceback()[:2000])
-
-	if not handled:
-		_forward(payload, instance)
+	_forward(payload, instance)
 
 
 def _message_text(message):

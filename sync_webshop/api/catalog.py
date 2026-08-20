@@ -1,5 +1,7 @@
 import re
 
+import json
+
 import frappe
 
 from sync_webshop.api.utils import set_cors_headers, full_url, require_catalog_access
@@ -138,6 +140,14 @@ def get_catalog(
 
 	page = max(1, int(page or 1))
 	page_size = min(max(1, int(page_size or 20)), MAX_PAGE_SIZE)
+
+	# القايمة بتوصل نص لما تتبعت في الرابط — زي ما السلة بتعمل وهي
+	# بتراجع رصيد وسعر أصنافها.
+	if isinstance(item_codes, str):
+		try:
+			item_codes = json.loads(item_codes)
+		except ValueError:
+			item_codes = [x.strip() for x in item_codes.split(",") if x.strip()]
 	min_price = float(min_price) if min_price not in (None, "") else None
 	max_price = float(max_price) if max_price not in (None, "") else None
 	order_by = SORT_OPTIONS.get(sort or DEFAULT_SORT, SORT_OPTIONS[DEFAULT_SORT])

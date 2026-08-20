@@ -12,8 +12,7 @@
 
 import frappe
 import requests
-from frappe.utils import (add_days, cint, get_datetime, getdate,
-                          now_datetime)
+from frappe.utils import add_days, cint, get_datetime, now_datetime
 
 SOURCE_N8N = "n8n"
 SOURCE_ERP = "ERPNext"
@@ -242,47 +241,6 @@ def _pull_erpnext(rows):
 			"detail": (hook.request_url or "")[:200],
 		})
 
-	for note in frappe.get_all(
-			"Notification", fields=["name", "channel", "document_type",
-			                        "event", "enabled"]):
-		rows.append({
-			"job_key": "erp:notify:%s" % note.name,
-			"source": SOURCE_ERP,
-			"job_name": "تنبيه: %s" % note.name,
-			"is_active": cint(note.enabled),
-			"last_run": None,
-			"runs_7d": 0, "success_7d": 0, "error_7d": 0, "node_count": 0,
-			"health": HEALTH_OK if cint(note.enabled) else HEALTH_STOPPED,
-			"open_url": "/app/notification/%s" % note.name,
-			"detail": "%s — %s / %s" % (note.channel or "",
-			                            note.document_type or "", note.event or ""),
-		})
-
-	if frappe.db.exists("DocType", "Auto Repeat"):
-		for rep in frappe.get_all(
-				"Auto Repeat", fields=["name", "reference_doctype", "frequency",
-				                       "status", "next_schedule_date"]):
-			active = 1 if (rep.status or "") == "Active" else 0
-			rows.append({
-				"job_key": "erp:repeat:%s" % rep.name,
-				"source": SOURCE_ERP,
-				"job_name": "تكرار تلقائي: %s" % (rep.reference_doctype or rep.name),
-				"is_active": active,
-				"last_run": None,
-				"runs_7d": 0, "success_7d": 0, "error_7d": 0, "node_count": 0,
-				# التاريخ الجاي فات ومحدش نفّذه = واقف، مش شغّال
-				"health": (HEALTH_STOPPED if not active
-				           else HEALTH_ERRORS
-				           if (rep.next_schedule_date
-				               and getdate(rep.next_schedule_date) < getdate())
-				           else HEALTH_OK),
-				"open_url": "/app/auto-repeat/%s" % rep.name,
-				"detail": "%s — الجاية %s" % (rep.frequency or "",
-				                              rep.next_schedule_date or "—"),
-			})
-
-	_pull_whatsapp_lines(rows)
-
 	for scr in frappe.get_all(
 			"Server Script",
 			filters={"script_type": ["in", ["DocType Event", "Scheduler Event"]]},
@@ -298,48 +256,6 @@ def _pull_erpnext(rows):
 			"health": HEALTH_OK if active else HEALTH_STOPPED,
 			"open_url": "/app/server-script/%s" % scr.name,
 			"detail": "%s — %s" % (scr.script_type, scr.reference_doctype or ""),
-		})
-
-
-def _pull_whatsapp_lines(rows):
-	"""
-	أرقام الواتساب نفسها.
-
-	مش أتمتة بالمعنى الحرفي، بس كل أتمتة بتخرج من واحد منهم — ولو
-	رقم اتفصل، الحملة والردود ورسايل الطلبات كلها بتقف من غير ما حد
-	ياخد باله. فمكانه هنا.
-	"""
-	from sync_webshop.api.renewal import instance_health
-
-	settings = frappe.get_single("Webshop Content Settings")
-	for line in settings.get("wa_lines") or []:
-		instance = (line.evo_instance or "").strip()
-		if not instance:
-			continue
-		try:
-			state = instance_health(instance, alert=0) or {}
-			ok = cint(state.get("ok"))
-			why = state.get("reason") or ""
-		except Exception as exc:
-			ok, why = 0, str(exc)[:120]
-
-		sent = frappe.db.count("Renewal Conversation Log", {
-			"direction": "صادر",
-			"creation": [">=", add_days(now_datetime(), -WINDOW_DAYS)]}) \
-			if instance == "97" else 0
-
-		rows.append({
-			"job_key": "erp:waline:%s" % instance,
-			"source": SOURCE_ERP,
-			"job_name": "رقم واتساب: %s (%s)" % (line.line_name, instance),
-			"is_active": cint(line.enabled),
-			"last_run": now_datetime() if ok else None,
-			"runs_7d": sent, "success_7d": sent, "error_7d": 0,
-			"node_count": 0,
-			"health": (HEALTH_STOPPED if not cint(line.enabled)
-			           else HEALTH_OK if ok else HEALTH_ERRORS),
-			"open_url": "/app/webshop-content-settings",
-			"detail": "متصل ✓" if ok else ("مش متصل — %s" % why),
 		})
 
 

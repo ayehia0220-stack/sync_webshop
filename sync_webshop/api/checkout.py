@@ -131,7 +131,47 @@ def _clean_items(items):
 
 	if not merged:
 		frappe.throw(frappe._("سلتك فاضية."))
+
+	_assert_in_stock(merged)
 	return merged
+
+
+def _assert_in_stock(item_qty):
+	"""
+	يوقف الطلب لو صنف خلص أو الكمية المطلوبة أكبر من الموجود.
+
+	الرسالة بتقول اسم المنتج زي ما الزبون شافه على الموقع والكمية
+	المتاحة، عشان يعرف يعدّل سلته بنفسه بدل «حصل خطأ».
+	"""
+	codes = list(item_qty.keys())
+	if not codes:
+		return
+
+	rows = frappe.db.sql(
+		"""
+		SELECT i.name,
+		       COALESCE(i.website_title, i.item_name) AS label,
+		       i.is_stock_item,
+		       COALESCE((SELECT SUM(b.actual_qty - b.reserved_qty)
+		                 FROM `tabBin` b WHERE b.item_code = i.name), 0) AS available
+		FROM `tabItem` i
+		WHERE i.name IN %(codes)s
+		""",
+		{"codes": codes},
+		as_dict=True,
+	)
+
+	for row in rows:
+		if not row.is_stock_item:
+			continue
+		wanted = item_qty.get(row.name) or 0
+		available = int(row.available or 0)
+		if available <= 0:
+			frappe.throw(frappe._("{0} خلص من المخزن. شيله من السلة وكمّل طلبك.")
+			             .format(row.label))
+		if wanted > available:
+			frappe.throw(frappe._("متبقّي {0} بس من {1}. قلّل الكمية وكمّل طلبك.")
+			             .format(available, row.label))
 
 
 def _server_prices(item_codes):
