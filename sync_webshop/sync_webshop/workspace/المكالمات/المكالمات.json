@@ -1,0 +1,253 @@
+{
+ "charts": [],
+ "content": "[{\"id\": \"sthdr1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u0623\u0631\u0642\u0627\u0645 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629</b></span>\", \"col\": 12}}, {\"id\": \"stcard2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0648\u0627\u0631\u062f\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0635\u0627\u062f\u0631\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard5\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0645\u0631\u062f\u0648\u062f \u0639\u0644\u064a\u0647\u0627 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard6\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0641\u0627\u064a\u062a\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard7\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0646\u0633\u0628\u0629 \u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a %\", \"col\": 3}}, {\"id\": \"stspc8\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"sthdr9\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u062c\u0648\u062f\u0629 \u0627\u0644\u062e\u062f\u0645\u0629</b></span>\", \"col\": 12}}, {\"id\": \"stcard10\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0636\u0627\u0639\u062a \u0648\u0645\u062d\u062f\u0634 \u0631\u062c\u0651\u0639\u0644\u0647\u0627\", \"col\": 3}}, {\"id\": \"stcard11\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u062f\u0642\u0627\u064a\u0642 \u0643\u0644\u0627\u0645 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard12\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u062a\u0648\u0633\u0637 \u0645\u062f\u0629 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629 \u0628\u0627\u0644\u062b\u0648\u0627\u0646\u064a\", \"col\": 3}}, {\"id\": \"stcard13\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0623\u0637\u0648\u0644 \u0645\u0643\u0627\u0644\u0645\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629 \u0628\u0627\u0644\u062b\u0648\u0627\u0646\u064a\", \"col\": 3}}, {\"id\": \"stspc14\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"sthdr15\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u0627\u0644\u0623\u0631\u0642\u0627\u0645 \u0648\u0627\u0644\u0639\u0645\u0644\u0627\u0621</b></span>\", \"col\": 12}}, {\"id\": \"stcard16\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0623\u0631\u0642\u0627\u0645 \u0627\u062a\u0635\u0644\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard17\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0623\u0631\u0642\u0627\u0645 \u0643\u0631\u0631\u062a \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard18\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0623\u0631\u0642\u0627\u0645 \u0645\u0634 \u0639\u0645\u0644\u0627\u0621 \u0627\u062a\u0635\u0644\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard19\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0639\u0645\u0644\u0627\u0621 \u0645\u0639\u0631\u0648\u0641\u064a\u0646 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stspc20\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"sthdr21\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u062a\u0634\u063a\u064a\u0644 \u0648\u0645\u062a\u0627\u0628\u0639\u0629</b></span>\", \"col\": 12}}, {\"id\": \"stcard22\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0622\u062e\u0631 7 \u0623\u064a\u0627\u0645\", \"col\": 3}}, {\"id\": \"stcard23\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0628\u0631\u0651\u0647 \u0627\u0644\u0645\u0648\u0627\u0639\u064a\u062f \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard24\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u062e\u0637\u0648\u0637 \u0634\u063a\u0651\u0627\u0644\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 3}}, {\"id\": \"stcard25\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0639\u0627\u0644\u0642\u0629 \u0639\u0646\u062f \u0627\u0644\u0631\u0646\u064a\u0646\", \"col\": 3}}, {\"id\": \"stspc26\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"sthdr9\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u062c\u0648\u062f\u0629 \u0627\u0644\u062e\u062f\u0645\u0629</b></span>\", \"col\": 12}}, {\"id\": \"stspc14\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"sthdr15\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u0627\u0644\u0623\u0631\u0642\u0627\u0645 \u0648\u0627\u0644\u0639\u0645\u0644\u0627\u0621</b></span>\", \"col\": 12}}, {\"id\": \"stspc20\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"sthdr21\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u062a\u0634\u063a\u064a\u0644 \u0648\u0645\u062a\u0627\u0628\u0639\u0629</b></span>\", \"col\": 12}}, {\"id\": \"stspc26\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"sthdr9\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u062c\u0648\u062f\u0629 \u0627\u0644\u062e\u062f\u0645\u0629</b></span>\", \"col\": 12}}, {\"id\": \"stspc14\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"sthdr15\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u0627\u0644\u0623\u0631\u0642\u0627\u0645 \u0648\u0627\u0644\u0639\u0645\u0644\u0627\u0621</b></span>\", \"col\": 12}}, {\"id\": \"stspc20\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"sthdr21\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u062a\u0634\u063a\u064a\u0644 \u0648\u0645\u062a\u0627\u0628\u0639\u0629</b></span>\", \"col\": 12}}, {\"id\": \"stspc26\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"header660441910\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u0627\u0641\u062a\u062d \u0628\u0633\u0631\u0639\u0629</b></span>\", \"col\": 12}}, {\"id\": \"shortcut864236820\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"\u0633\u062c\u0644 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a\", \"col\": 3}}, {\"id\": \"shortcut469683304\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"\u0627\u0644\u0639\u0645\u0644\u0627\u0621\", \"col\": 3}}, {\"id\": \"shortcut196584022\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"\u062c\u0647\u0627\u062a \u0627\u0644\u0627\u062a\u0635\u0627\u0644\", \"col\": 3}}, {\"id\": \"shortcut146095878\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"\u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646 \u0648\u0627\u0644\u062a\u062d\u0648\u064a\u0644\u0627\u062a\", \"col\": 3}}, {\"id\": \"shortcut112323870\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"\u0641\u0631\u064a\u0642 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a\", \"col\": 3}}, {\"id\": \"shortcut95639178\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"\u0648\u0633\u064a\u0644\u0629 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0648\u0627\u0644\u0648\u0631\u062f\u064a\u0627\u062a\", \"col\": 3}}, {\"id\": \"shortcut617797047\", \"type\": \"shortcut\", \"data\": {\"shortcut_name\": \"\u062a\u0630\u0627\u0643\u0631 \u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0629\", \"col\": 3}}, {\"id\": \"rptcard1\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"rptcard2\", \"type\": \"card\", \"data\": {\"card_name\": \"\u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631\", \"col\": 4}}]",
+ "creation": "2026-08-13 17:22:54.488579",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "hide_custom": 1,
+ "icon": "call",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "\u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "\u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631",
+   "link_count": 10,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0633\u062c\u0644 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+   "link_count": 0,
+   "link_to": "\u0633\u062c\u0644 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646",
+   "link_count": 0,
+   "link_to": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0623\u0648\u0642\u0627\u062a \u0630\u0631\u0648\u0629 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+   "link_count": 0,
+   "link_to": "\u0623\u0648\u0642\u0627\u062a \u0630\u0631\u0648\u0629 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0623\u0631\u0642\u0627\u0645 \u0627\u062a\u0635\u0644\u062a \u0648\u0644\u064a\u0633\u062a \u0639\u0645\u0644\u0627\u0621",
+   "link_count": 0,
+   "link_to": "\u0623\u0631\u0642\u0627\u0645 \u0627\u062a\u0635\u0644\u062a \u0648\u0644\u064a\u0633\u062a \u0639\u0645\u0644\u0627\u0621",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0636\u0627\u0639\u062a \u0648\u0645\u062d\u062f\u0634 \u0631\u062c\u0651\u0639\u0647\u0627",
+   "link_count": 0,
+   "link_to": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0636\u0627\u0639\u062a \u0648\u0645\u062d\u062f\u0634 \u0631\u062c\u0651\u0639\u0647\u0627",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0627\u0644\u0639\u0645\u0644\u0627\u0621",
+   "link_count": 0,
+   "link_to": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0627\u0644\u0639\u0645\u0644\u0627\u0621",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0645\u0642\u0627\u0631\u0646\u0629 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0623\u0633\u0628\u0648\u0639\u064a\u064b\u0627",
+   "link_count": 0,
+   "link_to": "\u0645\u0642\u0627\u0631\u0646\u0629 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0623\u0633\u0628\u0648\u0639\u064a\u064b\u0627",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0633\u0631\u0639\u0629 \u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+   "link_count": 0,
+   "link_to": "\u0633\u0631\u0639\u0629 \u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0643\u0644 \u062e\u0637 (\u062f\u0646\u062c\u0644)",
+   "link_count": 0,
+   "link_to": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0643\u0644 \u062e\u0637 (\u062f\u0646\u062c\u0644)",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0623\u062f\u0651\u062a \u0644\u0645\u0628\u064a\u0639\u0627\u062a",
+   "link_count": 0,
+   "link_to": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0623\u062f\u0651\u062a \u0644\u0645\u0628\u064a\u0639\u0627\u062a",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2026-08-15 00:06:22.387171",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "\u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+ "number_cards": [
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0648\u0627\u0631\u062f\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0648\u0627\u0631\u062f\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0635\u0627\u062f\u0631\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0635\u0627\u062f\u0631\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0645\u0631\u062f\u0648\u062f \u0639\u0644\u064a\u0647\u0627 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0645\u0631\u062f\u0648\u062f \u0639\u0644\u064a\u0647\u0627 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0641\u0627\u064a\u062a\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0641\u0627\u064a\u062a\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0646\u0633\u0628\u0629 \u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a %",
+   "number_card_name": "\u0646\u0633\u0628\u0629 \u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a %"
+  },
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0636\u0627\u0639\u062a \u0648\u0645\u062d\u062f\u0634 \u0631\u062c\u0651\u0639\u0644\u0647\u0627",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0636\u0627\u0639\u062a \u0648\u0645\u062d\u062f\u0634 \u0631\u062c\u0651\u0639\u0644\u0647\u0627"
+  },
+  {
+   "label": "\u062f\u0642\u0627\u064a\u0642 \u0643\u0644\u0627\u0645 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u062f\u0642\u0627\u064a\u0642 \u0643\u0644\u0627\u0645 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0645\u062a\u0648\u0633\u0637 \u0645\u062f\u0629 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629 \u0628\u0627\u0644\u062b\u0648\u0627\u0646\u064a",
+   "number_card_name": "\u0645\u062a\u0648\u0633\u0637 \u0645\u062f\u0629 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0629 \u0628\u0627\u0644\u062b\u0648\u0627\u0646\u064a"
+  },
+  {
+   "label": "\u0623\u0637\u0648\u0644 \u0645\u0643\u0627\u0644\u0645\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629 \u0628\u0627\u0644\u062b\u0648\u0627\u0646\u064a",
+   "number_card_name": "\u0623\u0637\u0648\u0644 \u0645\u0643\u0627\u0644\u0645\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629 \u0628\u0627\u0644\u062b\u0648\u0627\u0646\u064a"
+  },
+  {
+   "label": "\u0623\u0631\u0642\u0627\u0645 \u0627\u062a\u0635\u0644\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0623\u0631\u0642\u0627\u0645 \u0627\u062a\u0635\u0644\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0623\u0631\u0642\u0627\u0645 \u0643\u0631\u0631\u062a \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0623\u0631\u0642\u0627\u0645 \u0643\u0631\u0631\u062a \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0623\u0631\u0642\u0627\u0645 \u0645\u0634 \u0639\u0645\u0644\u0627\u0621 \u0627\u062a\u0635\u0644\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0623\u0631\u0642\u0627\u0645 \u0645\u0634 \u0639\u0645\u0644\u0627\u0621 \u0627\u062a\u0635\u0644\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0639\u0645\u0644\u0627\u0621 \u0645\u0639\u0631\u0648\u0641\u064a\u0646 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0639\u0645\u0644\u0627\u0621 \u0645\u0639\u0631\u0648\u0641\u064a\u0646 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0622\u062e\u0631 7 \u0623\u064a\u0627\u0645",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0622\u062e\u0631 7 \u0623\u064a\u0627\u0645"
+  },
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0628\u0631\u0651\u0647 \u0627\u0644\u0645\u0648\u0627\u0639\u064a\u062f \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0628\u0631\u0651\u0647 \u0627\u0644\u0645\u0648\u0627\u0639\u064a\u062f \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u062e\u0637\u0648\u0637 \u0634\u063a\u0651\u0627\u0644\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
+   "number_card_name": "\u062e\u0637\u0648\u0637 \u0634\u063a\u0651\u0627\u0644\u0629 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+  },
+  {
+   "label": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0639\u0627\u0644\u0642\u0629 \u0639\u0646\u062f \u0627\u0644\u0631\u0646\u064a\u0646",
+   "number_card_name": "\u0645\u0643\u0627\u0644\u0645\u0627\u062a \u0639\u0627\u0644\u0642\u0629 \u0639\u0646\u062f \u0627\u0644\u0631\u0646\u064a\u0646"
+  }
+ ],
+ "owner": "Administrator",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 3.0,
+ "shortcuts": [
+  {
+   "doc_view": "",
+   "label": "\u0633\u062c\u0644 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+   "link_to": "Call Log",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "\u0627\u0644\u0639\u0645\u0644\u0627\u0621",
+   "link_to": "Customer",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "\u062c\u0647\u0627\u062a \u0627\u0644\u0627\u062a\u0635\u0627\u0644",
+   "link_to": "Contact",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "\u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646 \u0648\u0627\u0644\u062a\u062d\u0648\u064a\u0644\u0627\u062a",
+   "link_to": "Employee",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "\u0641\u0631\u064a\u0642 \u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a",
+   "link_to": "Employee Group",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "\u0648\u0633\u064a\u0644\u0629 \u0627\u0644\u0627\u062a\u0635\u0627\u0644 \u0648\u0627\u0644\u0648\u0631\u062f\u064a\u0627\u062a",
+   "link_to": "Communication Medium",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "\u062a\u0630\u0627\u0643\u0631 \u0627\u0644\u0645\u062a\u0627\u0628\u0639\u0629",
+   "link_to": "ToDo",
+   "type": "DocType"
+  }
+ ],
+ "title": "\u0627\u0644\u0645\u0643\u0627\u0644\u0645\u0627\u062a"
+}
