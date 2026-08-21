@@ -1,6 +1,7 @@
 {
+ "app": "sync_webshop",
  "charts": [],
- "content": "[{\"id\": \"auhdr1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u0646\u0638\u0631\u0629 \u0633\u0631\u064a\u0639\u0629</b></span>\", \"col\": 12}}, {\"id\": \"aucard2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a\", \"col\": 3}}, {\"id\": \"aucard3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0634\u063a\u0627\u0644\u0629\", \"col\": 3}}, {\"id\": \"aucard4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0645\u064a\u062a\u0629\", \"col\": 3}}, {\"id\": \"aucard5\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0641\u064a\u0647\u0627 \u0623\u062e\u0637\u0627\u0621\", \"col\": 3}}, {\"id\": \"auspc6\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"auhdr7\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u0641\u064a\u0646</b></span>\", \"col\": 12}}, {\"id\": \"aucard8\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0641\u064a n8n\", \"col\": 4}}, {\"id\": \"aucard9\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u062c\u0648\u0651\u0647 ERPNext\", \"col\": 4}}, {\"id\": \"aucard10\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0645\u0642\u0641\u0648\u0644\u0629\", \"col\": 4}}, {\"id\": \"auhdr50\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0639\u0645\u0644\u0627\u0621 \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629</b></span>\", \"col\": 12}}, {\"id\": \"aucard51\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0631\u062f\u0648\u062f \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 4}}, {\"id\": \"aucard52\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0631\u062f\u0648\u062f \u0641\u0634\u0644\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629\", \"col\": 4}}, {\"id\": \"hdrcd_14\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>\u0627\u0644\u0634\u0627\u0634\u0627\u062a \u0648\u0627\u0644\u0631\u0648\u0627\u0628\u0637</b></span>\", \"col\": 12}}, {\"id\": \"cd_15\", \"type\": \"card\", \"data\": {\"card_name\": \"\u0627\u0644\u0634\u0627\u0634\u0627\u062a\", \"col\": 4}}, {\"id\": \"cd_16\", \"type\": \"card\", \"data\": {\"card_name\": \"\u0646\u0635\u0648\u0635 \u0627\u0644\u0631\u0633\u0627\u064a\u0644\", \"col\": 4}}, {\"id\": \"cd_17\", \"type\": \"card\", \"data\": {\"card_name\": \"\u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a\", \"col\": 4}}, {\"id\": \"cd_18\", \"type\": \"card\", \"data\": {\"card_name\": \"\u0623\u062f\u0648\u0627\u062a ERPNext\", \"col\": 4}}, {\"id\": \"cd_19\", \"type\": \"card\", \"data\": {\"card_name\": \"\u0627\u0644\u0633\u062c\u0644\u0627\u062a\", \"col\": 4}}]",
+ "content": "[{\"id\": \"auhdr1\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>نظرة سريعة</b></span>\", \"col\": 12}}, {\"id\": \"aucard2\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"الأتمتة — الإجمالي\", \"col\": 3}}, {\"id\": \"aucard3\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"الأتمتة — شغالة\", \"col\": 3}}, {\"id\": \"aucard4\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"الأتمتة — ميتة\", \"col\": 3}}, {\"id\": \"aucard5\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"الأتمتة — فيها أخطاء\", \"col\": 3}}, {\"id\": \"auspc6\", \"type\": \"spacer\", \"data\": {\"col\": 12}}, {\"id\": \"auhdr7\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>الأتمتة فين</b></span>\", \"col\": 12}}, {\"id\": \"aucard8\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"الأتمتة — في n8n\", \"col\": 4}}, {\"id\": \"aucard9\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"الأتمتة — جوّه ERPNext\", \"col\": 4}}, {\"id\": \"aucard10\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"الأتمتة — مقفولة\", \"col\": 4}}, {\"id\": \"auhdr50\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>الرد على العملاء النهاردة</b></span>\", \"col\": 12}}, {\"id\": \"aucard51\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"الأتمتة — ردود النهاردة\", \"col\": 4}}, {\"id\": \"aucard52\", \"type\": \"number_card\", \"data\": {\"number_card_name\": \"الأتمتة — ردود فشلت النهاردة\", \"col\": 4}}, {\"id\": \"hdrcd_14\", \"type\": \"header\", \"data\": {\"text\": \"<span class=\\\"h4\\\"><b>الشاشات والروابط</b></span>\", \"col\": 12}}, {\"id\": \"cd_15\", \"type\": \"card\", \"data\": {\"card_name\": \"الشاشات\", \"col\": 4}}, {\"id\": \"cd_16\", \"type\": \"card\", \"data\": {\"card_name\": \"نصوص الرسايل\", \"col\": 4}}, {\"id\": \"cd_17\", \"type\": \"card\", \"data\": {\"card_name\": \"الإعدادات\", \"col\": 4}}, {\"id\": \"cd_18\", \"type\": \"card\", \"data\": {\"card_name\": \"أدوات ERPNext\", \"col\": 4}}, {\"id\": \"cd_19\", \"type\": \"card\", \"data\": {\"card_name\": \"السجلات\", \"col\": 4}}]",
  "creation": "2026-08-20 22:14:02.815708",
  "custom_blocks": [],
  "docstatus": 0,
@@ -10,12 +11,12 @@
  "idx": 0,
  "indicator_color": "green",
  "is_hidden": 0,
- "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629",
+ "label": "الأتمتة",
  "links": [
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0627\u0644\u0634\u0627\u0634\u0627\u062a",
+   "label": "الشاشات",
    "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
@@ -25,9 +26,9 @@
    "dependencies": "Social Interaction",
    "hidden": 0,
    "is_query_report": 1,
-   "label": "\u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0639\u0645\u0644\u0627\u0621",
+   "label": "الرد على العملاء",
    "link_count": 0,
-   "link_to": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0627\u0644\u0631\u062f \u0639\u0644\u0649 \u0627\u0644\u0639\u0645\u0644\u0627\u0621",
+   "link_to": "الأتمتة — الرد على العملاء",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
@@ -36,9 +37,9 @@
    "dependencies": "Automation Job",
    "hidden": 0,
    "is_query_report": 1,
-   "label": "\u0643\u0644 \u0627\u0644\u0648\u0631\u0643 \u0641\u0644\u0648",
+   "label": "كل الورك فلو",
    "link_count": 0,
-   "link_to": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0643\u0644 \u0627\u0644\u0648\u0631\u0643 \u0641\u0644\u0648",
+   "link_to": "الأتمتة — كل الورك فلو",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
@@ -47,9 +48,9 @@
    "dependencies": "Automation Job",
    "hidden": 0,
    "is_query_report": 1,
-   "label": "\u0645\u062d\u062a\u0627\u062c\u0629 \u0642\u0631\u0627\u0631",
+   "label": "محتاجة قرار",
    "link_count": 0,
-   "link_to": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0645\u062d\u062a\u0627\u062c\u0629 \u0642\u0631\u0627\u0631",
+   "link_to": "الأتمتة — محتاجة قرار",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"
@@ -57,7 +58,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0643\u0644 \u0627\u0644\u0623\u062a\u0645\u062a\u0629",
+   "label": "كل الأتمتة",
    "link_count": 0,
    "link_to": "Automation Job",
    "link_type": "DocType",
@@ -67,7 +68,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0646\u0635\u0648\u0635 \u0627\u0644\u0631\u0633\u0627\u064a\u0644",
+   "label": "نصوص الرسايل",
    "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
@@ -76,7 +77,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0631\u0633\u0627\u064a\u0644 \u0645\u0627 \u0628\u0639\u062f \u0627\u0644\u0639\u0645\u0644\u064a\u0627\u062a",
+   "label": "رسايل ما بعد العمليات",
    "link_count": 0,
    "link_to": "Webshop Lifecycle Message",
    "link_type": "DocType",
@@ -86,7 +87,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0631\u0633\u0627\u064a\u0644 \u062d\u0645\u0644\u0629 \u0627\u0644\u062a\u062c\u062f\u064a\u062f",
+   "label": "رسايل حملة التجديد",
    "link_count": 0,
    "link_to": "Renewal Message Template",
    "link_type": "DocType",
@@ -96,7 +97,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u062a\u062f\u0631\u064a\u0628 \u0627\u0644\u0645\u0633\u0627\u0639\u062f",
+   "label": "تدريب المساعد",
    "link_count": 0,
    "link_to": "Webshop Agent Training",
    "link_type": "DocType",
@@ -106,7 +107,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a",
+   "label": "الإعدادات",
    "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
@@ -115,7 +116,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0623\u0631\u0642\u0627\u0645 \u0627\u0644\u0648\u0627\u062a\u0633\u0627\u0628 \u0648\u0627\u0644\u0645\u0641\u0627\u062a\u064a\u062d",
+   "label": "أرقام الواتساب والمفاتيح",
    "link_count": 0,
    "link_to": "Webshop Content Settings",
    "link_type": "DocType",
@@ -125,7 +126,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0627\u0644\u0631\u0628\u0637 \u0628\u0640 n8n",
+   "label": "الربط بـ n8n",
    "link_count": 0,
    "link_to": "Webshop API Settings",
    "link_type": "DocType",
@@ -135,7 +136,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u062d\u0645\u0644\u0629 \u0627\u0644\u062a\u062c\u062f\u064a\u062f",
+   "label": "إعدادات حملة التجديد",
    "link_count": 0,
    "link_to": "Renewal Campaign Settings",
    "link_type": "DocType",
@@ -145,7 +146,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0623\u062f\u0648\u0627\u062a ERPNext",
+   "label": "أدوات ERPNext",
    "link_count": 4,
    "link_type": "DocType",
    "onboard": 0,
@@ -154,7 +155,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0627\u0644\u0645\u0647\u0627\u0645 \u0627\u0644\u0645\u062c\u062f\u0648\u0644\u0629",
+   "label": "المهام المجدولة",
    "link_count": 0,
    "link_to": "Scheduled Job Type",
    "link_type": "DocType",
@@ -164,7 +165,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0627\u0644\u062a\u0646\u0628\u064a\u0647\u0627\u062a",
+   "label": "التنبيهات",
    "link_count": 0,
    "link_to": "Notification",
    "link_type": "DocType",
@@ -174,7 +175,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0627\u0644\u0648\u064a\u0628 \u0647\u0648\u0643",
+   "label": "الويب هوك",
    "link_count": 0,
    "link_to": "Webhook",
    "link_type": "DocType",
@@ -184,7 +185,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0633\u0643\u0631\u0628\u062a\u0627\u062a \u0627\u0644\u0633\u064a\u0631\u0641\u0631",
+   "label": "سكربتات السيرفر",
    "link_count": 0,
    "link_to": "Server Script",
    "link_type": "DocType",
@@ -194,7 +195,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0627\u0644\u0633\u062c\u0644\u0627\u062a",
+   "label": "السجلات",
    "link_count": 3,
    "link_type": "DocType",
    "onboard": 0,
@@ -203,7 +204,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0645\u062d\u0627\u062f\u062b\u0627\u062a \u0627\u0644\u062a\u062c\u062f\u064a\u062f",
+   "label": "محادثات التجديد",
    "link_count": 0,
    "link_to": "Renewal Conversation Log",
    "link_type": "DocType",
@@ -213,7 +214,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0645\u062d\u0627\u062f\u062b\u0627\u062a \u0641\u064a\u0633\u0628\u0648\u0643 \u0648\u0648\u0627\u062a\u0633\u0627\u0628",
+   "label": "محادثات فيسبوك وواتساب",
    "link_count": 0,
    "link_to": "Social Interaction",
    "link_type": "DocType",
@@ -223,7 +224,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0633\u062c\u0644 \u0627\u0644\u0623\u062e\u0637\u0627\u0621",
+   "label": "سجل الأخطاء",
    "link_count": 0,
    "link_to": "Error Log",
    "link_type": "DocType",
@@ -233,7 +234,7 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "\u0633\u062c\u0644 \u0627\u0644\u0645\u0647\u0627\u0645",
+   "label": "سجل المهام",
    "link_count": 0,
    "link_to": "Scheduled Job Log",
    "link_type": "DocType",
@@ -244,43 +245,43 @@
  "modified": "2026-08-20 23:05:21.713395",
  "modified_by": "Administrator",
  "module": "Sync Webshop",
- "name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629",
+ "name": "الأتمتة",
  "number_cards": [
   {
-   "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a",
-   "number_card_name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0627\u0644\u0625\u062c\u0645\u0627\u0644\u064a"
+   "label": "الأتمتة — الإجمالي",
+   "number_card_name": "الأتمتة — الإجمالي"
   },
   {
-   "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0634\u063a\u0627\u0644\u0629",
-   "number_card_name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0634\u063a\u0627\u0644\u0629"
+   "label": "الأتمتة — شغالة",
+   "number_card_name": "الأتمتة — شغالة"
   },
   {
-   "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0645\u064a\u062a\u0629",
-   "number_card_name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0645\u064a\u062a\u0629"
+   "label": "الأتمتة — ميتة",
+   "number_card_name": "الأتمتة — ميتة"
   },
   {
-   "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0641\u064a\u0647\u0627 \u0623\u062e\u0637\u0627\u0621",
-   "number_card_name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0641\u064a\u0647\u0627 \u0623\u062e\u0637\u0627\u0621"
+   "label": "الأتمتة — فيها أخطاء",
+   "number_card_name": "الأتمتة — فيها أخطاء"
   },
   {
-   "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0641\u064a n8n",
-   "number_card_name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0641\u064a n8n"
+   "label": "الأتمتة — في n8n",
+   "number_card_name": "الأتمتة — في n8n"
   },
   {
-   "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u062c\u0648\u0651\u0647 ERPNext",
-   "number_card_name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u062c\u0648\u0651\u0647 ERPNext"
+   "label": "الأتمتة — جوّه ERPNext",
+   "number_card_name": "الأتمتة — جوّه ERPNext"
   },
   {
-   "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0645\u0642\u0641\u0648\u0644\u0629",
-   "number_card_name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0645\u0642\u0641\u0648\u0644\u0629"
+   "label": "الأتمتة — مقفولة",
+   "number_card_name": "الأتمتة — مقفولة"
   },
   {
-   "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0631\u062f\u0648\u062f \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
-   "number_card_name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0631\u062f\u0648\u062f \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+   "label": "الأتمتة — ردود النهاردة",
+   "number_card_name": "الأتمتة — ردود النهاردة"
   },
   {
-   "label": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0631\u062f\u0648\u062f \u0641\u0634\u0644\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629",
-   "number_card_name": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629 \u2014 \u0631\u062f\u0648\u062f \u0641\u0634\u0644\u062a \u0627\u0644\u0646\u0647\u0627\u0631\u062f\u0629"
+   "label": "الأتمتة — ردود فشلت النهاردة",
+   "number_card_name": "الأتمتة — ردود فشلت النهاردة"
   }
  ],
  "owner": "Administrator",
@@ -289,5 +290,5 @@
  "roles": [],
  "sequence_id": 91.0,
  "shortcuts": [],
- "title": "\u0627\u0644\u0623\u062a\u0645\u062a\u0629"
+ "title": "الأتمتة"
 }
