@@ -505,9 +505,6 @@ def log_whatsapp(phone, message, sent=True, customer=None, reference=None):
 				})
 				doc.save(ignore_permissions=True)
 				frappe.db.commit()
-			elif meta.get_field("timeline_doctype"):
-				doc.db_set("timeline_doctype", "Sales Order", update_modified=False)
-				doc.db_set("timeline_name", reference, update_modified=False)
 		return doc.name
 	except Exception:
 		frappe.log_error(title="WhatsApp log failed",

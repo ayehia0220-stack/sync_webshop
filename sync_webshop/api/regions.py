@@ -15,6 +15,7 @@ will serve it:
 Refreshed daily and on demand. If Turbo is unreachable the last good copy keeps
 serving, because an empty address picker means nobody can order at all.
 """
+import io
 import json
 
 import frappe
@@ -114,11 +115,10 @@ def get_regions():
 
 	if not data:
 		# Better a slightly stale list than a checkout nobody can complete.
-		stale = frappe.db.get_default(FALLBACK_KEY)
-		return json.loads(stale) if stale else []
+		return _read_fallback()
 
 	frappe.cache().set_value(CACHE_KEY, data, expires_in_sec=CACHE_TTL)
-	frappe.db.set_default(FALLBACK_KEY, json.dumps(data))
+	_write_fallback(data)
 	return data
 
 
@@ -145,3 +145,30 @@ def refresh_daily():
 		get_regions()
 	except Exception as exc:
 		frappe.log_error(title="Turbo regions daily refresh", message=str(exc)[:500])
+
+
+# ————————————————————————— النسخة الاحتياطية للمناطق —————————————————————————
+#
+# القايمة دي أكبر من عمود `defvalue` في قاعدة البيانات (نوعه text، والقايمة
+# بتعدّيه)، فكانت كل محاولة حفظ بترمي خطأ 1406. مكانها الصح ملف على السيرفر.
+
+def _fallback_path():
+	from frappe.utils import get_site_path
+	return get_site_path("private", "files", "turbo_regions.json")
+
+
+def _read_fallback():
+	try:
+		with io.open(_fallback_path(), encoding="utf-8") as fh:
+			return json.load(fh)
+	except Exception:
+		return []
+
+
+def _write_fallback(data):
+	try:
+		with io.open(_fallback_path(), "w", encoding="utf-8") as fh:
+			fh.write(json.dumps(data, ensure_ascii=False))
+	except Exception as exc:
+		frappe.log_error(title="Turbo regions fallback write",
+		                 message=str(exc)[:400])

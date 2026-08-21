@@ -1,11 +1,9 @@
 {
- "doctype": "DocType",
- "name": "Webshop Landing Section",
- "module": "Sync Webshop",
- "custom": 0,
- "istable": 0,
- "engine": "InnoDB",
+ "actions": [],
  "autoname": "field:section_title_en",
+ "creation": "2026-08-01 01:21:56.445415",
+ "doctype": "DocType",
+ "engine": "InnoDB",
  "field_order": [
   "section_title_en",
   "section_title_ar",
@@ -30,16 +28,16 @@
    "reqd": 1
   },
   {
+   "default": "1",
    "fieldname": "enabled",
    "fieldtype": "Check",
-   "label": "Enabled",
-   "default": 1
+   "label": "Enabled"
   },
   {
+   "default": "0",
    "fieldname": "sort_order",
    "fieldtype": "Int",
-   "label": "Sort Order",
-   "default": 0
+   "label": "Sort Order"
   },
   {
    "fieldname": "section_subtitle_en",
@@ -58,13 +56,23 @@
    "options": "Webshop Landing Section Item"
   }
  ],
+ "links": [],
+ "modified": "2026-08-01 01:21:56.445415",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Landing Section",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
-   "read": 1,
-   "write": 1,
    "create": 1,
-   "delete": 1
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
   }
- ]
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
 }

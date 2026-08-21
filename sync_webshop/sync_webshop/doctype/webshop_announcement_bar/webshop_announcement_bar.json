@@ -1,14 +1,23 @@
 {
- "name": "Webshop Announcement Bar",
- "module": "Sync Webshop",
+ "actions": [],
+ "creation": "2026-08-01 01:21:55.073077",
  "doctype": "DocType",
- "issingle": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "message_en",
+  "message_ar",
+  "background_color",
+  "text_color",
+  "link_url",
+  "show_close_button"
+ ],
  "fields": [
   {
+   "default": "0",
    "fieldname": "enabled",
    "fieldtype": "Check",
-   "label": "Enabled",
-   "default": 0
+   "label": "Enabled"
   },
   {
    "fieldname": "message_en",
@@ -22,16 +31,16 @@
    "label": "Message (Arabic)"
   },
   {
+   "default": "#000000",
    "fieldname": "background_color",
    "fieldtype": "Color",
-   "label": "Background Color",
-   "default": "#000000"
+   "label": "Background Color"
   },
   {
+   "default": "#ffffff",
    "fieldname": "text_color",
    "fieldtype": "Color",
-   "label": "Text Color",
-   "default": "#ffffff"
+   "label": "Text Color"
   },
   {
    "fieldname": "link_url",
@@ -39,17 +48,28 @@
    "label": "Link URL"
   },
   {
+   "default": "1",
    "fieldname": "show_close_button",
    "fieldtype": "Check",
-   "label": "Show Close Button",
-   "default": 1
+   "label": "Show Close Button"
   }
  ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-01 01:21:55.073077",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Announcement Bar",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
    "read": 1,
+   "role": "System Manager",
    "write": 1
   }
- ]
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
 }

@@ -1,11 +1,7 @@
 {
+ "actions": [],
+ "creation": "2026-08-01 01:21:53.781512",
  "doctype": "DocType",
- "name": "Webshop Content Settings",
- "module": "Sync Webshop",
- "custom": 0,
- "istable": 0,
- "issingle": 1,
- "track_changes": 1,
  "engine": "InnoDB",
  "field_order": [
   "general_section",
@@ -61,7 +57,27 @@
   "show_back_to_top",
   "delivery_section",
   "min_delivery_days",
-  "max_delivery_days"
+  "max_delivery_days",
+  "user_auth_section",
+  "enable_user_registration",
+  "enable_wishlist",
+  "analytics_section",
+  "google_analytics_id",
+  "cdn_url_prefix",
+  "enable_webp_optimization",
+  "customer_support_section",
+  "enable_live_chat",
+  "live_chat_type",
+  "live_chat_custom_script",
+  "marketing_section",
+  "enable_coupons",
+  "enable_abandoned_cart_recovery",
+  "recovery_email_delay",
+  "mailchimp_section",
+  "enable_mailchimp",
+  "mailchimp_api_key",
+  "mailchimp_list_id",
+  "mailchimp_server_prefix"
  ],
  "fields": [
   {
@@ -134,10 +150,10 @@
    "label": "Top Bar"
   },
   {
+   "default": "1",
    "fieldname": "show_top_bar",
    "fieldtype": "Check",
-   "label": "Show Top Bar",
-   "default": 1
+   "label": "Show Top Bar"
   },
   {
    "fieldname": "top_bar_message_en",
@@ -246,29 +262,29 @@
    "label": "Product List Settings"
   },
   {
+   "default": "1",
    "fieldname": "show_category_sidebar",
    "fieldtype": "Check",
-   "label": "Show Category Sidebar",
-   "default": 1
+   "label": "Show Category Sidebar"
   },
   {
+   "default": "1",
    "fieldname": "show_price_filter",
    "fieldtype": "Check",
-   "label": "Show Price Filter",
-   "default": 1
+   "label": "Show Price Filter"
   },
   {
+   "default": "1",
    "fieldname": "show_brand_filter",
    "fieldtype": "Check",
-   "label": "Show Brand Filter",
-   "default": 1
+   "label": "Show Brand Filter"
   },
   {
+   "default": "220",
+   "description": "Width of the category sidebar in pixels (e.g. 180, 220, 280)",
    "fieldname": "sidebar_width",
    "fieldtype": "Int",
-   "label": "Sidebar Width (px)",
-   "default": 220,
-   "description": "Width of the category sidebar in pixels (e.g. 180, 220, 280)"
+   "label": "Sidebar Width (px)"
   },
   {
    "fieldname": "seo_section",
@@ -276,32 +292,32 @@
    "label": "SEO & Social Sharing"
   },
   {
+   "description": "Default meta description for search engines (English)",
    "fieldname": "seo_meta_description_en",
    "fieldtype": "Small Text",
-   "label": "Meta Description (English)",
-   "description": "Default meta description for search engines (English)"
+   "label": "Meta Description (English)"
   },
   {
+   "description": "Default meta description for search engines (Arabic)",
    "fieldname": "seo_meta_description_ar",
    "fieldtype": "Small Text",
-   "label": "Meta Description (Arabic)",
-   "description": "Default meta description for search engines (Arabic)"
+   "label": "Meta Description (Arabic)"
   },
   {
    "fieldname": "column_break_seo",
    "fieldtype": "Column Break"
   },
   {
+   "description": "Default image shown when sharing links on social media (recommended: 1200x630px)",
    "fieldname": "seo_og_image",
    "fieldtype": "Attach Image",
-   "label": "Default OG Image",
-   "description": "Default image shown when sharing links on social media (recommended: 1200x630px)"
+   "label": "Default OG Image"
   },
   {
+   "description": "Comma-separated keywords for search engines",
    "fieldname": "seo_keywords",
    "fieldtype": "Data",
-   "label": "SEO Keywords",
-   "description": "Comma-separated keywords for search engines"
+   "label": "SEO Keywords"
   },
   {
    "fieldname": "floating_buttons_section",
@@ -309,32 +325,32 @@
    "label": "Floating Action Buttons"
   },
   {
+   "default": "1",
    "fieldname": "show_whatsapp_button",
    "fieldtype": "Check",
-   "label": "Show WhatsApp Button",
-   "default": 1
+   "label": "Show WhatsApp Button"
   },
   {
+   "description": "International format without + (e.g. 9647801234567)",
    "fieldname": "whatsapp_number",
    "fieldtype": "Data",
-   "label": "WhatsApp Number",
-   "description": "International format without + (e.g. 9647801234567)"
+   "label": "WhatsApp Number"
   },
   {
+   "description": "Pre-filled message when user clicks WhatsApp button",
    "fieldname": "whatsapp_message",
    "fieldtype": "Data",
-   "label": "WhatsApp Default Message",
-   "description": "Pre-filled message when user clicks WhatsApp button"
+   "label": "WhatsApp Default Message"
   },
   {
    "fieldname": "column_break_floating",
    "fieldtype": "Column Break"
   },
   {
+   "default": "1",
    "fieldname": "show_back_to_top",
    "fieldtype": "Check",
-   "label": "Show Back to Top Button",
-   "default": 1
+   "label": "Show Back to Top Button"
   },
   {
    "fieldname": "delivery_section",
@@ -342,16 +358,16 @@
    "label": "Delivery Settings"
   },
   {
+   "default": "1",
    "fieldname": "min_delivery_days",
    "fieldtype": "Int",
-   "label": "Minimum Delivery Lead Time (Days)",
-   "default": 1
+   "label": "Minimum Delivery Lead Time (Days)"
   },
   {
+   "default": "7",
    "fieldname": "max_delivery_days",
    "fieldtype": "Int",
-   "label": "Maximum Delivery Lead Time (Days)",
-   "default": 7
+   "label": "Maximum Delivery Lead Time (Days)"
   },
   {
    "fieldname": "user_auth_section",
@@ -359,16 +375,16 @@
    "label": "User Authentication & Wishlist"
   },
   {
+   "default": "1",
    "fieldname": "enable_user_registration",
    "fieldtype": "Check",
-   "label": "Enable User Registration",
-   "default": 1
+   "label": "Enable User Registration"
   },
   {
+   "default": "1",
    "fieldname": "enable_wishlist",
    "fieldtype": "Check",
-   "label": "Enable Wishlist",
-   "default": 1
+   "label": "Enable Wishlist"
   },
   {
    "fieldname": "analytics_section",
@@ -381,16 +397,16 @@
    "label": "Google Analytics ID (G-XXXXX)"
   },
   {
+   "description": "e.g. https://cdn.example.com",
    "fieldname": "cdn_url_prefix",
    "fieldtype": "Data",
-   "label": "CDN URL Prefix",
-   "description": "e.g. https://cdn.example.com"
+   "label": "CDN URL Prefix"
   },
   {
+   "default": "1",
    "fieldname": "enable_webp_optimization",
    "fieldtype": "Check",
-   "label": "Enable WebP Optimization",
-   "default": 1
+   "label": "Enable WebP Optimization"
   },
   {
    "fieldname": "customer_support_section",
@@ -398,24 +414,24 @@
    "label": "Customer Support & Live Chat"
   },
   {
+   "default": "1",
    "fieldname": "enable_live_chat",
    "fieldtype": "Check",
-   "label": "Enable Live Chat Widget",
-   "default": 1
+   "label": "Enable Live Chat Widget"
   },
   {
+   "default": "WhatsApp",
    "fieldname": "live_chat_type",
    "fieldtype": "Select",
    "label": "Live Chat Type",
-   "options": "WhatsApp\nTawk.to\nCustom Script",
-   "default": "WhatsApp"
+   "options": "WhatsApp\nTawk.to\nCustom Script"
   },
   {
+   "depends_on": "eval:doc.live_chat_type==\"Custom Script\"",
    "fieldname": "live_chat_custom_script",
    "fieldtype": "Code",
    "label": "Custom Chat Script",
-   "options": "JS",
-   "depends_on": "eval:doc.live_chat_type==\"Custom Script\""
+   "options": "JS"
   },
   {
    "fieldname": "marketing_section",
@@ -423,22 +439,22 @@
    "label": "Marketing & Coupons"
   },
   {
+   "default": "1",
    "fieldname": "enable_coupons",
    "fieldtype": "Check",
-   "label": "Enable Coupon Codes",
-   "default": 1
+   "label": "Enable Coupon Codes"
   },
   {
+   "default": "1",
    "fieldname": "enable_abandoned_cart_recovery",
    "fieldtype": "Check",
-   "label": "Enable Abandoned Cart Recovery",
-   "default": 1
+   "label": "Enable Abandoned Cart Recovery"
   },
   {
+   "default": "24",
    "fieldname": "recovery_email_delay",
    "fieldtype": "Int",
-   "label": "Recovery Email Delay (Hours)",
-   "default": 24
+   "label": "Recovery Email Delay (Hours)"
   },
   {
    "fieldname": "mailchimp_section",
@@ -446,10 +462,10 @@
    "label": "Mailchimp Integration"
   },
   {
+   "default": "0",
    "fieldname": "enable_mailchimp",
    "fieldtype": "Check",
-   "label": "Enable Mailchimp Subscription",
-   "default": 0
+   "label": "Enable Mailchimp Subscription"
   },
   {
    "fieldname": "mailchimp_api_key",
@@ -467,12 +483,24 @@
    "label": "Mailchimp Server Prefix (e.g. us1)"
   }
  ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-01 01:21:53.781512",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Content Settings",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
+   "create": 1,
    "read": 1,
-   "write": 1,
-   "create": 1
+   "role": "System Manager",
+   "write": 1
   }
- ]
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }

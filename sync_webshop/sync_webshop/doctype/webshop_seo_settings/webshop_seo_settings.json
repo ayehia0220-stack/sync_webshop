@@ -1,8 +1,28 @@
 {
- "name": "Webshop SEO Settings",
- "module": "Sync Webshop",
+ "actions": [],
+ "creation": "2026-08-01 01:21:56.294680",
  "doctype": "DocType",
- "issingle": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "meta_section",
+  "meta_title_en",
+  "meta_title_ar",
+  "meta_description_en",
+  "meta_description_ar",
+  "og_section",
+  "og_title_en",
+  "og_title_ar",
+  "og_description_en",
+  "og_description_ar",
+  "og_image",
+  "advanced_section",
+  "canonical_url",
+  "robots_txt",
+  "sitemap_enabled",
+  "structured_data",
+  "redirects_section",
+  "redirects"
+ ],
  "fields": [
   {
    "fieldname": "meta_section",
@@ -76,10 +96,10 @@
    "options": "Markdown"
   },
   {
+   "default": "1",
    "fieldname": "sitemap_enabled",
    "fieldtype": "Check",
-   "label": "Sitemap Enabled",
-   "default": 1
+   "label": "Sitemap Enabled"
   },
   {
    "fieldname": "structured_data",
@@ -99,11 +119,22 @@
    "options": "Webshop SEO Redirect"
   }
  ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-01 01:21:56.294680",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop SEO Settings",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
    "read": 1,
+   "role": "System Manager",
    "write": 1
   }
- ]
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
 }

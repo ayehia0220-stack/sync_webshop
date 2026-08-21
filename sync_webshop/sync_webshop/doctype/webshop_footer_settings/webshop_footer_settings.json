@@ -1,14 +1,20 @@
 {
- "name": "Webshop Footer Settings",
- "module": "Sync Webshop",
+ "actions": [],
+ "creation": "2026-08-01 01:21:56.699237",
  "doctype": "DocType",
- "issingle": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "enabled",
+  "footer_logo",
+  "copyright_en",
+  "copyright_ar"
+ ],
  "fields": [
   {
+   "default": "1",
    "fieldname": "enabled",
    "fieldtype": "Check",
-   "label": "Enabled",
-   "default": 1
+   "label": "Enabled"
   },
   {
    "fieldname": "footer_logo",
@@ -26,11 +32,22 @@
    "label": "Copyright Text (Arabic)"
   }
  ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-01 01:21:56.699237",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Footer Settings",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
    "read": 1,
+   "role": "System Manager",
    "write": 1
   }
- ]
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
 }

@@ -1,11 +1,7 @@
 {
+ "actions": [],
+ "creation": "2026-08-01 01:21:55.335717",
  "doctype": "DocType",
- "name": "Webshop API Settings",
- "module": "Sync Webshop",
- "custom": 0,
- "istable": 0,
- "issingle": 1,
- "track_changes": 1,
  "engine": "InnoDB",
  "field_order": [
   "connection_section",
@@ -24,22 +20,22 @@
    "label": "Connection"
   },
   {
+   "description": "A restricted-role user whose API Key/Secret the React frontend uses for write calls (checkout, etc). Created and scoped in Step 3.",
    "fieldname": "api_user",
    "fieldtype": "Link",
    "label": "API User",
-   "options": "User",
-   "description": "A restricted-role user whose API Key/Secret the React frontend uses for write calls (checkout, etc). Created and scoped in Step 3."
+   "options": "User"
   },
   {
    "fieldname": "column_break_1",
    "fieldtype": "Column Break"
   },
   {
+   "default": "1",
+   "description": "Allow the item/price catalog and theme/content endpoints to be read without login, so the storefront can render for anonymous visitors.",
    "fieldname": "enable_guest_catalog_access",
    "fieldtype": "Check",
-   "label": "Enable Guest Catalog Access",
-   "default": "1",
-   "description": "Allow the item/price catalog and theme/content endpoints to be read without login, so the storefront can render for anonymous visitors."
+   "label": "Enable Guest Catalog Access"
   },
   {
    "fieldname": "catalog_section",
@@ -47,11 +43,11 @@
    "label": "Catalog"
   },
   {
+   "description": "Which ERPNext Price List the storefront's item prices are read from (e.g. Standard Selling).",
    "fieldname": "default_price_list",
    "fieldtype": "Link",
    "label": "Default Price List",
-   "options": "Price List",
-   "description": "Which ERPNext Price List the storefront's item prices are read from (e.g. Standard Selling)."
+   "options": "Price List"
   },
   {
    "fieldname": "cors_section",
@@ -59,18 +55,30 @@
    "label": "CORS"
   },
   {
+   "description": "One origin per line, e.g. https://shop.dpono.com - this server's frontend domain(s) allowed to call the API.",
    "fieldname": "allowed_origins",
    "fieldtype": "Small Text",
-   "label": "Allowed Frontend Origins",
-   "description": "One origin per line, e.g. https://shop.dpono.com - this server's frontend domain(s) allowed to call the API."
+   "label": "Allowed Frontend Origins"
   }
  ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-01 01:21:55.335717",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop API Settings",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
+   "create": 1,
    "read": 1,
-   "write": 1,
-   "create": 1
+   "role": "System Manager",
+   "write": 1
   }
- ]
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }

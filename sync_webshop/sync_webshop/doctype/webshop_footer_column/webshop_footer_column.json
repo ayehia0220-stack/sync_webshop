@@ -1,15 +1,23 @@
 {
- "name": "Webshop Footer Column",
- "module": "Sync Webshop",
- "doctype": "DocType",
+ "actions": [],
  "autoname": "field:title_en",
+ "creation": "2026-08-01 01:21:53.085446",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title_en",
+  "title_ar",
+  "sort_order",
+  "enabled",
+  "links"
+ ],
  "fields": [
   {
    "fieldname": "title_en",
    "fieldtype": "Data",
    "label": "Title (English)",
-   "unique": 1,
-   "reqd": 1
+   "reqd": 1,
+   "unique": 1
   },
   {
    "fieldname": "title_ar",
@@ -17,16 +25,16 @@
    "label": "Title (Arabic)"
   },
   {
+   "default": "0",
    "fieldname": "sort_order",
    "fieldtype": "Int",
-   "label": "Sort Order",
-   "default": 0
+   "label": "Sort Order"
   },
   {
+   "default": "1",
    "fieldname": "enabled",
    "fieldtype": "Check",
-   "label": "Enabled",
-   "default": 1
+   "label": "Enabled"
   },
   {
    "fieldname": "links",
@@ -35,13 +43,23 @@
    "options": "Webshop Footer Link"
   }
  ],
+ "links": [],
+ "modified": "2026-08-01 01:21:53.085446",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Footer Column",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
-   "read": 1,
-   "write": 1,
    "create": 1,
-   "delete": 1
+   "delete": 1,
+   "read": 1,
+   "role": "System Manager",
+   "write": 1
   }
- ]
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
 }

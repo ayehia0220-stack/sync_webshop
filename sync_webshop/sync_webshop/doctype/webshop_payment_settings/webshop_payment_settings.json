@@ -1,11 +1,7 @@
 {
+ "actions": [],
+ "creation": "2026-08-01 01:21:54.050210",
  "doctype": "DocType",
- "name": "Webshop Payment Settings",
- "module": "Sync Webshop",
- "custom": 0,
- "istable": 0,
- "issingle": 1,
- "track_changes": 1,
  "engine": "InnoDB",
  "field_order": [
   "stripe_section",
@@ -26,17 +22,17 @@
    "label": "Stripe Settings"
   },
   {
+   "default": "0",
    "fieldname": "stripe_enabled",
    "fieldtype": "Check",
-   "label": "Enable Stripe",
-   "default": 0
+   "label": "Enable Stripe"
   },
   {
+   "default": "Test",
    "fieldname": "stripe_mode",
    "fieldtype": "Select",
    "label": "Mode",
-   "options": "Test\nLive",
-   "default": "Test"
+   "options": "Test\nLive"
   },
   {
    "fieldname": "stripe_publishable_key",
@@ -59,30 +55,42 @@
    "label": "Cash on Delivery"
   },
   {
+   "default": "1",
    "fieldname": "cod_enabled",
    "fieldtype": "Check",
-   "label": "Enable Cash on Delivery",
-   "default": 1
+   "label": "Enable Cash on Delivery"
   },
   {
+   "default": "Cash on Delivery",
    "fieldname": "cod_label_en",
    "fieldtype": "Data",
-   "label": "COD Label (English)",
-   "default": "Cash on Delivery"
+   "label": "COD Label (English)"
   },
   {
+   "default": "\u0627\u0644\u062f\u0641\u0639 \u0639\u0646\u062f \u0627\u0644\u0627\u0633\u062a\u0644\u0627\u0645",
    "fieldname": "cod_label_ar",
    "fieldtype": "Data",
-   "label": "COD Label (Arabic)",
-   "default": "الدفع عند الاستلام"
+   "label": "COD Label (Arabic)"
   }
  ],
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-08-01 01:21:54.050210",
+ "modified_by": "Administrator",
+ "module": "Sync Webshop",
+ "name": "Webshop Payment Settings",
+ "owner": "Administrator",
  "permissions": [
   {
-   "role": "System Manager",
+   "create": 1,
    "read": 1,
-   "write": 1,
-   "create": 1
+   "role": "System Manager",
+   "write": 1
   }
- ]
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
 }
