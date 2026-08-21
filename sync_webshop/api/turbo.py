@@ -172,6 +172,26 @@ def _is_pickup(addr):
 
 
 @frappe.whitelist()
+def _assert_reachable_phone(order, payload):
+	"""
+	يوقف الشحنة لو الرقم اللي هيروح للمندوب مش رقم مصري كامل.
+
+	الرقم ده بييجي من عنوان الشحن، مش من الخانة اللي في شاشة الطلب —
+	فالرسالة بتقول المكان الصح عشان اللي بيصلّح ميدوّرش.
+	"""
+	phone1 = normalise_customer_phone(payload.get("phone1"))
+	if not phone1:
+		frappe.throw(frappe._(
+			"رقم الزبون «{0}» مش رقم موبايل مصري كامل، والمندوب مش هيوصله.\n\n"
+			"عدّله من: عنوان الشحن بتاع الطلب ← خانة الهاتف.\n"
+			"(الخانة اللي في شاشة الطلب مش هي اللي بتروح لتربو.)"
+		).format(payload.get("phone1") or frappe._("فاضي")))
+
+	# الاحتياطي اختياري: لو مكسور بنشيله بدل ما نبعت رقم غلط لتربو
+	if payload.get("phone2") and not normalise_customer_phone(payload.get("phone2")):
+		payload["phone2"] = None
+
+
 def create_shipment(order_name):
 	"""Hand one order to Turbo. Safe to call twice — it will not duplicate."""
 	order = frappe.get_doc("Sales Order", order_name)
@@ -189,6 +209,8 @@ def create_shipment(order_name):
 	if err:
 		order.db_set("turbo_error", err, update_modified=False)
 		return {"ok": False, "message": err}
+
+	_assert_reachable_phone(order, payload)
 
 	ok, result = _call("/external-api/add-order", payload, creds)
 	if not ok:
